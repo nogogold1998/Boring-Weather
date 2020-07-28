@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_200"
+    android:background="@color/color_ziggurat">
+
+    <TextView
+        android:id="@+id/textDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_holder_date_time"
+        android:textSize="@dimen/sp_25"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
+
+    <TextView
+        android:id="@+id/textCurrentTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_holder_temperature"
+        android:textSize="@dimen/sp_60"
+        app:layout_constraintBottom_toTopOf="@+id/textWeatherDescription"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@+id/textDateTime" />
+
+    <TextView
+        android:id="@+id/textSunrise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_sunrise_24"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_time"
+        app:layout_constraintBottom_toTopOf="@+id/textDayTemperature"
+        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
+        app:layout_constraintTop_toTopOf="@+id/textCurrentTemperature"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    <TextView
+        android:id="@+id/textDayTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_sunny_24"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_temperature"
+        app:layout_constraintBottom_toTopOf="@+id/textSunset"
+        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
+        app:layout_constraintTop_toBottomOf="@+id/textSunrise" />
+
+    <TextView
+        android:id="@+id/textSunset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_sunset_24"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_time"
+        app:layout_constraintBottom_toTopOf="@+id/textNightTemperature"
+        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
+        app:layout_constraintTop_toBottomOf="@+id/textDayTemperature" />
+
+    <TextView
+        android:id="@+id/textNightTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_moon_24"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_temperature"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
+        app:layout_constraintTop_toBottomOf="@+id/textSunset" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/dp_32" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/dp_16" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/dp_16" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_begin="@dimen/dp_16"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textWeatherDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_description"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        tools:text="Thunderstorm" />
+
+    <TextView
+        android:id="@+id/textFeelsLike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_16"
+        android:drawableStart="@drawable/ic_round_faces_24"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_temperature"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textCurrentTemperature"
+        app:layout_constraintStart_toEndOf="@+id/textCurrentTemperature" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideMiddleVertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.65" />
+</androidx.constraintlayout.widget.ConstraintLayout>
