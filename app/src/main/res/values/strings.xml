@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">Boring Weather</string>
+
+    <string name="details_current">Current</string>
+    <string name="details_humidity">Humidity</string>
+    <string name="details_visibility">Visibility</string>
+    <string name="details_uv_index">UV index</string>
+    <string name="details_wind_speed">Wind speed</string>
+    <string name="details_pressure">Pressure</string>
+    <string name="details_current_details">Current details</string>
+    <string name="details_cloud">Cloud</string>
+
+    <string name="title_today">Today</string>
+    <string name="title_forecast">Forecast</string>
+
+    <string name="title_holder_percent">-- %</string>
+    <string name="title_holder_distance">-- Km</string>
+    <string name="title_holder_speed">-- m/s</string>
+    <string name="title_holder_number">--.-</string>
+    <string name="title_holder_pressure">----nPa</string>
+    <string name="title_holder_temperature">--°C</string>
+    <string name="title_holder_time">--:-- am</string>
+    <string name="title_holder_description">Description</string>
+    <string name="title_holder_date_time">July, —,—:— AM</string>
+    <string name="title_holder_title_collapsing_toolbar">Boring Weather</string>
+
+    <string name="action_history">History</string>
+
+    <string name="menu_current">Current</string>
+    <string name="menu_today">Today</string>
+    <string name="menu_forecast">Forecast</string>
+    <string name="menu_history">History</string>
+    <string name="menu_locations">Locations</string>
+    <string name="menu_settings">Settings</string>
 </resources>
