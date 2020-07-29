@@ -10,7 +10,10 @@ class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        onNavigateToFragment(R.id.fragment_container, CurrentFragment.newInstance(), null, null)
+
+        val fragment =
+            CurrentFragment.newInstance(/*TODO get cityId from setting or SearchFragment*/)
+        onNavigateToFragment(R.id.fragment_container, fragment, null, null)
     }
 
     override fun onPopBackStack() {
@@ -25,7 +28,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
     ) {
         supportFragmentManager.beginTransaction()
             .replace(containerId, fragment, tag)
-            // todo add custom animation transition
+            // TODO add custom animation transition
             // .setCustomAnimations()
             .addToBackStack(backStackName)
             .commit()

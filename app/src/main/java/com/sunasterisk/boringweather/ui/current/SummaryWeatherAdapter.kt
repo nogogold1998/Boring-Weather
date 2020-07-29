@@ -8,17 +8,19 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.data.local.model.SummaryWeather
+import com.sunasterisk.boringweather.util.UnitSystem
 import kotlinx.android.synthetic.main.item_summary_weather.view.*
 
 class SummaryWeatherAdapter(
-    private val tempUnit: String
+    private val unitSystem: UnitSystem,
+    private val itemClickListener: (SummaryWeather) -> Unit
 ) : ListAdapter<SummaryWeather, SummaryWeatherAdapter.SummaryWeatherVH>(
     SummaryWeather.diffUtil
 ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SummaryWeatherVH {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_summary_weather, parent, false)
-        return SummaryWeatherVH(view, tempUnit)
+        return SummaryWeatherVH(view, unitSystem, itemClickListener)
     }
 
     override fun onBindViewHolder(holder: SummaryWeatherVH, position: Int) {
@@ -28,14 +30,16 @@ class SummaryWeatherAdapter(
 
     class SummaryWeatherVH(
         view: View,
-        private val tempUnit: String
+        private val unitSystem: UnitSystem,
+        private val itemClickListener: (SummaryWeather) -> Unit
     ) : RecyclerView.ViewHolder(view) {
 
         fun bind(item: SummaryWeather) {
             with(itemView) {
-                textTemperature.text = "${item.temperature} $tempUnit"
+                textTemperature.text = unitSystem.formatTemperature(item.temperature, resources)
                 // TODO implement parse Long to date time String
                 textDateTime.text = DateUtils.formatElapsedTime(item.dt / 1000)
+                containerItem.setOnClickListener { itemClickListener(item) }
             }
         }
     }
