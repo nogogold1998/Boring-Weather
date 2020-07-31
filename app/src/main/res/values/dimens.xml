@@ -10,9 +10,17 @@
     <dimen name="dp_72">72dp</dimen>
     <dimen name="dp_120">120dp</dimen>
     <dimen name="dp_200">200dp</dimen>
-    <dimen name="dp_250">250dp</dimen>
+    <dimen name="dp_240">240dp</dimen>
 
     <dimen name="sp_20">20sp</dimen>
     <dimen name="sp_25">25sp</dimen>
     <dimen name="sp_60">60sp</dimen>
+    <dimen name="dp_3">3dp</dimen>
+
+    <item name="scaling_toolbar_image_start" format="float" type="dimen">1.2</item>
+    <item name="scaling_toolbar_image_end" format="float" type="dimen">1.0</item>
+    <item name="scaling_text_title_start" format="float" type="dimen">1.0</item>
+    <item name="scaling_text_title_end" format="float" type="dimen">0.625</item>
+    <item name="scaling_image_background_start" format="float" type="dimen">1.0</item>
+    <item name="scaling_image_background_end" format="float" type="dimen">1.2</item>
 </resources>

@@ -20,8 +20,8 @@ import com.sunasterisk.boringweather.util.showToast
 import com.sunasterisk.boringweather.util.verticalScrollProgress
 import kotlinx.android.synthetic.main.fragment_current.*
 import kotlinx.android.synthetic.main.fragment_current.view.*
-import kotlinx.android.synthetic.main.tile_detail.*
-import kotlinx.android.synthetic.main.tile_summary.*
+import kotlinx.android.synthetic.main.partial_detail.*
+import kotlinx.android.synthetic.main.partial_summary.*
 
 class CurrentFragment : BaseFragment(), CurrentContract.View,
     NavigationView.OnNavigationItemSelectedListener {
@@ -151,7 +151,6 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             swipeRefreshLayout.isEnabled = scrollView.verticalScrollProgress == 0f
         }
     }
-
     companion object {
 
         fun newInstance(cityId: Int? = null) = CurrentFragment().apply {

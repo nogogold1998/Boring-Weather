@@ -10,8 +10,10 @@
     <string name="details_current_details">Current details</string>
     <string name="details_cloud">Cloud</string>
 
+    <string name="title_current">Current</string>
     <string name="title_today">Today</string>
     <string name="title_forecast">Forecast</string>
+    <string name="title_detail">Detail</string>
 
     <string name="title_holder_percent">-- %</string>
     <string name="title_holder_distance">-- Km</string>
@@ -48,8 +50,14 @@
     <string name="format_speed_imperial">%1$.1f miles/h</string>
 
     <string name="format_pressure">%1$.1f kPa</string>
-    
-    <string name="error_unknown">Unknown error has occurred!</string>
+
+    <string name="error_refresh_result_null">No result returned</string>
+    <string name="error_refresh_task_pending">Refresh task is pending</string>
+    <string name="error_refresh_task_running">Refresh task is running</string>
+    <string name="error_refresh_task_canceled">Refresh task has cancelled</string>
     <string name="error_refresh_city_null">Loading city failed</string>
     <string name="error_refresh_failed">Failed to refresh weather data</string>
+    <string name="error_unknown">Unknown error has occurred!</string>
+    <string name="msg_weather_icon">Weather Icon</string>
+    <string name="msg_expand">Expand</string>
 </resources>

@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.sunasterisk.boringweather.R
-import com.sunasterisk.boringweather.ui.current.CurrentFragment
+import com.sunasterisk.boringweather.ui.detail.DetailFragment
 
 class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,7 +12,8 @@ class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
         setContentView(R.layout.activity_main)
 
         val fragment =
-            CurrentFragment.newInstance(/*TODO get cityId from setting or SearchFragment*/)
+            DetailFragment()
+            // CurrentFragment.newInstance(/*TODO get cityId from setting or SearchFragment*/)
         onNavigateToFragment(R.id.fragment_container, fragment, null, null)
     }
 
