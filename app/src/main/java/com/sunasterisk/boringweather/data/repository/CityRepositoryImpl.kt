@@ -1,9 +1,11 @@
-package com.sunasterisk.boringweather.data
+package com.sunasterisk.boringweather.data.repository
 
 import com.sunasterisk.boringweather.base.Result
-import com.sunasterisk.boringweather.data.local.model.City
+import com.sunasterisk.boringweather.data.model.City
+import com.sunasterisk.boringweather.data.repository.CityRepository
 
-class CityRepositoryImpl : CityRepository {
+class CityRepositoryImpl :
+    CityRepository {
     override fun getCityById(cityId: Int, callback: (Result<City>) -> Unit) {
         callback(Result.Success(City()))
     }

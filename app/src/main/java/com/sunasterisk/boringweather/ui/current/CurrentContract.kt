@@ -1,10 +1,10 @@
 package com.sunasterisk.boringweather.ui.current
 
 import androidx.annotation.StringRes
-import com.sunasterisk.boringweather.data.local.model.City
-import com.sunasterisk.boringweather.data.local.model.DailyWeather
-import com.sunasterisk.boringweather.data.local.model.HourlyWeather
-import com.sunasterisk.boringweather.data.local.model.SummaryWeather
+import com.sunasterisk.boringweather.data.model.City
+import com.sunasterisk.boringweather.data.model.DailyWeather
+import com.sunasterisk.boringweather.data.model.HourlyWeather
+import com.sunasterisk.boringweather.data.model.SummaryWeather
 
 interface CurrentContract {
     interface View {

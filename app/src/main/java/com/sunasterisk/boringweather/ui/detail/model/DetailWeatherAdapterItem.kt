@@ -1,7 +1,7 @@
 package com.sunasterisk.boringweather.ui.detail.model
 
-import com.sunasterisk.boringweather.data.local.model.DailyWeather
-import com.sunasterisk.boringweather.data.local.model.HourlyWeather
+import com.sunasterisk.boringweather.data.model.DailyWeather
+import com.sunasterisk.boringweather.data.model.HourlyWeather
 import com.sunasterisk.boringweather.ui.detail.DetailWeatherAdapterViewType
 
 sealed class DetailWeatherAdapterItem<T> {

@@ -1,7 +1,7 @@
-package com.sunasterisk.boringweather.data
+package com.sunasterisk.boringweather.data.repository
 
 import com.sunasterisk.boringweather.base.Result
-import com.sunasterisk.boringweather.data.local.model.City
+import com.sunasterisk.boringweather.data.model.City
 
 interface CityRepository {
     fun getCityById(cityId: Int, callback: (Result<City>) -> Unit)

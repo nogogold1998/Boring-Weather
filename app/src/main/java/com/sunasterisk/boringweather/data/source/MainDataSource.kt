@@ -1,4 +1,4 @@
-package com.sunasterisk.boringweather.data
+package com.sunasterisk.boringweather.data.source
 
 interface MainDataSource {
     interface Local

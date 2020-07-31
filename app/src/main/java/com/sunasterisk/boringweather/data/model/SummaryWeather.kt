@@ -1,4 +1,4 @@
-package com.sunasterisk.boringweather.data.local.model
+package com.sunasterisk.boringweather.data.model
 
 import androidx.recyclerview.widget.DiffUtil
 

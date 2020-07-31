@@ -1,4 +1,4 @@
-package com.sunasterisk.boringweather.data.local.model
+package com.sunasterisk.boringweather.data.model
 
 import com.sunasterisk.boringweather.util.getOrNull
 import org.json.JSONObject

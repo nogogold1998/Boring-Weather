@@ -1,7 +1,5 @@
-package com.sunasterisk.boringweather.data.remote.dto
+package com.sunasterisk.boringweather.data.model
 
-import com.sunasterisk.boringweather.data.local.model.DailyWeather
-import com.sunasterisk.boringweather.data.local.model.HourlyWeather
 import com.sunasterisk.boringweather.util.getOrElse
 import com.sunasterisk.boringweather.util.getOrNull
 import com.sunasterisk.boringweather.util.map
