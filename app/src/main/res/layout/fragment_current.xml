@@ -27,9 +27,9 @@
                     android:orientation="vertical"
                     android:paddingBottom="@dimen/dp_32">
 
-                    <include layout="@layout/tile_summary" />
+                    <include layout="@layout/partial_summary" />
 
-                    <include layout="@layout/tile_detail" />
+                    <include layout="@layout/partial_detail" />
 
                     <TextView
                         android:id="@+id/textTitleTodaySummaryWeather"
@@ -101,7 +101,7 @@
                 <com.google.android.material.appbar.CollapsingToolbarLayout
                     android:id="@+id/collapsingToolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_250"
+                    android:layout_height="@dimen/dp_240"
                     android:fitsSystemWindows="true"
                     app:contentScrim="?attr/colorPrimary"
                     app:expandedTitleGravity="bottom"
