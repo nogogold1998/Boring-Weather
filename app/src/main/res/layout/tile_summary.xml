@@ -114,12 +114,11 @@
         android:id="@+id/textFeelsLike"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_16"
         android:drawableStart="@drawable/ic_round_faces_24"
         android:drawablePadding="@dimen/dp_8"
         android:text="@string/title_holder_temperature"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textCurrentTemperature"
-        app:layout_constraintStart_toEndOf="@+id/textCurrentTemperature" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/textDateTime"
+        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideMiddleVertical"

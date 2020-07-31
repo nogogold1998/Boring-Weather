@@ -16,7 +16,7 @@ data class DailyWeather(
     val dewPoint: Float = 0f,
     val windSpeed: Float = 0f,
     val windDegree: Int = 0,
-    val weathers: List<Weather>,
+    val weathers: List<Weather> = emptyList(),
     val clouds: Int = 0,
     val uvIndex: Float = 0f
 ) {

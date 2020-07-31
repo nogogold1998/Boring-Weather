@@ -32,4 +32,24 @@
     <string name="menu_history">History</string>
     <string name="menu_locations">Locations</string>
     <string name="menu_settings">Settings</string>
+
+    <string name="format_temperature_international">%1$.1f °K</string>
+    <string name="format_temperature_metric">%1$.1f °C</string>
+    <string name="format_temperature_imperial">%1$.1f °F</string>
+
+    <string name="format_percent_decimal">%1$02d %%</string>
+
+    <string name="format_visibility_international">%1$s km</string>
+    <string name="format_visibility_metric">%1$s km</string>
+    <string name="format_visibility_imperial">%1$s miles</string>
+
+    <string name="format_speed_international">%1$.1f m/s</string>
+    <string name="format_speed_metric">%1$.1f m/s</string>
+    <string name="format_speed_imperial">%1$.1f miles/h</string>
+
+    <string name="format_pressure">%1$.1f kPa</string>
+    
+    <string name="error_unknown">Unknown error has occurred!</string>
+    <string name="error_refresh_city_null">Loading city failed</string>
+    <string name="error_refresh_failed">Failed to refresh weather data</string>
 </resources>
