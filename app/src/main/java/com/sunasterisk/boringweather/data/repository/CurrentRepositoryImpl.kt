@@ -17,11 +17,11 @@ class CurrentRepositoryImpl :
         callback: (Result<CurrentWeather>) -> Unit
     ) {
         asyncTask = CallbackAsyncTask<City, CurrentWeather>(
-            {
+            handler = {
                 Thread.sleep(2000) // TODO implement after implement data sources
                 CurrentWeather.default
             },
-            {
+            onFinishedListener = {
                 callback(it ?: Result.Error(NullPointerException()))
             }
         ).apply { executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, city) }

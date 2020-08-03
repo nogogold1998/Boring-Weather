@@ -29,6 +29,10 @@ class AppDatabase private constructor(
 
         private var instance: AppDatabase? = null
         fun getInstance(context: Context) =
-            instance ?: synchronized(this) { AppDatabase(context).also { instance = it } }
+            instance ?: synchronized(this) {
+                instance ?: AppDatabase(context).also {
+                    instance = it
+                }
+            }
     }
 }
