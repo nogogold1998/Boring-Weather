@@ -16,8 +16,10 @@ inline fun <R> JSONObject.tryOrNull(tryBlock: JSONObject.() -> R): R? {
         this.tryBlock()
     } catch (e: JSONException) {
         when {
-            e.message!!.matches("""JSONObject\["[a-zA-Z0-9_]+"] not found\.""".toRegex()) -> null
-            e.message!!.matches("""JSONObject\["[a-zA-Z0-9_]+"] is not an \w+\.""".toRegex()) -> null
+            e.message == null -> throw e
+            e.message!!.matches("""JSONObject\["[a-zA-Z0-9_]+"] not found\.""".toRegex())
+                || e.message!!.matches("""JSONObject\["[a-zA-Z0-9_]+"] is not an \w+\.""".toRegex())
+                || e.message!!.matches("""No value for \w+""".toRegex()) -> null
             else -> throw e
         }
     }
@@ -34,9 +36,12 @@ inline fun <R> JSONObject.tryOrNull(tryBlock: JSONObject.() -> R): R? {
 inline fun <R> JSONObject.tryOrElse(default: R, tryBlock: JSONObject.() -> R): R =
     tryOrNull(tryBlock) ?: default
 
-inline fun <R> JSONArray.map(transform: (JSONObject) -> R): List<R> = List(length()) { index ->
-    with(get(index) as JSONObject) { transform(this) }
-}
+inline fun <R> JSONArray.map(transform: (JSONObject) -> R?): List<R> =
+    mutableListOf<R>().also { list ->
+        repeat(length()) {
+            (get(it) as? JSONObject)?.let(transform)?.let(list::add)
+        }
+    }
 
 inline fun <reified R> JSONObject.getOrNull(name: String): R? = tryOrNull {
     when (R::class) {
@@ -55,4 +60,4 @@ inline fun <reified R> JSONObject.getOrNull(name: String): R? = tryOrNull {
 }
 
 inline fun <reified R> JSONObject.getOrElse(name: String, default: R): R =
-    tryOrNull { get(name) as? R } ?: default
+    tryOrNull { getOrNull(name) as? R } ?: default

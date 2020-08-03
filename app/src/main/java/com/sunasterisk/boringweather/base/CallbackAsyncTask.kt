@@ -18,4 +18,8 @@ class CallbackAsyncTask<T : Any, R : Any>(
     override fun onPostExecute(result: Result<R>?) {
         onFinishedListener(result)
     }
+
+    fun executeOnExecutor(vararg params: T) {
+        executeOnExecutor(THREAD_POOL_EXECUTOR, *params)
+    }
 }

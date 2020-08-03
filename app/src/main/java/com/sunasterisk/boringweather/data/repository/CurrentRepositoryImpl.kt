@@ -19,7 +19,7 @@ class CurrentRepositoryImpl :
         asyncTask = CallbackAsyncTask<City, CurrentWeather>(
             {
                 Thread.sleep(2000) // TODO implement after implement data sources
-                CurrentWeather()
+                CurrentWeather.default
             },
             {
                 callback(it ?: Result.Error(NullPointerException()))

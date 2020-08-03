@@ -7,26 +7,27 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 data class OneCallEntry(
-    var latitude: Float = 0f,
-    var longitude: Float = 0f,
-    var timeZone: String = "",
-    var timeZoneOffset: Long = 0,
-    var current: HourlyWeather = HourlyWeather(),
-    var hourly: List<HourlyWeather> = emptyList(),
-    var daily: List<DailyWeather> = emptyList()
+    var latitude: Float,
+    var longitude: Float,
+    var timeZone: String,
+    var timeZoneOffset: Long,
+    var current: HourlyWeather,
+    var hourly: List<HourlyWeather>,
+    var daily: List<DailyWeather>
 ) {
 
-    constructor(jsonObject: JSONObject): this(
-        jsonObject.getOrElse(LAT, 0f),
-        jsonObject.getOrElse(LON, 0f),
-        jsonObject.getOrElse(TIMEZONE, ""),
-        jsonObject.getOrElse(TIMEZONE_OFFSET, 0),
-        jsonObject.getOrNull<JSONObject>(CURRENT)?.let(::HourlyWeather) ?: HourlyWeather(),
-        jsonObject.getOrNull<JSONArray>(HOURLY)?.map(::HourlyWeather) ?: emptyList(),
-        jsonObject.getOrNull<JSONArray>(DAILY)?.map(::DailyWeather) ?: emptyList()
+    constructor(jsonObject: JSONObject) : this(
+        jsonObject.getOrElse(LAT, default.latitude),
+        jsonObject.getOrElse(LON, default.longitude),
+        jsonObject.getOrElse(TIMEZONE, default.timeZone),
+        jsonObject.getOrElse(TIMEZONE_OFFSET, default.timeZoneOffset),
+        jsonObject.getOrNull<JSONObject>(CURRENT)?.let(::HourlyWeather) ?: default.current,
+        jsonObject.getOrNull<JSONArray>(HOURLY)?.map(::HourlyWeather) ?: default.hourly,
+        jsonObject.getOrNull<JSONArray>(DAILY)?.map(::DailyWeather) ?: default.daily
     )
 
     companion object {
+        val default = OneCallEntry(0f, 0f, "", 0, HourlyWeather.default, emptyList(), emptyList())
 
         private const val LAT = "lat"
         private const val LON = "lon"
