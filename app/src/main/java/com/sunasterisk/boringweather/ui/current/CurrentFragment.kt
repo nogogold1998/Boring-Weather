@@ -9,12 +9,12 @@ import androidx.core.widget.NestedScrollView
 import com.google.android.material.navigation.NavigationView
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.BaseFragment
-import com.sunasterisk.boringweather.data.CityRepositoryImpl
-import com.sunasterisk.boringweather.data.CurrentRepositoryImpl
-import com.sunasterisk.boringweather.data.local.model.City
-import com.sunasterisk.boringweather.data.local.model.DailyWeather
-import com.sunasterisk.boringweather.data.local.model.HourlyWeather
-import com.sunasterisk.boringweather.data.local.model.SummaryWeather
+import com.sunasterisk.boringweather.data.model.City
+import com.sunasterisk.boringweather.data.model.DailyWeather
+import com.sunasterisk.boringweather.data.model.HourlyWeather
+import com.sunasterisk.boringweather.data.model.SummaryWeather
+import com.sunasterisk.boringweather.data.repository.CityRepository
+import com.sunasterisk.boringweather.data.repository.CurrentRepositoryImpl
 import com.sunasterisk.boringweather.util.UnitSystem
 import com.sunasterisk.boringweather.util.showToast
 import com.sunasterisk.boringweather.util.verticalScrollProgress
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.partial_summary.*
 
 class CurrentFragment : BaseFragment(), CurrentContract.View,
     NavigationView.OnNavigationItemSelectedListener {
-    private var city: City = City()
+    private var city = City.default
 
     private var unitSystem = UnitSystem.METRIC // TODO injected from settings
 
@@ -36,9 +36,13 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.getInt(ARGUMENT_CITY_ID)?.let { city = City(id = it) }
+        arguments?.getInt(ARGUMENT_CITY_ID)?.let { city = City.default.copy(id = it) }
 
-        presenter = CurrentPresenter(this, CurrentRepositoryImpl(), CityRepositoryImpl())
+        presenter = CurrentPresenter(
+            this,
+            CurrentRepositoryImpl(),
+            CityRepository.getInstance(TODO("inject localCityDataSource"))
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -151,6 +155,7 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             swipeRefreshLayout.isEnabled = scrollView.verticalScrollProgress == 0f
         }
     }
+
     companion object {
 
         fun newInstance(cityId: Int? = null) = CurrentFragment().apply {

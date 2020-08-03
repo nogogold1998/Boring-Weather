@@ -2,9 +2,9 @@ package com.sunasterisk.boringweather.ui.current
 
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.Result
-import com.sunasterisk.boringweather.data.CityRepository
-import com.sunasterisk.boringweather.data.CurrentRepository
-import com.sunasterisk.boringweather.data.local.model.City
+import com.sunasterisk.boringweather.data.repository.CityRepository
+import com.sunasterisk.boringweather.data.repository.CurrentRepository
+import com.sunasterisk.boringweather.data.model.City
 
 class CurrentPresenter(
     override val view: CurrentContract.View,

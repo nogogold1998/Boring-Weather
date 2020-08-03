@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.sunasterisk.boringweather.R
-import com.sunasterisk.boringweather.data.local.model.SummaryWeather
+import com.sunasterisk.boringweather.data.model.SummaryWeather
 import com.sunasterisk.boringweather.util.UnitSystem
 import kotlinx.android.synthetic.main.item_summary_weather.view.*
 

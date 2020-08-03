@@ -1,4 +1,4 @@
-package com.sunasterisk.boringweather.data.local.model
+package com.sunasterisk.boringweather.data.model
 
 import com.sunasterisk.boringweather.util.getOrElse
 import com.sunasterisk.boringweather.util.getOrNull
@@ -12,10 +12,10 @@ import org.json.JSONObject
  * @param icon - Weather icon id
  */
 data class Weather(
-    val id: Int = 0,
-    val main: String = "",
-    val description: String = "",
-    val icon: String? = null
+    val id: Int,
+    val main: String,
+    val description: String,
+    val icon: String?
 ) {
 
     constructor(jsonObject: JSONObject) : this(
@@ -26,6 +26,8 @@ data class Weather(
     )
 
     companion object {
+        val default = Weather(0, "", "", null)
+
         private const val SERIALIZED_NAME_ID = "id"
         private const val SERIALIZED_NAME_MAIN = "main"
         private const val SERIALIZED_NAME_DESCRIPTION = "description"
