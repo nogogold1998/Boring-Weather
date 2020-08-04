@@ -16,11 +16,13 @@ class RemoteOneCallWeatherDataSource private constructor() : OneCallWeatherDataS
         callback: (Result<OneCallEntry>) -> Unit
     ) {
 
-        callbackAsyncTask = CallbackAsyncTask<Coordinate, OneCallEntry>({
-            ApiService.queryOneCallApi(it)
-        }, {
-            it?.let(callback)
-        }).apply { executeOnExecutor(coordinate) }
+        callbackAsyncTask = CallbackAsyncTask<Coordinate, OneCallEntry>(
+            handler = {
+                ApiService.queryOneCallApi(it)
+            },
+            onFinishedListener = {
+                it?.let(callback)
+            }).apply { executeOnExecutor(coordinate) }
     }
 
     override fun cancel() {
