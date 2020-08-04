@@ -2,13 +2,14 @@ package com.sunasterisk.boringweather.ui.current
 
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.Result
-import com.sunasterisk.boringweather.data.repository.CityRepository
-import com.sunasterisk.boringweather.data.repository.CurrentRepository
 import com.sunasterisk.boringweather.data.model.City
+import com.sunasterisk.boringweather.data.repository.CityRepository
+import com.sunasterisk.boringweather.data.source.OneCallWeatherDataSource
+import com.sunasterisk.boringweather.util.TimeUtils
 
 class CurrentPresenter(
     override val view: CurrentContract.View,
-    private val currentRepository: CurrentRepository,
+    private val oneCallWeatherRepository: OneCallWeatherDataSource,
     private val cityRepository: CityRepository
 ) : CurrentContract.Presenter {
 
@@ -22,7 +23,8 @@ class CurrentPresenter(
     }
 
     override fun refreshCurrentWeather(city: City, forceNetwork: Boolean) {
-        currentRepository.getCurrentWeather(city, forceNetwork) {
+        val current = TimeUtils.getCurrentToSeconds()
+        oneCallWeatherRepository.getCurrentWeather(city, current, false) {
             when (it) {
                 is Result.Success -> {
                     val currentWeather = it.data
@@ -35,10 +37,11 @@ class CurrentPresenter(
             }
             view.finishRefresh()
         }
+        view.finishRefresh()
     }
 
     override fun stopLoadData() {
-        currentRepository.stopTask()
+        oneCallWeatherRepository.cancel()
     }
 
     companion object {

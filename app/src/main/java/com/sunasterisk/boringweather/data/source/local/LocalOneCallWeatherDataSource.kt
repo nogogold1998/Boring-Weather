@@ -61,10 +61,9 @@ class LocalOneCallWeatherDataSource(
                         hourlyWeatherDao.getHourlyWeather(city.id, currentDateTime)
                     val hourlyWeathers =
                         hourlyWeatherDao.findHourlyWeather(city.id, startOfDay, endOfDay)
-                    val todayDailyWeather =
-                        dailyWeatherDao.getDailyWeather(city.id, currentDateTime)
                     val dailyWeathers =
                         dailyWeatherDao.findDailyWeather(city.id, currentDateTime)
+                    val todayDailyWeather = dailyWeathers.firstOrNull()
                     CurrentWeather(
                         city,
                         currentHourlyWeather ?: CurrentWeather.default.currentWeather,
@@ -75,7 +74,7 @@ class LocalOneCallWeatherDataSource(
                 },
                 onFinishedListener = {
                     it?.let(callback)
-                }).apply { executeOnExecutor() }
+                }).apply { executeOnExecutor(Unit) }
     }
 
     override fun getDetailWeather(
@@ -101,7 +100,7 @@ class LocalOneCallWeatherDataSource(
                 },
                 onFinishedListener = {
                     it?.let(callback)
-                }).apply { executeOnExecutor() }
+                }).apply { executeOnExecutor(Unit) }
     }
 
     override fun cancel() {
