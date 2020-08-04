@@ -13,8 +13,7 @@ import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.data.model.DailyWeather
 import com.sunasterisk.boringweather.data.model.HourlyWeather
 import com.sunasterisk.boringweather.data.model.SummaryWeather
-import com.sunasterisk.boringweather.data.repository.CityRepository
-import com.sunasterisk.boringweather.data.repository.CurrentRepositoryImpl
+import com.sunasterisk.boringweather.di.Injector
 import com.sunasterisk.boringweather.util.UnitSystem
 import com.sunasterisk.boringweather.util.showToast
 import com.sunasterisk.boringweather.util.verticalScrollProgress
@@ -40,8 +39,8 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
 
         presenter = CurrentPresenter(
             this,
-            CurrentRepositoryImpl(),
-            CityRepository.getInstance(TODO("inject localCityDataSource"))
+            Injector.getOneCallRepository(requireContext()),
+            Injector.getCityRepository(requireContext())
         )
     }
 
@@ -159,7 +158,7 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
     companion object {
 
         fun newInstance(cityId: Int? = null) = CurrentFragment().apply {
-            if (cityId != null) arguments?.putInt(ARGUMENT_CITY_ID, cityId)
+            arguments = Bundle().apply { if (cityId != null) putInt(ARGUMENT_CITY_ID, cityId) }
         }
 
         private const val ARGUMENT_CITY_ID = "city_id"

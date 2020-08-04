@@ -11,6 +11,7 @@ import com.sunasterisk.boringweather.data.model.OneCallEntry
 interface OneCallWeatherDataSource : Cancellable {
     fun getCurrentWeather(
         city: City,
+        currentDateTime: Long,
         forceNetwork: Boolean,
         callback: (Result<CurrentWeather>) -> Unit
     )

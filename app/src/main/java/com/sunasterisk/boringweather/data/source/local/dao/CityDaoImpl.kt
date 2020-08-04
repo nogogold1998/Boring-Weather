@@ -44,7 +44,7 @@ class CityDaoImpl private constructor(sqLiteOpenHelper: SQLiteOpenHelper) : City
         val cursor = readableDb.query(
             CityTable.TABLE_NAME,
             null,
-            "${CityTable.TABLE_NAME} LIKE ?",
+            "${CityTable.COL_NAME} LIKE ?",
             arrayOf("$cityName%"),
             null,
             null,
