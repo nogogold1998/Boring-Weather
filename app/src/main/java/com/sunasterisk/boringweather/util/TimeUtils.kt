@@ -27,4 +27,10 @@ object TimeUtils {
         val endOfDay = timeInMillis / Constants.SECOND_TO_MILLIS
         startOfDay to endOfDay
     }
+
+    const val FORMAT_DATE_LONG_TIME_SHORT_ = "MMM dd yyyy, h:mm a"
+
+    const val FORMAT_TIME_SHORT = "h:mm a"
+
+    const val FORMAT_DATE_SHORT = "MMM dd"
 }

@@ -10,8 +10,11 @@ class CityRepository private constructor(
     override fun getCityById(cityId: Int, callback: (Result<City>) -> Unit) =
         localCityDataSource.getCityById(cityId, callback)
 
-    override fun findCityByName(cityName: String, callback: (Result<List<City>>) -> Unit) =
-        localCityDataSource.findCityByName(cityName, callback)
+    override fun findCityByName(
+        cityName: String,
+        limit: Int?,
+        callback: (Result<List<City>>) -> Unit
+    ) = localCityDataSource.findCityByName(cityName, limit, callback)
 
     override fun insertCity(vararg city: City, callback: (Result<Int>) -> Unit) =
         localCityDataSource.insertCity(*city, callback = callback)
