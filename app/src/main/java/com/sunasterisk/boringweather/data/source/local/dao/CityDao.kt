@@ -10,7 +10,7 @@ interface CityDao {
 
     fun getCityByCoordinate(coordinate: Coordinate): City?
 
-    fun findCityByName(cityName: String): List<City>
+    fun findCityByName(cityName: String, limit: Int?): List<City>
 
     fun insertCity(
         vararg city: City,

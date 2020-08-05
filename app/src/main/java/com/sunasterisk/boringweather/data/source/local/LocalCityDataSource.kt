@@ -21,11 +21,15 @@ class LocalCityDataSource private constructor(private val cityDao: CityDao) : Ci
             }).apply { executeOnExecutor(cityId) }
     }
 
-    override fun findCityByName(cityName: String, callback: (Result<List<City>>) -> Unit) {
+    override fun findCityByName(
+        cityName: String,
+        limit: Int?,
+        callback: (Result<List<City>>) -> Unit
+    ) {
         cancel()
         callbackAsyncTask = CallbackAsyncTask<String, List<City>>(
             handler = {
-                cityDao.findCityByName(it)
+                cityDao.findCityByName(it, limit)
             },
             onFinishedListener = {
                 it?.let(callback)

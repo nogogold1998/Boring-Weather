@@ -35,20 +35,21 @@ class CityDaoImpl private constructor(sqLiteOpenHelper: SQLiteOpenHelper) : City
             null,
             null,
             null,
-            "one"
+            "1"
         )
         return cursor?.use { if (it.moveToFirst()) City(it) else null }
     }
 
-    override fun findCityByName(cityName: String): List<City> {
+    override fun findCityByName(cityName: String, limit: Int?): List<City> {
         val cursor = readableDb.query(
             CityTable.TABLE_NAME,
             null,
             "${CityTable.COL_NAME} LIKE ?",
-            arrayOf("$cityName%"),
+            arrayOf("%$cityName%"),
             null,
             null,
-            null
+            null,
+            limit?.toString()
         )
         return cursor.use { it.map(::City) }
     }

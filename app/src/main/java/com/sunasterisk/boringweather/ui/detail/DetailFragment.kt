@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.os.bundleOf
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.BaseFragment
 import com.sunasterisk.boringweather.base.BaseTransitionListener
@@ -81,6 +82,18 @@ class DetailFragment : BaseFragment() {
             )
             val imageScaling = typedValueBackgroundImageScale.float
             imageBackground.translationY = (1 - scrollProgress * actionBarSize) * imageScaling
+        }
+    }
+
+    companion object {
+        private const val ARGUMENT_CITY_ID = "city_id"
+        private const val ARGUMENT_DAILY_WEATHER_DATE_TIME = "dailyWeather_dt"
+
+        fun newInstance(cityId: Int, dailyWeatherDateTime: Long) = DetailFragment().apply {
+            arguments = bundleOf(
+                ARGUMENT_CITY_ID to cityId,
+                ARGUMENT_DAILY_WEATHER_DATE_TIME to dailyWeatherDateTime
+            )
         }
     }
 }

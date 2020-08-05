@@ -17,4 +17,9 @@
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:padding">@dimen/dp_16</item>
     </style>
+
+    <style name="FullscreenDialogTheme" parent="Theme.AppCompat.Light.DialogWhenLarge">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/Animation.AppCompat.Dialog</item>
+    </style>
 </resources>
