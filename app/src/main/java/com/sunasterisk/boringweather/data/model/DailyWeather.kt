@@ -63,7 +63,7 @@ data class DailyWeather(
                 cursor.get(DailyWeatherTable.COL_WEATHER_MAIN) ?: Weather.default.main,
                 cursor.get(DailyWeatherTable.COL_WEATHER_DESCRIPTION)
                     ?: Weather.default.description,
-                cursor.get(DailyWeatherTable.COL_WEATHER_DESCRIPTION)
+                cursor.get(DailyWeatherTable.COL_WEATHER_ICON)
             )
         ),
         cursor.get(DailyWeatherTable.COL_CLOUDS) ?: default.clouds,

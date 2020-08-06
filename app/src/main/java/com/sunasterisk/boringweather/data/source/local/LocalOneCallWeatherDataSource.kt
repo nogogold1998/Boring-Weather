@@ -68,8 +68,20 @@ class LocalOneCallWeatherDataSource(
                         city,
                         currentHourlyWeather ?: CurrentWeather.default.currentWeather,
                         todayDailyWeather ?: CurrentWeather.default.dailyWeather,
-                        hourlyWeathers.map { SummaryWeather(it.dateTime, it.temperature) },
-                        dailyWeathers.map { SummaryWeather(it.dateTime, it.temperature.average) }
+                        hourlyWeathers.map {
+                            SummaryWeather(
+                                it.dateTime,
+                                it.temperature,
+                                it.weathers.firstOrNull()?.icon
+                            )
+                        },
+                        dailyWeathers.map {
+                            SummaryWeather(
+                                it.dateTime,
+                                it.temperature.average,
+                                it.weathers.firstOrNull()?.icon
+                            )
+                        }
                     )
                 },
                 onFinishedListener = {

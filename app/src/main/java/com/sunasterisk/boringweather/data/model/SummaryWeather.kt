@@ -2,7 +2,7 @@ package com.sunasterisk.boringweather.data.model
 
 import androidx.recyclerview.widget.DiffUtil
 
-data class SummaryWeather(val dt: Long, val temperature: Float) {
+data class SummaryWeather(val dt: Long, val temperature: Float, val icon:String?) {
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<SummaryWeather>() {
             override fun areItemsTheSame(

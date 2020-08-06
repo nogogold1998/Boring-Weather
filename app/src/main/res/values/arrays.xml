@@ -1,0 +1,31 @@
+<resources>
+    <!--Unit system-->
+    <string-array name="unit_system_entries">
+        <item>@string/title_international</item>
+        <item>@string/title_metric</item>
+        <item>@string/title_imperial</item>
+    </string-array>
+
+    <string-array name="unit_system_values">
+        <item>@string/pref_value_setting_unit_system_international</item>
+        <item>@string/pref_value_setting_unit_system_metric</item>
+        <item>@string/pref_value_setting_unit_system_imperial</item>
+    </string-array>
+
+    <!--Frequency-->
+    <string-array name="frequency_entries">
+        <item>@string/title_1hour</item>
+        <item>@string/title_3hours</item>
+        <item>@string/title_6hours</item>
+        <item>@string/title_12hours</item>
+        <item>@string/title_1day</item>
+    </string-array>
+
+    <string-array name="frequency_values">
+        <item>@string/pref_value_setting_frequency_1hour</item>
+        <item>@string/pref_value_setting_frequency_3hours</item>
+        <item>@string/pref_value_setting_frequency_6hours</item>
+        <item>@string/pref_value_setting_frequency_12hours</item>
+        <item>@string/pref_value_setting_frequency_1day</item>
+    </string-array>
+</resources>

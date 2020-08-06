@@ -8,6 +8,7 @@ import androidx.core.os.bundleOf
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.BaseFragment
 import com.sunasterisk.boringweather.base.BaseTransitionListener
+import com.sunasterisk.boringweather.ui.main.findNavigator
 import com.sunasterisk.boringweather.util.verticalScrollProgress
 import kotlinx.android.synthetic.main.fragment_detail.*
 
@@ -18,9 +19,16 @@ class DetailFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupAppBar()
         setupMotionDetail()
         setupSwipeRefreshLayout()
         setupRecyclerViewDetail()
+    }
+
+    private fun setupAppBar() {
+        imageUpButton.setOnClickListener {
+            findNavigator()?.popBackStack()
+        }
     }
 
     private fun setupMotionDetail() {

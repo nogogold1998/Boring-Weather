@@ -70,10 +70,49 @@
 
     <string name="url_prepopulate_city_table_sql">https://raw.githubusercontent.com/nogogold1998/BoringWeatherCity/master/cities_table.sql</string>
     <string name="pref_file_key">com.sunasterisk.borringweather.PREFERENCE_SETTINGS</string>
-    <string name="pref_key_is_first_launch">pk_ifl</string>
     <string name="pref_value_is_first_launch_default">true</string>
-
-    <string name="pref_key_selected_city_id">pk_sci</string>
-
+    <string name="pref_key_is_first_launch">_is_first_launch</string>
+    <string name="pref_key_selected_city_id">selected_city_id</string>
     <string name="pref_key_last_searched_city">pk_last_searched_city</string>
+
+    <!--Settings-->
+    <string name="title_settings">Settings</string>
+    <string name="title_setting_category_general">General</string>
+    <string name="title_setting_category_more">More</string>
+    <string name="title_setting_entry_unit">Unit system</string>
+    <string name="title_setting_category_notification">Notifications</string>
+    <string name="title_setting_notification_entry">@string/title_setting_category_notification</string>
+    <string name="title_setting_frequency_entry">Frequency</string>
+    <string name="title_setting_category_background">Background</string>
+    <string name="title_setting_background_refresh_entry">Background refresh</string>
+
+    <string name="title_international">International</string>
+    <string name="title_metric">Metric</string>
+    <string name="title_imperial">Imperial</string>
+
+    <string name="pref_key_setting_unit_system">setting_unit_system</string>
+    <string name="pref_value_setting_unit_system_international">international</string>
+    <string name="pref_value_setting_unit_system_metric">metric</string>
+    <string name="pref_value_setting_unit_system_imperial">imperial</string>
+    <string name="pref_value_setting_unit_system_default">@string/pref_value_setting_unit_system_international</string>
+
+    <string name="pref_key_setting_notification">setting_notification</string>
+    <string name="pref_key_setting_notification_frequency">setting_notification_frequency</string>
+    <string name="pref_value_setting_notification_frequency_default">@string/pref_value_setting_frequency_1hour</string>
+
+    <string name="pref_key_setting_background_refresh">setting_background_refresh</string>
+    <string name="pref_key_setting_background_refresh_frequency">setting_background_refresh_frequency</string>
+    <string name="pref_value_setting_background_refresh_frequency_default">@string/pref_value_setting_frequency_1hour</string>
+
+    <string name="pref_value_setting_frequency_1hour">1hour</string>
+    <string name="pref_value_setting_frequency_3hours">3hours</string>
+    <string name="pref_value_setting_frequency_6hours">6hours</string>
+    <string name="pref_value_setting_frequency_12hours">12hours</string>
+    <string name="pref_value_setting_frequency_1day">1day</string>
+
+    <string name="title_1hour">Hourly</string>
+    <string name="title_3hours">3 hours</string>
+    <string name="title_6hours">6 hours</string>
+    <string name="title_12hours">12 hours</string>
+    <string name="title_1day">Daily</string>
 </resources>

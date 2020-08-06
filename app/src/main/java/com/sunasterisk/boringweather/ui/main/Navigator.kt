@@ -1,7 +1,6 @@
 package com.sunasterisk.boringweather.ui.main
 
 import androidx.fragment.app.Fragment
-import com.sunasterisk.boringweather.base.BaseFragment
 
 interface Navigator {
     val containerId: Int
@@ -15,6 +14,8 @@ interface Navigator {
     fun navigateToSearchFragment()
 
     fun navigateToDetailsFragment(cityId: Int, dailyWeatherDateTime: Long)
+
+    fun navigateToSettingsFragment()
 }
 
-fun BaseFragment.findNavigator() = requireActivity() as? Navigator
+fun Fragment.findNavigator() = requireActivity() as? Navigator

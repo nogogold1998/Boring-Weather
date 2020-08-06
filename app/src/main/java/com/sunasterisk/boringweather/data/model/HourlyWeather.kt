@@ -64,7 +64,7 @@ data class HourlyWeather(
                     HourlyWeatherTable.COL_WEATHER_DESCRIPTION,
                     Weather.default.description
                 ),
-                cursor.get(HourlyWeatherTable.COL_WEATHER_DESCRIPTION)
+                cursor.get(HourlyWeatherTable.COL_WEATHER_ICON)
             )
         ),
         cursor.get(HourlyWeatherTable.COL_VISIBILITY),
