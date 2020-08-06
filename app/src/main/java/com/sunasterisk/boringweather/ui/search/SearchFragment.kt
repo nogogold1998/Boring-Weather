@@ -10,6 +10,7 @@ import com.sunasterisk.boringweather.base.BaseFragment
 import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.di.Injector
 import com.sunasterisk.boringweather.ui.main.findNavigator
+import com.sunasterisk.boringweather.util.defaultSharedPreferences
 import com.sunasterisk.boringweather.util.showSoftInput
 import com.sunasterisk.boringweather.util.showToast
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -20,7 +21,7 @@ class SearchFragment : BaseFragment(), SearchContract.View {
     override var presenter: SearchContract.Presenter? = null
 
     private val cityAdapter = CityAdapter {
-
+        saveSelectedCity(it)
         setFragmentResult(
             SearchConstants.KEY_REQUEST_SEARCH_CITY,
             bundleOf(SearchConstants.KEY_BUNDLE_CITY_ID to it)
@@ -76,5 +77,9 @@ class SearchFragment : BaseFragment(), SearchContract.View {
 
     override fun showError(errorStringRes: Int) {
         context?.showToast(getString(errorStringRes))
+    }
+
+    private fun saveSelectedCity(cityId: Int) {
+        context?.defaultSharedPreferences?.selectedCityId = cityId
     }
 }

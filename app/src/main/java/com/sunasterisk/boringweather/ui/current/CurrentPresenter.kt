@@ -13,31 +13,28 @@ class CurrentPresenter(
     private val cityRepository: CityRepository
 ) : CurrentContract.Presenter {
 
-    override fun loadCityById(cityId: Int) {
-        cityRepository.getCityById(cityId) {
-            when (it) {
-                is Result.Success -> it.data.let(view::showCity)
-                is Result.Error -> view.showError(R.string.error_unknown)
+    override fun loadCityById(cityId: Int) = cityRepository.getCityById(cityId) {
+        when (it) {
+            is Result.Success -> it.data.let { city ->
+                view.showCity(city)
+                refreshCurrentWeather(city, false)
             }
+            is Result.Error -> view.showError(R.string.error_unknown)
         }
     }
 
     override fun refreshCurrentWeather(city: City, forceNetwork: Boolean) {
-        val current = TimeUtils.getCurrentToSeconds()
-        oneCallWeatherRepository.getCurrentWeather(city, current, false) {
+        val current = TimeUtils.getCurrentInSeconds()
+        oneCallWeatherRepository.getCurrentWeather(city, current, forceNetwork) {
             when (it) {
                 is Result.Success -> {
                     val currentWeather = it.data
-                    view.showCurrentWeather(currentWeather.currentWeather)
-                    view.showDailyWeather(currentWeather.dailyWeather)
-                    view.showTodaySummaryWeather(currentWeather.todaySummaryWeathers)
-                    view.showForecastSummaryWeather(currentWeather.forecastSummaryWeather)
+                    view.showCurrentWeather(currentWeather)
                 }
                 is Result.Error -> view.showError(R.string.error_refresh_failed)
             }
             view.finishRefresh()
         }
-        view.finishRefresh()
     }
 
     override fun stopLoadData() {

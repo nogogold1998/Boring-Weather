@@ -89,7 +89,7 @@
             </androidx.core.widget.NestedScrollView>
 
             <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/appbar"
+                android:id="@+id/appbarCurrent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true"
@@ -130,13 +130,14 @@
                         android:text="@string/details_current" />
 
                     <androidx.appcompat.widget.Toolbar
-                        android:id="@+id/toolbar"
+                        android:id="@+id/toolbarSearch"
                         style="@style/Widget.AppCompat.Toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         app:layout_collapseMode="pin"
                         app:navigationIcon="@drawable/ic_round_hamburger"
-                        app:popupTheme="@style/ThemeOverlay.AppCompat" />
+                        app:popupTheme="@style/ThemeOverlay.AppCompat"
+                        app:menu="@menu/menu_current_fragment"/>
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
             </com.google.android.material.appbar.AppBarLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

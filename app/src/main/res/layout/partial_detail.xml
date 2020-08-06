@@ -99,7 +99,7 @@
         android:id="@+id/textVisibility"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title_holder_distance"
+        android:text="@string/title_holder_decimal_number"
         app:layout_constraintBottom_toTopOf="@+id/textWindSpeed"
         app:layout_constraintStart_toStartOf="@+id/guidelineMiddle"
         app:layout_constraintTop_toBottomOf="@+id/textHumidity" />
@@ -108,7 +108,7 @@
         android:id="@+id/textWindSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title_holder_speed"
+        android:text="@string/title_holder_decimal_number"
         app:layout_constraintBottom_toTopOf="@+id/textUVIndex"
         app:layout_constraintStart_toStartOf="@+id/guidelineMiddle"
         app:layout_constraintTop_toBottomOf="@+id/textVisibility" />
@@ -117,7 +117,7 @@
         android:id="@+id/textUVIndex"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title_holder_number"
+        android:text="@string/title_holder_float_number"
         app:layout_constraintBottom_toTopOf="@+id/textPressure"
         app:layout_constraintStart_toStartOf="@+id/guidelineMiddle"
         app:layout_constraintTop_toBottomOf="@+id/textWindSpeed" />

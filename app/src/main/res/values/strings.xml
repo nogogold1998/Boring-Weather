@@ -18,11 +18,10 @@
     <string name="title_search_city">Search city</string>
 
     <string name="title_holder_percent">-- %</string>
-    <string name="title_holder_distance">-- Km</string>
-    <string name="title_holder_speed">-- m/s</string>
-    <string name="title_holder_number">--.-</string>
+    <string name="title_holder_decimal_number">--</string>
+    <string name="title_holder_float_number">--.-</string>
     <string name="title_holder_pressure">----nPa</string>
-    <string name="title_holder_temperature">--°C</string>
+    <string name="title_holder_temperature">--</string>
     <string name="title_holder_time">--:-- am</string>
     <string name="title_holder_description">Description</string>
     <string name="title_holder_date_time">July, —,—:— AM</string>
@@ -41,15 +40,15 @@
     <string name="format_temperature_metric">%1$.1f °C</string>
     <string name="format_temperature_imperial">%1$.1f °F</string>
 
-    <string name="format_percent_decimal">%1$02d %%</string>
+    <string name="format_percent_decimal">%1$3d %%</string>
 
-    <string name="format_visibility_international">%1$s km</string>
-    <string name="format_visibility_metric">%1$s km</string>
-    <string name="format_visibility_imperial">%1$s miles</string>
+    <string name="format_visibility_international">%1$.1f km</string>
+    <string name="format_visibility_metric">%1$.1f km</string>
+    <string name="format_visibility_imperial">%1$.1f miles</string>
 
     <string name="format_speed_international">%1$.1f m/s</string>
     <string name="format_speed_metric">%1$.1f m/s</string>
-    <string name="format_speed_imperial">%1$.1f miles/h</string>
+    <string name="format_speed_imperial">%1$.1f mph</string>
 
     <string name="format_pressure">%1$.1f kPa</string>
 
@@ -63,4 +62,16 @@
     <string name="error_search_result_error">Searching failed</string>
     <string name="msg_weather_icon">Weather Icon</string>
     <string name="msg_expand">Expand</string>
+
+    <string name="notify_prepopulate_channel_id">prepopulateChannel</string>
+    <string name="notify_prepopulate_channel_name">Setup app</string>
+    <string name="notify_prepopulate_channel_description">Download files and prepopulate database</string>
+    <string name="notify_prepopulate_title">Setting up app</string>
+
+    <string name="url_prepopulate_city_table_sql">https://raw.githubusercontent.com/nogogold1998/BoringWeatherCity/master/cities_table.sql</string>
+    <string name="pref_file_key">com.sunasterisk.borringweather.PREFERENCE_SETTINGS</string>
+    <string name="pref_key_is_first_launch">pk_ifl</string>
+    <string name="pref_value_is_first_launch_default">true</string>
+
+    <string name="pref_key_selected_city_id">pk_sci</string>
 </resources>
