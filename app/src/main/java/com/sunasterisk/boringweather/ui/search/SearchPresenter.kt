@@ -9,8 +9,8 @@ class SearchPresenter(
     private val cityRepository: CityDataSource
 ) : SearchContract.Presenter {
 
-    override fun searchCity(input: String) {
-        cityRepository.findCityByName(input){
+    override fun searchCity(input: String, limit: Int) {
+        cityRepository.findCityByName(input, limit){
             when(it){
                 is Result.Success -> view.showSearchResult(it.data)
                 is Result.Error -> view.showError(R.string.error_search_result_error)

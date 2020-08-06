@@ -25,6 +25,12 @@ class DefaultSharedPreferences private constructor(
         set(value) = edit { putInt(context.getString(R.string.pref_key_selected_city_id), value) }
         get() = getInt(context.getString(R.string.pref_key_selected_city_id), City.default.id)
 
+    var lastSearchedCity: String
+        set(value) = edit {
+            putString(context.getString(R.string.pref_key_last_searched_city), value)
+        }
+        get() = getString(context.getString(R.string.pref_key_last_searched_city), null) ?: ""
+
     companion object {
         private var instance: DefaultSharedPreferences? = null
         fun getInstance(context: Context) = instance ?: synchronized(this) {
