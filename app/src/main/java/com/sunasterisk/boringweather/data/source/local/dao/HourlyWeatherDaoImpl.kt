@@ -6,6 +6,7 @@ import com.sunasterisk.boringweather.data.model.HourlyWeather
 import com.sunasterisk.boringweather.data.source.local.AppDatabase
 import com.sunasterisk.boringweather.data.source.local.DailyWeatherTable
 import com.sunasterisk.boringweather.data.source.local.HourlyWeatherTable
+import com.sunasterisk.boringweather.util.Constants
 import com.sunasterisk.boringweather.util.map
 
 class HourlyWeatherDaoImpl private constructor(
@@ -34,7 +35,8 @@ class HourlyWeatherDaoImpl private constructor(
         val cursor = readableDb.query(
             HourlyWeatherTable.TABLE_NAME,
             null,
-            "${HourlyWeatherTable.COL_CITY_ID} = ? AND ${HourlyWeatherTable.COL_DATE_TIME} <= ?",
+            "${HourlyWeatherTable.COL_CITY_ID} = ? AND ${HourlyWeatherTable.COL_DATE_TIME} " +
+                "<= (? + ${Constants.MINUTE_TO_SECONDS})",
             arrayOf(cityId.toString(), upperDateTime.toString()),
             null,
             null,
@@ -47,7 +49,8 @@ class HourlyWeatherDaoImpl private constructor(
     override fun findHourlyWeather(
         cityId: Int,
         fromDateTime: Long?,
-        toDateTime: Long?
+        toDateTime: Long?,
+        limit: Int?
     ): List<HourlyWeather> {
         val whereClause = StringBuffer("${HourlyWeatherTable.COL_CITY_ID} = ? ")
         if (fromDateTime != null) {
@@ -76,7 +79,8 @@ class HourlyWeatherDaoImpl private constructor(
             whereArgs,
             null,
             null,
-            "${HourlyWeatherTable.COL_DATE_TIME} ASC"
+            "${HourlyWeatherTable.COL_DATE_TIME} ASC",
+            limit?.toString()
         )
         return cursor.use { it.map(::HourlyWeather) }
     }

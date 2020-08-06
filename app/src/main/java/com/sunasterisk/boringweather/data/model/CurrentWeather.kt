@@ -5,7 +5,7 @@ data class CurrentWeather(
     val currentWeather: HourlyWeather,
     val dailyWeather: DailyWeather,
     val todaySummaryWeathers: List<SummaryWeather>,
-    val forecastSummaryWeather: List<SummaryWeather>
+    val forecastSummaryWeathers: List<SummaryWeather>
 ) {
     companion object {
         val default =

@@ -18,7 +18,7 @@ class OneCallWeatherRepository private constructor(
         callback: (Result<CurrentWeather>) -> Unit
     ) {
         val (startOfDay, endOfDay) =
-            TimeUtils.currentToStartEndOfDay(currentDateTime)
+            TimeUtils.getStartEndOfDay(currentDateTime)
         fetchDataFromNetWork(city, forceNetwork, callback) {
             localOneCallWeatherDataSource.getCurrentWeather(
                 city,

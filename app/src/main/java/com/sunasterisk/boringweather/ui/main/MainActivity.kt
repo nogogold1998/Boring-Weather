@@ -8,6 +8,7 @@ import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.ui.current.CurrentFragment
 import com.sunasterisk.boringweather.ui.detail.DetailFragment
 import com.sunasterisk.boringweather.ui.search.SearchFragment
+import com.sunasterisk.boringweather.util.defaultSharedPreferences
 
 class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
     override val containerId: Int get() = R.id.fragment_container
@@ -38,7 +39,8 @@ class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
     }
 
     override fun navigateStartFragment() {
-        val currentFragment = CurrentFragment.newInstance()
+        val selectedCityId = defaultSharedPreferences.selectedCityId
+        val currentFragment = CurrentFragment.newInstance(selectedCityId)
         supportFragmentManager.beginTransaction()
             .replace(containerId, currentFragment)
             .commit()

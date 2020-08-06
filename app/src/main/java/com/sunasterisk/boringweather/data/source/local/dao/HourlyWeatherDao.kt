@@ -17,7 +17,8 @@ interface HourlyWeatherDao {
     fun findHourlyWeather(
         cityId: Int,
         fromDateTime: Long? = null,
-        toDateTime: Long? = null
+        toDateTime: Long? = null,
+        limit: Int? = null
     ): List<HourlyWeather>
 
     fun deleteAllHourlyWeather(): Int
