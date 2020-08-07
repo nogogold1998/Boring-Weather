@@ -74,4 +74,6 @@
     <string name="pref_value_is_first_launch_default">true</string>
 
     <string name="pref_key_selected_city_id">pk_sci</string>
+
+    <string name="pref_key_last_searched_city">pk_last_searched_city</string>
 </resources>

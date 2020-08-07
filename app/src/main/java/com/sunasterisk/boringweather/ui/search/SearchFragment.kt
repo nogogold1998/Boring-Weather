@@ -1,6 +1,7 @@
 package com.sunasterisk.boringweather.ui.search
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.os.bundleOf
@@ -40,29 +41,35 @@ class SearchFragment : BaseFragment(), SearchContract.View {
         initView()
         initListener()
         requestInputFocus(editTextSearch)
+        searchCity()
     }
 
     private fun initView() {
         recyclerSearchCity.adapter = cityAdapter
+        editTextSearch.text =
+            SpannableStringBuilder(requireContext().defaultSharedPreferences.lastSearchedCity)
     }
 
     private fun initListener() {
-        textInputLayoutSearch.setStartIconOnClickListener {
-            findNavigator()?.popBackStack()
-        }
+        textInputLayoutSearch.setStartIconOnClickListener { findNavigator()?.popBackStack() }
 
-        textInputLayoutSearch.setEndIconOnClickListener {
-            editTextSearch.text?.toString()?.let { presenter?.searchCity(it) }
-        }
+        textInputLayoutSearch.setEndIconOnClickListener { searchCity() }
 
         editTextSearch.setOnEditorActionListener { v, actionId, event ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
-                    v.text?.toString()?.let { presenter?.searchCity(it) }
+                    searchCity()
                     true
                 }
                 else -> false
             }
+        }
+    }
+
+    private fun searchCity() {
+        editTextSearch.text?.toString()?.let {
+            context?.defaultSharedPreferences?.lastSearchedCity = it
+            presenter?.searchCity(it, SEARCH_LIMIT)
         }
     }
 
@@ -81,5 +88,9 @@ class SearchFragment : BaseFragment(), SearchContract.View {
 
     private fun saveSelectedCity(cityId: Int) {
         context?.defaultSharedPreferences?.selectedCityId = cityId
+    }
+
+    companion object {
+        private const val SEARCH_LIMIT = 20 //TODO inject from setting later
     }
 }

@@ -16,6 +16,6 @@ interface SearchContract {
     interface Presenter {
         val view: View
 
-        fun searchCity(input: String)
+        fun searchCity(input: String, limit: Int)
     }
 }
