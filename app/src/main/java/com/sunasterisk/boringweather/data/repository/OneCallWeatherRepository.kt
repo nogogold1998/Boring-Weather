@@ -32,12 +32,12 @@ class OneCallWeatherRepository private constructor(
 
     override fun getDetailWeather(
         city: City,
+        dailyWeatherDateTime: Long,
         forceNetwork: Boolean,
-        dateTime: Long,
         callback: (Result<DetailWeather>) -> Unit
     ) {
         fetchDataFromNetWork(city, forceNetwork, callback) {
-            localOneCallWeatherDataSource.getDetailWeather(city, dateTime, callback)
+            localOneCallWeatherDataSource.getDetailWeather(city, dailyWeatherDateTime, callback)
         }
     }
 

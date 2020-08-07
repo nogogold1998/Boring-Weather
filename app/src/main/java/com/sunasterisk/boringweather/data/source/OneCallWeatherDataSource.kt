@@ -18,8 +18,8 @@ interface OneCallWeatherDataSource : Cancellable {
 
     fun getDetailWeather(
         city: City,
+        dailyWeatherDateTime: Long,
         forceNetwork: Boolean,
-        dateTime: Long,
         callback: (Result<DetailWeather>) -> Unit
     )
 

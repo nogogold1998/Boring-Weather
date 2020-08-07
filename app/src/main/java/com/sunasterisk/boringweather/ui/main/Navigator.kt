@@ -7,8 +7,6 @@ interface Navigator {
 
     fun popBackStack()
 
-    fun onNavigateToFragment(containerId: Int, fragment: Fragment, tag: String?, backStackName: String?)
-
     fun navigateStartFragment()
 
     fun navigateToSearchFragment()
