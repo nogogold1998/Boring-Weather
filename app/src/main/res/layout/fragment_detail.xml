@@ -43,6 +43,7 @@
             android:id="@+id/imageUpButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/background_ripple"
             android:contentDescription="@null"
             android:padding="@dimen/dp_16"
             android:src="@drawable/ic_round_arrow_back_24"

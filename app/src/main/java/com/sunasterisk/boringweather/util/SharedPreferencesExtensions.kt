@@ -25,6 +25,18 @@ class DefaultSharedPreferences private constructor(
         set(value) = edit { putInt(context.getString(R.string.pref_key_selected_city_id), value) }
         get() = getInt(context.getString(R.string.pref_key_selected_city_id), City.default.id)
 
+    val unitSystem: UnitSystem
+        get() = with(context) {
+            return when (this@DefaultSharedPreferences.getString(
+                getString(R.string.pref_key_setting_unit_system), null
+            ) ?: getString(R.string.pref_value_setting_unit_system_default)) {
+                getString(R.string.pref_value_setting_unit_system_imperial) -> UnitSystem.IMPERIAL
+                getString(R.string.pref_value_setting_unit_system_metric) -> UnitSystem.METRIC
+                getString(R.string.pref_value_setting_unit_system_international) -> UnitSystem.INTERNATIONAL
+                else -> UnitSystem.INTERNATIONAL
+            }
+        }
+
     var lastSearchedCity: String
         set(value) = edit {
             putString(context.getString(R.string.pref_key_last_searched_city), value)

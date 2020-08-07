@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.core.widget.NestedScrollView
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.setFragmentResultListener
 import com.google.android.material.navigation.NavigationView
 import com.sunasterisk.boringweather.R
@@ -20,6 +21,7 @@ import com.sunasterisk.boringweather.ui.main.findNavigator
 import com.sunasterisk.boringweather.ui.search.SearchConstants
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.UnitSystem
+import com.sunasterisk.boringweather.util.defaultSharedPreferences
 import com.sunasterisk.boringweather.util.showToast
 import com.sunasterisk.boringweather.util.verticalScrollProgress
 import kotlinx.android.synthetic.main.fragment_current.*
@@ -28,12 +30,16 @@ import kotlinx.android.synthetic.main.partial_detail.*
 import kotlinx.android.synthetic.main.partial_summary.*
 
 class CurrentFragment : BaseFragment(), CurrentContract.View,
-    NavigationView.OnNavigationItemSelectedListener {
+    NavigationView.OnNavigationItemSelectedListener,
+    DrawerLayout.DrawerListener {
+
     private var city = City.default
 
     private var todayDailyWeather = DailyWeather.default
 
     private var unitSystem = UnitSystem.METRIC // TODO injected from settings
+
+    private var pendingDrawerCloseRunnable: Runnable? = null // TODO replace with [Single] later
 
     override val layoutResource = R.layout.fragment_current
 
@@ -61,12 +67,14 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        context?.let { unitSystem = it.defaultSharedPreferences.unitSystem }
         presenter?.loadCityById(city.id)
         initViews()
     }
 
     private fun initViews() {
         navView.setNavigationItemSelectedListener(this)
+        drawerLayout.addDrawerListener(this)
 
         recyclerTodaySummaryWeather.adapter =
             SummaryWeatherAdapter(unitSystem, TimeUtils.FORMAT_TIME_SHORT) {
@@ -91,8 +99,7 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             if (it.itemId == R.id.searchCity) {
                 findNavigator()?.navigateToSearchFragment()
                 true
-            }
-            else false
+            } else false
         }
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -106,10 +113,7 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.itemCurrent -> {
-            drawerLayout.closeDrawers()
-            true
-        }
+        R.id.itemCurrent -> true
         R.id.itemForecast -> {
             // TODO navigate to ForecastFragment
             true
@@ -123,11 +127,22 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             true
         }
         R.id.itemSettings -> {
-            // TODO navigate to SettingsFragment
+            pendingDrawerCloseRunnable = Runnable { findNavigator()?.navigateToSettingsFragment() }
             true
         }
         else -> false
+    }.also { if (it) drawerLayout.closeDrawers() }
+
+    override fun onDrawerClosed(drawerView: View) {
+        pendingDrawerCloseRunnable?.run()
+        pendingDrawerCloseRunnable = null
     }
+
+    override fun onDrawerStateChanged(newState: Int) = Unit
+
+    override fun onDrawerSlide(drawerView: View, slideOffset: Float) = Unit
+
+    override fun onDrawerOpened(drawerView: View) = Unit
 
     override fun showCity(city: City) {
         this.city = city
