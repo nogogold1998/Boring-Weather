@@ -69,6 +69,7 @@
     <string name="notify_prepopulate_title">Setting up app</string>
 
     <string name="url_prepopulate_city_table_sql">https://raw.githubusercontent.com/nogogold1998/BoringWeatherCity/master/cities_table.sql</string>
+    <string name="format_url_weather_icon">http://openweathermap.org/img/wn/%1$s@2x.png</string>
     <string name="pref_file_key">com.sunasterisk.borringweather.PREFERENCE_SETTINGS</string>
     <string name="pref_value_is_first_launch_default">true</string>
     <string name="pref_key_is_first_launch">_is_first_launch</string>

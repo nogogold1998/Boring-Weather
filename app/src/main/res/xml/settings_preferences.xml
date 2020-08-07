@@ -18,6 +18,7 @@
 
         <SwitchPreference
             app:defaultValue="false"
+            app:enabled="false"
             app:icon="@drawable/ic_round_notifications_24"
             app:key="@string/pref_key_setting_notification"
             app:title="@string/title_setting_notification_entry" />
@@ -26,7 +27,6 @@
             android:entries="@array/frequency_entries"
             app:defaultValue="@string/pref_value_setting_notification_frequency_default"
             app:dependency="@string/pref_key_setting_notification"
-            app:enabled="false"
             app:entryValues="@array/frequency_values"
             app:title="@string/title_setting_frequency_entry"
             app:useSimpleSummaryProvider="true" />
