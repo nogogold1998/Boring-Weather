@@ -11,6 +11,7 @@ import androidx.fragment.app.setFragmentResultListener
 import com.google.android.material.navigation.NavigationView
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.BaseFragment
+import com.sunasterisk.boringweather.base.Single
 import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.data.model.CurrentWeather
 import com.sunasterisk.boringweather.data.model.DailyWeather
@@ -37,9 +38,9 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
 
     private var todayDailyWeather = DailyWeather.default
 
-    private var unitSystem = UnitSystem.METRIC // TODO injected from settings
+    private var unitSystem = UnitSystem.METRIC
 
-    private var pendingDrawerCloseRunnable: Runnable? = null // TODO replace with [Single] later
+    private var pendingDrawerCloseRunnable = Single<Runnable>()
 
     override val layoutResource = R.layout.fragment_current
 
@@ -78,7 +79,8 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
 
         recyclerTodaySummaryWeather.adapter =
             SummaryWeatherAdapter(unitSystem, TimeUtils.FORMAT_TIME_SHORT) {
-                findNavigator()?.navigateToDetailsFragment(city.id, todayDailyWeather.dateTime)
+                findNavigator()
+                    ?.navigateToDetailsFragment(city.id, todayDailyWeather.dateTime, it.dt)
             }
 
         recyclerForecastSummaryWeather.adapter =
@@ -103,7 +105,7 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
         }
 
         swipeRefreshLayout.setOnRefreshListener {
-            presenter?.refreshCurrentWeather(city, true) // TODO check for network state
+            presenter?.refreshCurrentWeather(city, true)
         }
     }
 
@@ -127,15 +129,14 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             true
         }
         R.id.itemSettings -> {
-            pendingDrawerCloseRunnable = Runnable { findNavigator()?.navigateToSettingsFragment() }
+            pendingDrawerCloseRunnable.value = Runnable { findNavigator()?.navigateToSettingsFragment() }
             true
         }
         else -> false
     }.also { if (it) drawerLayout.closeDrawers() }
 
     override fun onDrawerClosed(drawerView: View) {
-        pendingDrawerCloseRunnable?.run()
-        pendingDrawerCloseRunnable = null
+        pendingDrawerCloseRunnable.value?.run()
     }
 
     override fun onDrawerStateChanged(newState: Int) = Unit

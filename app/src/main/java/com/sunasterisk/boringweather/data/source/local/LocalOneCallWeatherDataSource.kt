@@ -12,7 +12,7 @@ import com.sunasterisk.boringweather.data.source.OneCallWeatherDataSource
 import com.sunasterisk.boringweather.data.source.local.dao.CityDao
 import com.sunasterisk.boringweather.data.source.local.dao.DailyWeatherDao
 import com.sunasterisk.boringweather.data.source.local.dao.HourlyWeatherDao
-import com.sunasterisk.boringweather.util.Constants
+import com.sunasterisk.boringweather.util.TimeUtils
 
 class LocalOneCallWeatherDataSource(
     private val cityDao: CityDao,
@@ -63,7 +63,8 @@ class LocalOneCallWeatherDataSource(
                         hourlyWeatherDao.findHourlyWeather(city.id, startOfDay, endOfDay)
                     val dailyWeathers =
                         dailyWeatherDao.findDailyWeather(city.id, currentDateTime)
-                    val todayDailyWeather = dailyWeathers.firstOrNull()
+                    val todayDailyWeather =
+                        dailyWeatherDao.getDailyWeather(city.id, currentDateTime)
                     CurrentWeather(
                         city,
                         currentHourlyWeather ?: CurrentWeather.default.currentWeather,
@@ -94,6 +95,7 @@ class LocalOneCallWeatherDataSource(
         dateTime: Long,
         callback: (Result<DetailWeather>) -> Unit
     ) {
+        val (startOfDay, endOfDay) = TimeUtils.getStartEndOfDay(dateTime)
         cancel()
         callbackAsyncTask =
             CallbackAsyncTask<Unit, DetailWeather>(
@@ -101,8 +103,8 @@ class LocalOneCallWeatherDataSource(
                     val dailyWeather = dailyWeatherDao.getDailyWeather(city.id, dateTime)
                     val hourlyWeathers = hourlyWeatherDao.findHourlyWeather(
                         city.id,
-                        dateTime,
-                        dateTime + Constants.DAY_TO_SECONDS
+                        startOfDay,
+                        endOfDay
                     )
                     DetailWeather(
                         city,

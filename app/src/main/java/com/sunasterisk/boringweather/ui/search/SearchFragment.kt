@@ -55,7 +55,7 @@ class SearchFragment : BaseFragment(), SearchContract.View {
 
         textInputLayoutSearch.setEndIconOnClickListener { searchCity() }
 
-        editTextSearch.setOnEditorActionListener { v, actionId, event ->
+        editTextSearch.setOnEditorActionListener { v, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     searchCity()
