@@ -39,6 +39,7 @@ class LocalOneCallWeatherDataSource(
                         arrayOf(oneCallEntry.current, *oneCallEntry.hourly.toTypedArray())
                     hourlyWeatherDao.insertHourlyWeather(dbCityId, *willBeInsertedHourlyWeatherArr)
                     dailyWeatherDao.insertDailyWeather(dbCityId, *oneCallEntry.daily.toTypedArray())
+                    cityDao.updateFetchedCity(dbCityId, oneCallEntry.current.dateTime)
                     true
                 },
                 onFinishedListener = {
@@ -62,9 +63,8 @@ class LocalOneCallWeatherDataSource(
                     val hourlyWeathers =
                         hourlyWeatherDao.findHourlyWeather(city.id, startOfDay, endOfDay)
                     val dailyWeathers =
-                        dailyWeatherDao.findDailyWeather(city.id, currentDateTime)
-                    val todayDailyWeather =
-                        dailyWeatherDao.getDailyWeather(city.id, currentDateTime)
+                        dailyWeatherDao.findDailyWeather(city.id, startOfDay)
+                    val todayDailyWeather = dailyWeathers.firstOrNull()
                     CurrentWeather(
                         city,
                         currentHourlyWeather ?: CurrentWeather.default.currentWeather,

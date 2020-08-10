@@ -25,28 +25,23 @@ class DailyWeatherDaoImpl private constructor(
         ) > 0
     }
 
+    @ExperimentalStdlibApi
     override fun findDailyWeather(
         cityId: Int,
         fromDateTime: Long?,
         toDateTime: Long?
     ): List<DailyWeather> {
-        val whereClause = StringBuffer("${DailyWeatherTable.COL_CITY_ID} = ? ")
-        if (fromDateTime != null) {
-            val colDateTime = DailyWeatherTable.COL_DATE_TIME
-            whereClause.append("AND $colDateTime >= ? ")
-            if (toDateTime != null) {
-                whereClause.append("AND $colDateTime < ?")
+        val whereClause = StringBuffer()
+        val whereArgs = buildList {
+            whereClause.append("${DailyWeatherTable.COL_CITY_ID} = ? ")
+            add(cityId.toString())
+            fromDateTime?.let {
+                whereClause.append("AND ${DailyWeatherTable.COL_DATE_TIME} >= ? ")
+                add(it.toString())
             }
-        }
-
-        val whereArgs = run {
-            val cityIdStr = cityId.toString()
-            val fromDtStr = fromDateTime?.toString()
-            val toDtStr = toDateTime?.toString()
-            when {
-                fromDtStr != null && toDtStr != null -> arrayOf(cityIdStr, fromDtStr, toDtStr)
-                fromDtStr != null -> arrayOf(cityIdStr, fromDtStr)
-                else -> arrayOf(cityIdStr)
+            toDateTime?.let {
+                whereClause.append("AND ${DailyWeatherTable.COL_DATE_TIME} <= ?")
+                add(it.toString())
             }
         }
 
@@ -54,7 +49,7 @@ class DailyWeatherDaoImpl private constructor(
             DailyWeatherTable.TABLE_NAME,
             null,
             whereClause.toString(),
-            whereArgs,
+            whereArgs.toTypedArray(),
             null,
             null,
             "${DailyWeatherTable.COL_DATE_TIME} ASC"

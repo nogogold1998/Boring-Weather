@@ -16,4 +16,8 @@ interface CityDao {
         vararg city: City,
         @OnConflictStrategy strategy: Int = SQLiteDatabase.CONFLICT_REPLACE
     ): Int
+
+    fun getFetchedCities(): List<City>
+
+    fun updateFetchedCity(cityId: Int, lastFetch: Long)
 }

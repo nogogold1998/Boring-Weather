@@ -47,7 +47,7 @@ class SearchFragment : BaseFragment(), SearchContract.View {
     private fun initView() {
         recyclerSearchCity.adapter = cityAdapter
         editTextSearch.text =
-            SpannableStringBuilder(requireContext().defaultSharedPreferences.lastSearchedCity)
+            SpannableStringBuilder(requireContext().defaultSharedPreferences.lastSearchInput)
     }
 
     private fun initListener() {
@@ -68,7 +68,7 @@ class SearchFragment : BaseFragment(), SearchContract.View {
 
     private fun searchCity() {
         editTextSearch.text?.toString()?.let {
-            context?.defaultSharedPreferences?.lastSearchedCity = it
+            context?.defaultSharedPreferences?.lastSearchInput = it
             presenter?.searchCity(it, SEARCH_LIMIT)
         }
     }

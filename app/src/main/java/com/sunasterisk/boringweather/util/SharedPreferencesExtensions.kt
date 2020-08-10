@@ -46,7 +46,7 @@ class DefaultSharedPreferences(
             else -> UnitSystem.INTERNATIONAL
         }
 
-    var lastSearchedCity: String
+    var lastSearchInput: String
         set(value) = edit {
             putString(preCachedStrings[R.string.pref_key_last_searched_city], value)
         }

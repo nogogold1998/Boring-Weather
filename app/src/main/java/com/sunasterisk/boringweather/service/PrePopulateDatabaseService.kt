@@ -27,12 +27,12 @@ class PrePopulateDatabaseService : JobIntentService() {
             Constants.NOTIFICATION_ID_PREPOPULATE_DATABASE_SERVICE,
             buildNotification(R.string.notify_prepopulate_channel_id)
         )
-        intent.getStringExtra(Constants.EXTRA_URL_STRING_PREPOPULATE_DATABASE_SERVICE)?.let {
+        intent.getStringExtra(Constants.EXTRA_URL_STRING_PREPOPULATE_DATABASE)?.let {
             downloadThenPopulateDatabase(it)
             stopForeground(true)
             sendBroadcast(Intent().apply {
                 action = Constants.ACTION_PREPOPULATE_DATABASE
-                putExtra(Constants.EXTRA_URL_STRING_PREPOPULATE_DATABASE_SERVICE, it)
+                putExtra(Constants.EXTRA_URL_STRING_PREPOPULATE_DATABASE, it)
             })
         }
     }

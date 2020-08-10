@@ -9,6 +9,8 @@ import com.sunasterisk.boringweather.util.Constants.MULTIPLE_KELVIN_TO_CELSIUS
 import com.sunasterisk.boringweather.util.Constants.MULTIPLE_KELVIN_TO_FAHRENHEIT
 import com.sunasterisk.boringweather.util.Constants.OFFSET_KELVIN_TO_CELSIUS
 import com.sunasterisk.boringweather.util.Constants.OFFSET_KELVIN_TO_FAHRENHEIT
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 enum class UnitSystem {
     METRIC, IMPERIAL, INTERNATIONAL;
@@ -46,3 +48,18 @@ enum class UnitSystem {
             pressure.toFloat() / KILOPASCAL_TO_HECTOPASCAL
         )
 }
+
+private class UnitSystemDelegate<T>(private val initializer: () -> T) : ReadWriteProperty<Any?, T> {
+    private var value: T? = null
+
+    override fun getValue(thisRef: Any?, property: KProperty<*>) = synchronized(this) {
+        value ?: initializer()
+    }
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        this.value = value
+    }
+}
+
+fun <T> lazy(initializer: () -> T): ReadWriteProperty<Any?, T> =
+    UnitSystemDelegate(initializer)

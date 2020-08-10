@@ -22,7 +22,9 @@ object Constants {
 
     const val NOTIFICATION_ID_PREPOPULATE_DATABASE_SERVICE = 16
 
-    const val EXTRA_URL_STRING_PREPOPULATE_DATABASE_SERVICE = "url_string"
+    const val EXTRA_URL_STRING_PREPOPULATE_DATABASE = "url_string_prepopulate_database"
+    const val EXTRA_SUCCEEDED_PREPOPULATE_DATABASE = "succeeded_prepopulate_database"
+    const val EXTRA_FAILED_PREPOPULATE_DATABASE = "failed_prepopulate_database"
 
     const val ACTION_PREPOPULATE_DATABASE = "com.sunasterisk.boringweather.PREPOPULATE_DATABASE"
 }
