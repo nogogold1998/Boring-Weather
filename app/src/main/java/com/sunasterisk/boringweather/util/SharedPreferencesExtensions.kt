@@ -7,47 +7,68 @@ import androidx.preference.PreferenceManager
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.data.model.City
 
-class DefaultSharedPreferences private constructor(
-    sharedPreferences: SharedPreferences,
-    private val context: Context
-) : SharedPreferences by sharedPreferences {
+class DefaultSharedPreferences(
+    context: Context
+) : SharedPreferences by PreferenceManager.getDefaultSharedPreferences(context) {
+
+    class PreCachedStrings(private val delegate: Map<Int, String>) : Map<Int, String> by delegate {
+        override fun get(key: Int): String =
+            delegate[key] ?: throw IllegalArgumentException("StringRes $key hasn't been included")
+    }
+
+    private val preCachedStrings =
+        preferenceStringRes.associateWith(context::getString).let(::PreCachedStrings)
 
     var isFirstLaunch: Boolean
-        set(value) = edit()
-            .putBoolean(context.getString(R.string.pref_key_is_first_launch), value)
-            .apply()
+        set(value) = edit {
+            putBoolean(preCachedStrings[R.string.pref_key_is_first_launch], value)
+        }
         get() = getBoolean(
-            context.getString(R.string.pref_key_is_first_launch),
-            context.getString(R.string.pref_value_is_first_launch_default).toBoolean()
+            preCachedStrings[R.string.pref_key_is_first_launch],
+            preCachedStrings[R.string.pref_value_is_first_launch_default].toBoolean()
         )
 
     var selectedCityId: Int
-        set(value) = edit { putInt(context.getString(R.string.pref_key_selected_city_id), value) }
-        get() = getInt(context.getString(R.string.pref_key_selected_city_id), City.default.id)
+        set(value) = edit {
+            putInt(preCachedStrings[R.string.pref_key_selected_city_id], value)
+        }
+        get() = getInt(
+            preCachedStrings[R.string.pref_key_selected_city_id],
+            City.default.id
+        )
 
     val unitSystem: UnitSystem
-        get() = with(context) {
-            return when (this@DefaultSharedPreferences.getString(
-                getString(R.string.pref_key_setting_unit_system), null
-            ) ?: getString(R.string.pref_value_setting_unit_system_default)) {
-                getString(R.string.pref_value_setting_unit_system_imperial) -> UnitSystem.IMPERIAL
-                getString(R.string.pref_value_setting_unit_system_metric) -> UnitSystem.METRIC
-                getString(R.string.pref_value_setting_unit_system_international) -> UnitSystem.INTERNATIONAL
-                else -> UnitSystem.INTERNATIONAL
-            }
+        get() = when (getString(preCachedStrings[R.string.pref_key_setting_unit_system], null)
+            ?: preCachedStrings[R.string.pref_value_setting_unit_system_default]) {
+            preCachedStrings[R.string.pref_value_setting_unit_system_imperial] -> UnitSystem.IMPERIAL
+            preCachedStrings[R.string.pref_value_setting_unit_system_metric] -> UnitSystem.METRIC
+            preCachedStrings[R.string.pref_value_setting_unit_system_international] -> UnitSystem.INTERNATIONAL
+            else -> UnitSystem.INTERNATIONAL
         }
 
     var lastSearchedCity: String
         set(value) = edit {
-            putString(context.getString(R.string.pref_key_last_searched_city), value)
+            putString(preCachedStrings[R.string.pref_key_last_searched_city], value)
         }
-        get() = getString(context.getString(R.string.pref_key_last_searched_city), null) ?: ""
+        get() = getString(preCachedStrings[R.string.pref_key_last_searched_city], null) ?: ""
 
     companion object {
+        private val preferenceStringRes = listOf(
+            R.string.pref_key_is_first_launch,
+            R.string.pref_value_is_first_launch_default,
+            R.string.pref_key_selected_city_id,
+            R.string.pref_key_setting_unit_system,
+            R.string.pref_value_setting_unit_system_default,
+            R.string.pref_value_setting_unit_system_imperial,
+            R.string.pref_value_setting_unit_system_international,
+            R.string.pref_value_setting_unit_system_metric,
+            R.string.pref_key_last_searched_city
+        )
+
         private var instance: DefaultSharedPreferences? = null
+
         fun getInstance(context: Context) = instance ?: synchronized(this) {
-            instance ?: DefaultSharedPreferences(PreferenceManager.getDefaultSharedPreferences(context), context)
-                .also { instance = it }
+            instance ?: DefaultSharedPreferences(context).also { instance = it }
         }
     }
 }

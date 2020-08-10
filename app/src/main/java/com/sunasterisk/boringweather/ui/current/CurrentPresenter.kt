@@ -40,8 +40,4 @@ class CurrentPresenter(
     override fun stopLoadData() {
         oneCallWeatherRepository.cancel()
     }
-
-    companion object {
-        private const val TAG = "CurrentPresenter"
-    }
 }

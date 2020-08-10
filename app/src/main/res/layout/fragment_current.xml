@@ -48,7 +48,7 @@
                         android:orientation="horizontal"
                         android:paddingHorizontal="@dimen/dp_16"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_summary_weather"/>
+                        tools:listitem="@layout/item_summary_weather" />
 
                     <TextView
                         android:id="@+id/textTitleForecastSummaryWeather"
@@ -105,6 +105,7 @@
                     android:fitsSystemWindows="true"
                     app:contentScrim="?attr/colorPrimary"
                     app:expandedTitleGravity="bottom"
+                    app:expandedTitleMarginBottom="@dimen/dp_16"
                     app:expandedTitleMarginEnd="@dimen/dp_16"
                     app:expandedTitleMarginStart="@dimen/dp_16"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
@@ -129,15 +130,22 @@
                         android:layout_marginTop="@dimen/dp_16"
                         android:text="@string/details_current" />
 
+                    <View
+                        android:id="@+id/viewBlur"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        android:layout_gravity="bottom"
+                        android:background="@color/color_black_blur_dim" />
+
                     <androidx.appcompat.widget.Toolbar
                         android:id="@+id/toolbarSearch"
                         style="@style/Widget.AppCompat.Toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         app:layout_collapseMode="pin"
+                        app:menu="@menu/menu_current_fragment"
                         app:navigationIcon="@drawable/ic_round_hamburger"
-                        app:popupTheme="@style/ThemeOverlay.AppCompat"
-                        app:menu="@menu/menu_current_fragment"/>
+                        app:popupTheme="@style/ThemeOverlay.AppCompat" />
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
             </com.google.android.material.appbar.AppBarLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
     }
 
     override fun navigateStartFragment() {
+        if (supportFragmentManager.backStackEntryCount > 0) return
         val selectedCityId = defaultSharedPreferences.selectedCityId
         val currentFragment = CurrentFragment.newInstance(selectedCityId)
         supportFragmentManager.beginTransaction()
@@ -41,10 +42,14 @@ class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
             .commit()
     }
 
-    override fun navigateToDetailsFragment(cityId: Int, dailyWeatherDateTime: Long) {
+    override fun navigateToDetailsFragment(
+        cityId: Int,
+        dailyWeatherDateTime: Long,
+        focusHourlyWeatherDateTime: Long?
+    ) {
         beginTransactionWithSlideAnim().replace(
             containerId,
-            DetailFragment.newInstance(cityId, dailyWeatherDateTime)
+            DetailFragment.newInstance(cityId, dailyWeatherDateTime, focusHourlyWeatherDateTime)
         )
             .addToBackStack(null)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)

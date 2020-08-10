@@ -23,17 +23,16 @@ enum class UnitSystem {
         }.let { (stringRes, unitTemperature) -> resources.getString(stringRes, unitTemperature) }
 
     fun formatDistance(visibility: Int?, resources: Resources) =
-        ((visibility ?: 0) / METER_TO_KILOMETER).let {
-            val (format, number) = when (this) {
-                METRIC -> R.string.format_visibility_metric to it
-                IMPERIAL -> R.string.format_visibility_imperial to it / KILOMETER_TO_MILES
-                INTERNATIONAL -> R.string.format_visibility_international to it
-            }
-            resources.getString(
-                format,
-                if (number >= 0) number else resources.getString(R.string.title_holder_float_number)
-            )
-        }
+        visibility?.div(METER_TO_KILOMETER)
+            ?.takeIf { it > 0f }
+            ?.let {
+                val (format, number) = when (this) {
+                    METRIC -> R.string.format_visibility_metric to it
+                    IMPERIAL -> R.string.format_visibility_imperial to it / KILOMETER_TO_MILES
+                    INTERNATIONAL -> R.string.format_visibility_international to it
+                }
+                resources.getString(format, number)
+            } ?: resources.getString(R.string.title_holder_float_number)
 
     fun formatSpeed(speed: Float, resources: Resources) = when (this) {
         METRIC -> R.string.format_speed_metric to speed

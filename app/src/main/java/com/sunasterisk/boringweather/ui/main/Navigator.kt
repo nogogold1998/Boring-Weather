@@ -11,7 +11,11 @@ interface Navigator {
 
     fun navigateToSearchFragment()
 
-    fun navigateToDetailsFragment(cityId: Int, dailyWeatherDateTime: Long)
+    fun navigateToDetailsFragment(
+        cityId: Int,
+        dailyWeatherDateTime: Long,
+        focusHourlyWeatherDateTime: Long? = null
+    )
 
     fun navigateToSettingsFragment()
 }

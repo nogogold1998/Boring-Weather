@@ -28,9 +28,13 @@ class DetailPresenter(
                                 view.showError(R.string.error_refresh_result_null)
                             }
                         }
+                        view.finishRefresh()
                     }
                 }
-                is Result.Error -> view.showError(R.string.error_refresh_city_null)
+                is Result.Error -> {
+                    view.showError(R.string.error_refresh_city_null)
+                    view.finishRefresh()
+                }
             }
         }
     }

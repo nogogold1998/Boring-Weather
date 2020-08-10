@@ -55,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/dp_48" />
+        app:layout_constraintGuide_begin="@dimen/dp_16" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBottom"
@@ -92,7 +92,7 @@
         android:text="@string/title_holder_percent"
         app:layout_constraintBottom_toTopOf="@+id/textVisibility"
         app:layout_constraintStart_toStartOf="@+id/guidelineMiddle"
-        app:layout_constraintTop_toTopOf="@+id/guidelineTop"
+        app:layout_constraintTop_toBottomOf="@+id/textTitleTile"
         app:layout_constraintVertical_chainStyle="spread" />
 
     <TextView
@@ -146,8 +146,8 @@
         android:layout_height="wrap_content"
         android:text="@string/details_current_details"
         android:textSize="@dimen/sp_25"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineTop"
         app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@+id/guidelineTop"
         app:layout_constraintVertical_chainStyle="spread" />
 
     <TextView
@@ -157,5 +157,5 @@
         android:text="@string/details_humidity"
         app:layout_constraintBottom_toTopOf="@+id/textTitleVisibility"
         app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
+        app:layout_constraintTop_toBottomOf="@+id/textTitleTile" />
 </androidx.constraintlayout.widget.ConstraintLayout>
