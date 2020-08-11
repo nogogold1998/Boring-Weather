@@ -2,8 +2,14 @@
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/color_ziggurat">
     <item android:id="@android:id/mask">
-        <shape android:shape="rectangle">
+        <shape android:shape="oval">
             <solid android:color="@color/color_ziggurat" />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/background">
+        <shape android:shape="oval">
+            <corners android:radius="@dimen/dp_8" />
         </shape>
     </item>
 </ripple>

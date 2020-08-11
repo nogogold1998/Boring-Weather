@@ -11,14 +11,13 @@ interface CurrentContract {
         fun showCity(city: City)
         fun showCurrentWeather(currentWeather: CurrentWeather)
         fun showError(@StringRes errorStringRes: Int)
-        fun finishRefresh()
     }
 
     interface Presenter {
         val view: View
 
         fun loadCityById(cityId: Int)
-        fun refreshCurrentWeather(city: City, forceNetwork: Boolean = false)
+        fun refreshCurrentWeather(forceNetwork: Boolean = false)
         fun stopLoadData()
     }
 }

@@ -29,7 +29,13 @@
 
                     <include layout="@layout/partial_summary" />
 
-                    <include layout="@layout/partial_detail" />
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/color_gull_gray">
+
+                        <include layout="@layout/partial_detail" />
+                    </FrameLayout>
 
                     <TextView
                         android:id="@+id/textTitleTodaySummaryWeather"
@@ -157,7 +163,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:paddingTop="@dimen/dp_120"
-        app:headerLayout="@null"
+        app:headerLayout="@layout/partial_nav_view_header"
         app:menu="@menu/menu_nav_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

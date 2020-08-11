@@ -48,9 +48,9 @@
             android:contentDescription="@null"
             android:padding="@dimen/dp_12"
             android:src="@drawable/ic_round_arrow_back_24"
-            android:tint="?android:attr/textColorPrimaryInverse"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?android:attr/textColorPrimaryInverse" />
 
         <TextView
             android:id="@+id/textTitleDetail"

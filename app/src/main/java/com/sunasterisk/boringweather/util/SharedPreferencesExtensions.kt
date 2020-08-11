@@ -52,6 +52,15 @@ class DefaultSharedPreferences(
         }
         get() = getString(preCachedStrings[R.string.pref_key_last_searched_city], null) ?: ""
 
+    var citySearchingLimit: Int
+        set(value) = edit {
+            putInt(preCachedStrings[R.string.pref_key_setting_search_limit], value)
+        }
+        get() = getInt(
+            preCachedStrings[R.string.pref_key_setting_search_limit],
+            preCachedStrings[R.string.pref_value_setting_search_limit_default].toInt()
+        )
+
     companion object {
         private val preferenceStringRes = listOf(
             R.string.pref_key_is_first_launch,
@@ -62,7 +71,9 @@ class DefaultSharedPreferences(
             R.string.pref_value_setting_unit_system_imperial,
             R.string.pref_value_setting_unit_system_international,
             R.string.pref_value_setting_unit_system_metric,
-            R.string.pref_key_last_searched_city
+            R.string.pref_key_last_searched_city,
+            R.string.pref_key_setting_search_limit,
+            R.string.pref_value_setting_search_limit_default
         )
 
         private var instance: DefaultSharedPreferences? = null

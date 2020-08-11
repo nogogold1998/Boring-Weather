@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.sunasterisk.boringweather.R
+import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.ui.current.CurrentFragment
 import com.sunasterisk.boringweather.ui.detail.DetailFragment
 import com.sunasterisk.boringweather.ui.search.SearchFragment
@@ -17,7 +18,12 @@ class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        navigateStartFragment()
+        if (savedInstanceState == null) navigateStartFragment()
+    }
+
+    override fun onBackPressed() {
+        if (defaultSharedPreferences.selectedCityId == City.default.id) finish()
+        else super.onBackPressed()
     }
 
     override fun popBackStack() {
@@ -25,7 +31,6 @@ class MainActivity : AppCompatActivity(), MainContract.View, Navigator {
     }
 
     override fun navigateStartFragment() {
-        if (supportFragmentManager.backStackEntryCount > 0) return
         val selectedCityId = defaultSharedPreferences.selectedCityId
         val currentFragment = CurrentFragment.newInstance(selectedCityId)
         supportFragmentManager.beginTransaction()

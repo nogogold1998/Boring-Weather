@@ -11,11 +11,20 @@
     <string name="details_cloud">Cloud</string>
 
     <string name="title_current">Current</string>
+    <string name="title_powered">powered</string>
     <string name="title_today">Today</string>
     <string name="title_forecast">Forecast</string>
     <string name="title_detail">Detail</string>
     <string name="title_search">Search</string>
     <string name="title_search_city">Search city</string>
+    <string name="title_search_text_background_first_time">First, let find a city</string>
+    <string name="title_search_text_background">You can use \'?\' to find city with country code - e.g., VN?your_city</string>
+    <string name="title_search_use_device_location">use device\'s location</string>
+    <string name="title_search_clear">clear</string>
+    <string name="title_search_available_cities">Available cities</string>
+    <string name="title_search_location_dialog">Access location</string>
+    <string name="format_msg_search_location_dialog_location_require">The app needs %s permission(s) to perform this action</string>
+    <string name="msg_search_location_dialog_location_off">Location is off</string>
 
     <string name="title_holder_percent">-- %</string>
     <string name="title_holder_decimal_number">--</string>
@@ -28,6 +37,7 @@
     <string name="title_holder_title_collapsing_toolbar">Boring Weather</string>
 
     <string name="action_history">History</string>
+    <string name="action_go_to_settings">Go to location settings</string>
 
     <string name="menu_current">Current</string>
     <string name="menu_today">Today</string>
@@ -60,7 +70,14 @@
     <string name="error_refresh_failed">Failed to refresh weather data</string>
     <string name="error_unknown">Unknown error has occurred!</string>
     <string name="error_search_result_error">Searching failed</string>
+    <string name="error_search_need_select_city">You need to select a city</string>
+    <string name="error_search_fetched_cities">Getting fetched cities failed</string>
+    <string name="error_search_location_permission_denied">Location is not granted</string>
+    <string name="error_search_location_null">Failed to receive device\'s location</string>
     <string name="error_show_detail_weather">Failed to show detail weather</string>
+    <string name="error_network_no_connection">You are currently offline, please check your connection</string>
+    <string name="error_network_lost">Internet connection has lost!</string>
+    <string name="error_feature_not_implemented">This feature is still being in development</string>
     <string name="msg_weather_icon">Weather Icon</string>
     <string name="msg_expand">Expand</string>
 
@@ -69,7 +86,10 @@
     <string name="notify_prepopulate_channel_description">Download files and prepopulate database</string>
     <string name="notify_prepopulate_title">Setting up app</string>
 
-    <string name="url_prepopulate_city_table_sql">https://raw.githubusercontent.com/nogogold1998/BoringWeatherCity/master/cities_table.sql</string>
+    <string name="url_prepopulate_city_table_sql">https://raw.githubusercontent.com/nogogold1998/Boring-Weather/sql/cities_table.sql</string>
+    <string name="url_plash_weather_icon_gif">https://cdn.dribbble.com/users/372537/screenshots/2065624/icons_km_weather.gif</string>
+    <string name="url_open_weather_api">https://openweathermap.org/api</string>
+    <string name="url_open_weather_icon">https://openweathermap.org/themes/openweathermap/assets/img/logo_white_cropped.png</string>
     <string name="format_url_weather_icon">http://openweathermap.org/img/wn/%1$s@2x.png</string>
     <string name="pref_file_key">com.sunasterisk.borringweather.PREFERENCE_SETTINGS</string>
     <string name="pref_value_is_first_launch_default">true</string>
@@ -117,4 +137,14 @@
     <string name="title_6hours">6 hours</string>
     <string name="title_12hours">12 hours</string>
     <string name="title_1day">Daily</string>
+
+    <string name="title_setting_search_limit_summary">Maximum number of cities result</string>
+    <string name="title_setting_search_limit">Search limit</string>
+    <string name="title_setting_info">Powered by OpenWeather</string>
+    <string name="pref_key_setting_search_limit">setting_search_limit</string>
+    <string name="pref_value_setting_search_limit_default">50</string>
+    <string name="pref_key_setting_info">setting_info</string>
+    <string name="title_splash_status_setup">Getting things ready…</string>
+    <string name="title_splash_status_ready">Here you go..</string>
+    <string name="title_splash_status_welcome_back">Welcome back</string>
 </resources>
