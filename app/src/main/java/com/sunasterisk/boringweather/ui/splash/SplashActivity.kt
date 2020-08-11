@@ -22,7 +22,7 @@ class SplashActivity : AppCompatActivity() {
         if (defaultSharedPreferences.isFirstLaunch) {
             PrePopulateDatabaseService.enqueueWork(
                 this, Intent().putExtra(
-                    Constants.EXTRA_URL_STRING_PREPOPULATE_DATABASE_SERVICE, getString(
+                    Constants.EXTRA_URL_STRING_PREPOPULATE_DATABASE, getString(
                         R.string.url_prepopulate_city_table_sql
                     )
                 )

@@ -6,6 +6,8 @@ object CityTable {
     const val COL_ID = "id"
     const val COL_NAME = "name"
     const val COL_COUNTRY = "country"
+    const val COL_LAST_FETCH = "last_fetch"
+    const val DEFAULT_COL_LAST_FETCH = 0L
     const val COL_COORDINATE_LAT = "lat"
     const val COL_COORDINATE_LON = "lon"
 
@@ -15,6 +17,7 @@ object CityTable {
         $COL_ID INT PRIMARY KEY,
         $COL_NAME TEXT,
         $COL_COUNTRY TEXT,
+        $COL_LAST_FETCH INT DEFAULT $DEFAULT_COL_LAST_FETCH,
         $COL_COORDINATE_LAT FLOAT,
         $COL_COORDINATE_LON FLOAT
         ); """

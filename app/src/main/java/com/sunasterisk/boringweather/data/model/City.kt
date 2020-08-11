@@ -16,12 +16,14 @@ data class City(
     val id: Int,
     val name: String,
     val country: String,
+    val lastFetch: Long,
     val coordinate: Coordinate
 ) {
     constructor(jsonObject: JSONObject) : this(
         jsonObject.getInt(ID),
         jsonObject.getString(NAME),
         jsonObject.getString(COUNTRY),
+        jsonObject.getOrElse(LAST_FETCH, default.lastFetch),
         jsonObject.getJSONObject(COORDINATE).let(::Coordinate)
     )
 
@@ -29,6 +31,7 @@ data class City(
         cursor.getOrElse(CityTable.COL_ID, default.id),
         cursor.getOrElse(CityTable.COL_NAME, default.name),
         cursor.getOrElse(CityTable.COL_COUNTRY, default.country),
+        cursor.getOrElse(CityTable.COL_LAST_FETCH, default.lastFetch),
         Coordinate(
             cursor.getOrElse(CityTable.COL_COORDINATE_LAT, default.coordinate.latitude),
             cursor.getOrElse(CityTable.COL_COORDINATE_LON, default.coordinate.longitude)
@@ -39,12 +42,13 @@ data class City(
         put(CityTable.COL_ID, id)
         put(CityTable.COL_NAME, name)
         put(CityTable.COL_COUNTRY, country)
+        put(CityTable.COL_LAST_FETCH, lastFetch)
         put(CityTable.COL_COORDINATE_LAT, coordinate.latitude)
         put(CityTable.COL_COORDINATE_LON, coordinate.longitude)
     }
 
     companion object {
-        val default = City(0, "", "", Coordinate())
+        val default = City(0, "", "", CityTable.DEFAULT_COL_LAST_FETCH, Coordinate())
 
         @WorkerThread
         fun getFromRaw(resource: Resources, @RawRes rawId: Int): List<City> {
@@ -57,5 +61,6 @@ data class City(
         private const val NAME = "name"
         private const val COUNTRY = "country"
         private const val COORDINATE = "coord"
+        private const val LAST_FETCH = "last_fetch"
     }
 }

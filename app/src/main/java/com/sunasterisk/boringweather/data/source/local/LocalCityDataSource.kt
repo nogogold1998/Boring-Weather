@@ -3,6 +3,7 @@ package com.sunasterisk.boringweather.data.source.local
 import com.sunasterisk.boringweather.base.CallbackAsyncTask
 import com.sunasterisk.boringweather.base.Result
 import com.sunasterisk.boringweather.data.model.City
+import com.sunasterisk.boringweather.data.model.Coordinate
 import com.sunasterisk.boringweather.data.source.CityDataSource
 import com.sunasterisk.boringweather.data.source.local.dao.CityDao
 
@@ -50,6 +51,29 @@ class LocalCityDataSource private constructor(private val cityDao: CityDao) : Ci
     override fun cancel() {
         callbackAsyncTask?.cancel(true)
         callbackAsyncTask = null
+    }
+
+    override fun getFetchedCities(callback: (Result<List<City>>) -> Unit) {
+        cancel()
+
+        callbackAsyncTask = CallbackAsyncTask<Unit, List<City>>(
+            handler = { cityDao.getFetchedCities() },
+            onFinishedListener = { it?.let(callback) })
+            .apply { executeOnExecutor(Unit) }
+    }
+
+    override fun getCityByCoordinate(
+        coordinate: Coordinate,
+        callback: (Result<City>) -> Unit
+    ) {
+        cancel()
+        callbackAsyncTask = CallbackAsyncTask<Coordinate, City>(
+            handler = {
+                cityDao.getCityByCoordinate(it)
+                    ?: throw NullPointerException("Given $coordinate return null")
+            },
+            onFinishedListener = { it?.let(callback) }
+        ).apply { executeOnExecutor(coordinate) }
     }
 
     companion object {
