@@ -5,8 +5,6 @@ import android.util.TypedValue
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.BaseFragment
 import com.sunasterisk.boringweather.base.BaseTransitionListener
@@ -25,6 +23,8 @@ import com.sunasterisk.boringweather.ui.detail.model.LoadDetailWeatherRequest
 import com.sunasterisk.boringweather.ui.main.findNavigator
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
+import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
+import com.sunasterisk.boringweather.util.setupDefaultItemDecoration
 import com.sunasterisk.boringweather.util.showToast
 import com.sunasterisk.boringweather.util.verticalScrollProgress
 import kotlinx.android.synthetic.main.fragment_detail.*
@@ -102,8 +102,19 @@ class DetailFragment : BaseFragment(), DetailContract.View {
         pendingRestoreRecyclerScrollPosition.value = getInt(KEY_SCROLL_POSITION)
     }
 
+    private fun setupAppBar() {
+        imageUpButton.setOnClickListener {
+            findNavigator()?.popBackStack()
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+
+        saveRecyclerViewState(outState)
+    }
+
+    private fun saveRecyclerViewState(outState: Bundle) {
         adapter?.currentList
             ?.filterIsInstance(HourlyWeatherItem::class.java)
             ?.filter(HourlyWeatherItem::expanded)
@@ -112,16 +123,7 @@ class DetailFragment : BaseFragment(), DetailContract.View {
             ?.let { outState.putLongArray(KEY_EXPANDED_ITEMS, it) }
 
         recyclerViewDetail?.takeUnless { it.verticalScrollProgress == 0f }
-            ?.let { it.layoutManager as? LinearLayoutManager }
-            ?.let {
-                outState.putInt(KEY_SCROLL_POSITION, it.findLastCompletelyVisibleItemPosition())
-            }
-    }
-
-    private fun setupAppBar() {
-        imageUpButton.setOnClickListener {
-            findNavigator()?.popBackStack()
-        }
+            ?.let { outState.putInt(KEY_SCROLL_POSITION, it.lastCompletelyVisibleItemPosition) }
     }
 
     private fun setupMotionDetail() {
@@ -164,8 +166,7 @@ class DetailFragment : BaseFragment(), DetailContract.View {
             translateBackgroundImage(scrollProgress)
         }
 
-        (layoutManager as? LinearLayoutManager)?.orientation
-            ?.let { addItemDecoration(DividerItemDecoration(context, it)) }
+        setupDefaultItemDecoration()
     }
 
     private fun translateBackgroundImage(scrollProgress: Float) {

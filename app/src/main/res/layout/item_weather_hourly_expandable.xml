@@ -9,7 +9,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/color_white_blur_bright"
-        app:layout_constraintBottom_toTopOf="@+id/containerDetail"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,7 +20,6 @@
         android:layout_height="0dp"
         android:contentDescription="@string/msg_weather_icon"
         android:scaleType="center"
-        app:layout_constraintBottom_toBottomOf="@+id/textWeatherDescription"
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintStart_toStartOf="@+id/guidelineItemWeatherHourlyStart"
         app:layout_constraintTop_toTopOf="@+id/textTime" />
@@ -45,9 +44,34 @@
         android:layout_marginBottom="@dimen/dp_32"
         android:text="@string/title_holder_description"
         android:textSize="@dimen/sp_20"
-        app:layout_constraintBottom_toTopOf="@+id/containerDetail"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
         app:layout_constraintStart_toStartOf="@+id/textTime"
         app:layout_constraintTop_toBottomOf="@+id/textTime" />
+
+    <TextView
+        android:id="@+id/textFeelsLikeHourly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_temperature"
+        android:textSize="@dimen/sp_20"
+        app:drawableStartCompat="@drawable/ic_round_faces_24"
+        app:layout_constraintBottom_toBottomOf="@+id/textWeatherDescription"
+        app:layout_constraintEnd_toEndOf="@+id/textTemperature"
+        app:layout_constraintTop_toBottomOf="@+id/textTemperature" />
+
+    <TextView
+        android:id="@+id/textTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_24"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_temperature"
+        android:textSize="@dimen/sp_35"
+        app:layout_constraintBottom_toTopOf="@+id/textFeelsLikeHourly"
+        app:layout_constraintEnd_toStartOf="@+id/buttonExpand"
+        app:layout_constraintTop_toBottomOf="@+id/guidelineItemWeatherHourlyTop"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <ImageView
         android:id="@+id/buttonExpand"
@@ -61,14 +85,19 @@
         app:layout_constraintEnd_toStartOf="@+id/guidelineItemWeatherHourlyEnd"
         app:layout_constraintTop_toTopOf="@+id/imageWeatherIcon" />
 
-    <include
-        android:id="@+id/containerDetail"
-        layout="@layout/partial_detail"
+    <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/color_gull_gray_blur"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include
+            android:id="@+id/containerDetail"
+            layout="@layout/partial_detail" />
+    </FrameLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineItemWeatherHourlyStart"

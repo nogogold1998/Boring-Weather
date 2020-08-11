@@ -121,6 +121,8 @@ class DetailWeatherAdapter(
                 data.uvIndex?.toString() ?: context.getString(R.string.title_holder_float_number)
             textPressure.text = unitSystem.formatPressure(data.pressure, resources)
             textCloud.text = context.getString(R.string.format_percent_decimal, data.clouds)
+            textTemperature.text = unitSystem.formatTemperature(data.temperature, resources)
+            textFeelsLikeHourly.text = unitSystem.formatTemperature(data.feelsLike, resources)
             containerDetail.visibility = if (item.expanded) View.VISIBLE else View.GONE
             rotateAnimateExpandButton(item)
         }

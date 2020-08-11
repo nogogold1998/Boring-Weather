@@ -12,6 +12,14 @@
         android:layout_height="match_parent"
         app:layoutDescription="@xml/fragment_detail_scene">
 
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineBottomActionBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="?attr/actionBarSize" />
+
         <ImageView
             android:id="@+id/imageBackground"
             android:layout_width="match_parent"
@@ -42,12 +50,15 @@
         <ImageView
             android:id="@+id/imageUpButton"
             style="@style/Toolbar.Button"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@drawable/background_ripple"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/dp_8"
+            android:background="@drawable/background_circle_ripple"
             android:contentDescription="@null"
-            android:padding="@dimen/dp_12"
+            android:padding="@dimen/dp_4"
             android:src="@drawable/ic_round_arrow_back_24"
+            app:layout_constraintBottom_toTopOf="@id/guidelineBottomActionBar"
+            app:layout_constraintDimensionRatio="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="?android:attr/textColorPrimaryInverse" />
@@ -77,12 +88,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_16"
-            android:layout_marginBottom="@dimen/dp_16"
             android:gravity="center"
             android:text="@string/app_name"
             android:textColor="?android:attr/textColorPrimaryInverse"
-            app:layout_constraintBottom_toBottomOf="@id/imageToolbar"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@id/viewBlur"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/viewBlur" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 

@@ -1,5 +1,6 @@
 package com.sunasterisk.boringweather.ui.search
 
+import android.location.Location
 import androidx.annotation.StringRes
 import com.sunasterisk.boringweather.data.model.City
 
@@ -17,5 +18,9 @@ interface SearchContract {
         val view: View
 
         fun searchCity(input: String, limit: Int)
+
+        fun getFetchedCities()
+
+        fun searchCityByLocation(location: Location)
     }
 }
