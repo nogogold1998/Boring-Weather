@@ -22,7 +22,7 @@
         android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="@+id/textWeatherDescription"
         app:layout_constraintDimensionRatio="1"
-        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintStart_toStartOf="@+id/guidelineItemWeatherHourlyStart"
         app:layout_constraintTop_toTopOf="@+id/textTime" />
 
     <TextView
@@ -35,7 +35,7 @@
         android:textSize="@dimen/sp_20"
         app:layout_constraintBottom_toTopOf="@+id/textWeatherDescription"
         app:layout_constraintStart_toEndOf="@+id/imageWeatherIcon"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:layout_constraintTop_toTopOf="@id/guidelineItemWeatherHourlyTop"
         app:layout_constraintVertical_chainStyle="spread" />
 
     <TextView
@@ -58,7 +58,7 @@
         android:src="@drawable/ic_round_keyboard_arrow_down_24"
         app:layout_constraintBottom_toBottomOf="@+id/imageWeatherIcon"
         app:layout_constraintDimensionRatio="1"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineItemWeatherHourlyEnd"
         app:layout_constraintTop_toTopOf="@+id/imageWeatherIcon" />
 
     <include
@@ -71,21 +71,21 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineStart"
+        android:id="@+id/guidelineItemWeatherHourlyStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/dp_32" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineTop"
+        android:id="@+id/guidelineItemWeatherHourlyTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="@dimen/dp_32" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineEnd"
+        android:id="@+id/guidelineItemWeatherHourlyEnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"

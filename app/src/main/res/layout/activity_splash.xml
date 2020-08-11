@@ -1,18 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:ignore="Overdraw">
 
     <ImageView
         android:id="@+id/imageSplash"
-        android:layout_width="@dimen/dp_120"
-        android:layout_height="@dimen/dp_120"
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="@dimen/dp_200"
         android:contentDescription="@null"
-        android:tint="@color/color_nevada"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
+        app:srcCompat="@drawable/ic_launcher_foreground"
+        app:tint="@color/color_nevada" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="bottom"
+        android:maxLines="1"
+        android:text="@string/app_name"
+        app:autoSizeMaxTextSize="@dimen/sp_60"
+        app:autoSizeMinTextSize="@dimen/sp_20"
+        app:autoSizeStepGranularity="@dimen/sp_2"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@+id/imageSplash"
+        app:layout_constraintEnd_toEndOf="@+id/imageSplash"
+        app:layout_constraintStart_toStartOf="@+id/imageSplash"
+        app:layout_constraintTop_toTopOf="@+id/imageSplash"
+        app:singleLine="true" />
+
+    <TextView
+        android:id="@+id/textStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_72"
+        android:layout_marginTop="@dimen/dp_4"
+        android:text="@string/title_splash_status_setup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageSplash" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/dp_4"
+        app:layout_constraintBottom_toBottomOf="@+id/textStatus"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintStart_toEndOf="@+id/textStatus"
+        app:layout_constraintTop_toTopOf="@+id/textStatus" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

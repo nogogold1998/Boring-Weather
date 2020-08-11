@@ -12,20 +12,22 @@ class CurrentPresenter(
     private val oneCallWeatherRepository: OneCallWeatherDataSource,
     private val cityRepository: CityRepository
 ) : CurrentContract.Presenter {
+    private var cachedCity = City.default
 
     override fun loadCityById(cityId: Int) = cityRepository.getCityById(cityId) {
         when (it) {
             is Result.Success -> it.data.let { city ->
+                this.cachedCity = city
                 view.showCity(city)
-                refreshCurrentWeather(city, false)
+                refreshCurrentWeather(false)
             }
             is Result.Error -> view.showError(R.string.error_unknown)
         }
     }
 
-    override fun refreshCurrentWeather(city: City, forceNetwork: Boolean) {
+    override fun refreshCurrentWeather(forceNetwork: Boolean) {
         val current = TimeUtils.getCurrentInSeconds()
-        oneCallWeatherRepository.getCurrentWeather(city, current, forceNetwork) {
+        oneCallWeatherRepository.getCurrentWeather(cachedCity, current, forceNetwork) {
             when (it) {
                 is Result.Success -> {
                     val currentWeather = it.data
@@ -33,7 +35,6 @@ class CurrentPresenter(
                 }
                 is Result.Error -> view.showError(R.string.error_refresh_failed)
             }
-            view.finishRefresh()
         }
     }
 

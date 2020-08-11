@@ -5,6 +5,7 @@
     <item
         android:id="@+id/searchCity"
         android:icon="@drawable/ic_round_search_24"
+        app:iconTint="?android:attr/colorControlNormal"
         android:title="@string/title_search"
         app:showAsAction="always" />
 </menu>
