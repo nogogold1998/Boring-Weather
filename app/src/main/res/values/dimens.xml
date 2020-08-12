@@ -16,9 +16,11 @@
     <dimen name="dp_240">240dp</dimen>
 
     <dimen name="sp_2">2sp</dimen>
+    <dimen name="dp_10">10dp</dimen>
     <dimen name="sp_20">20sp</dimen>
     <dimen name="sp_25">25sp</dimen>
     <dimen name="sp_30">30sp</dimen>
+    <dimen name="sp_35">35sp</dimen>
     <dimen name="sp_60">60sp</dimen>
 
     <item name="scaling_toolbar_image_start" format="float" type="dimen">1.2</item>
