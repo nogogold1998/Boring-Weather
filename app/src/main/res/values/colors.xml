@@ -7,4 +7,9 @@
     <color name="color_cod_gray">#1C1C1C</color>
     <color name="color_black_blur_dim">#40000000</color>
     <color name="color_white_blur_bright">#54FFFFFF</color>
+
+    <color name="color_dodger_blue">#34BEFF</color>
+    <color name="color_dolly">#FFF98F</color>
+    <color name="color_reef">#C2FF9D</color>
+    <color name="color_zest">#E47D2F</color>
 </resources>

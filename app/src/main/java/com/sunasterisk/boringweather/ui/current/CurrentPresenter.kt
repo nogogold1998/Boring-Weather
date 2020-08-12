@@ -5,6 +5,7 @@ import com.sunasterisk.boringweather.base.Result
 import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.data.repository.CityRepository
 import com.sunasterisk.boringweather.data.source.OneCallWeatherDataSource
+import com.sunasterisk.boringweather.util.LastFetchOutDateException
 import com.sunasterisk.boringweather.util.TimeUtils
 
 class CurrentPresenter(
@@ -33,7 +34,11 @@ class CurrentPresenter(
                     val currentWeather = it.data
                     view.showCurrentWeather(currentWeather)
                 }
-                is Result.Error -> view.showError(R.string.error_refresh_failed)
+                is Result.Error -> if (it.exception is LastFetchOutDateException) {
+                    view.showError(it.exception.errStringRes)
+                } else {
+                    view.showError(R.string.error_refresh_failed)
+                }
             }
         }
     }

@@ -20,6 +20,7 @@
         android:layout_height="0dp"
         android:contentDescription="@string/msg_weather_icon"
         android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="@id/textWeatherDescription"
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintStart_toStartOf="@+id/guidelineItemWeatherHourlyStart"
         app:layout_constraintTop_toTopOf="@+id/textTime" />
@@ -55,7 +56,6 @@
         android:drawablePadding="@dimen/dp_8"
         android:text="@string/title_holder_temperature"
         android:textSize="@dimen/sp_20"
-        app:drawableStartCompat="@drawable/ic_round_faces_24"
         app:layout_constraintBottom_toBottomOf="@+id/textWeatherDescription"
         app:layout_constraintEnd_toEndOf="@+id/textTemperature"
         app:layout_constraintTop_toBottomOf="@+id/textTemperature" />

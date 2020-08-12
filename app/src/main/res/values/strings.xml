@@ -67,6 +67,8 @@
     <string name="error_refresh_task_running">Refresh task is running</string>
     <string name="error_refresh_task_canceled">Refresh task has cancelled</string>
     <string name="error_refresh_city_null">Loading city failed</string>
+    <string name="error_refresh_city_not_outdated">Nope! Your data is recent</string>
+    <string name="error_refresh_city_spamming">Hold on. Are you spamming?😤</string>
     <string name="error_refresh_failed">Failed to refresh weather data</string>
     <string name="error_unknown">Unknown error has occurred!</string>
     <string name="error_search_result_error">Searching failed</string>

@@ -66,7 +66,7 @@ class DetailWeatherAdapter(
                 unitSystem.formatTemperature(data.temperature.average, resources)
             textWeatherDescription.text = data.weathers.firstOrNull()?.description ?: ""
             textFeelsLike.text = unitSystem.formatTemperature(
-                data.temperature.run { max + min } / 2, resources
+                data.temperature.run { max + min } / 2, resources, true
             )
             textSunrise.text = TimeUtils.formatToString(TimeUtils.FORMAT_TIME_SHORT, data.sunrise)
             textDayTemperature.text = unitSystem.formatTemperature(data.temperature.day, resources)
@@ -78,7 +78,7 @@ class DetailWeatherAdapter(
                 context.getString(R.string.format_percent_decimal, data.humidity)
             textVisibility.text = unitSystem.formatDistance(0, resources)
             textWindSpeed.text = unitSystem.formatSpeed(data.windSpeed, resources)
-            textUVIndex.text = data.uvIndex.toString()
+            data.uvIndex.takeIf { it > 0f }?.toString()?.let { textUVIndex.text = it }
             textPressure.text = unitSystem.formatPressure(data.pressure, resources)
             textCloud.text = context.getString(R.string.format_percent_decimal, data.clouds)
         }
@@ -117,12 +117,11 @@ class DetailWeatherAdapter(
                 context.getString(R.string.format_percent_decimal, data.humidity)
             textVisibility.text = unitSystem.formatDistance(data.visibility, resources)
             textWindSpeed.text = unitSystem.formatSpeed(data.windSpeed, resources)
-            textUVIndex.text =
-                data.uvIndex?.toString() ?: context.getString(R.string.title_holder_float_number)
+            data.uvIndex?.takeIf { it > 0 }?.toString()?.let { textUVIndex.text = it }
             textPressure.text = unitSystem.formatPressure(data.pressure, resources)
             textCloud.text = context.getString(R.string.format_percent_decimal, data.clouds)
             textTemperature.text = unitSystem.formatTemperature(data.temperature, resources)
-            textFeelsLikeHourly.text = unitSystem.formatTemperature(data.feelsLike, resources)
+            textFeelsLikeHourly.text = unitSystem.formatTemperature(data.feelsLike, resources, true)
             containerDetail.visibility = if (item.expanded) View.VISIBLE else View.GONE
             rotateAnimateExpandButton(item)
         }

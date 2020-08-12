@@ -16,6 +16,9 @@ import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.BaseFragment
@@ -27,6 +30,7 @@ import com.sunasterisk.boringweather.di.Injector
 import com.sunasterisk.boringweather.ui.main.findNavigator
 import com.sunasterisk.boringweather.ui.search.model.CityItem
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
+import com.sunasterisk.boringweather.util.isLazyInitialized
 import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
 import com.sunasterisk.boringweather.util.locationManager
 import com.sunasterisk.boringweather.util.networkState
@@ -44,7 +48,30 @@ class SearchFragment : BaseFragment(), SearchContract.View {
 
     private val pendingRestoreRecyclerViewPosition = Single<Int>()
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val fusedLocationClient: FusedLocationProviderClient by lazy {
+        LocationServices.getFusedLocationProviderClient(requireContext())
+    }
+
+    private val locationRequest: LocationRequest by lazy {
+        LocationRequest.create().apply {
+            interval = 60000
+            fastestInterval = 5000
+            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        }
+    }
+    private val locationCallback: LocationCallback by lazy {
+        object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                for (location in locationResult.locations) {
+                    if (location != null) {
+                        presenter?.searchCityByLocation(location)
+                    } else {
+                        showError(R.string.error_search_location_null)
+                    }
+                }
+            }
+        }
+    }
 
     private val cityAdapter: CityAdapter by lazy {
         CityAdapter(
@@ -65,8 +92,6 @@ class SearchFragment : BaseFragment(), SearchContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
         presenter = SearchPresenter(this, Injector.getCityRepository(requireContext()))
         savedInstanceState?.getInt(KEY_RECYCLER_POSITION)
             ?.let { pendingRestoreRecyclerViewPosition.value = it }
@@ -75,14 +100,14 @@ class SearchFragment : BaseFragment(), SearchContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initView()
-        initListener()
         if (context?.networkState == null) {
             context?.defaultSharedPreferences?.lastSearchInput = ""
             showError(R.string.error_network_no_connection)
         } else {
             requestInputFocus(editTextSearch)
         }
+        initView()
+        initListener()
         searchCity()
     }
 
@@ -90,6 +115,14 @@ class SearchFragment : BaseFragment(), SearchContract.View {
         super.onSaveInstanceState(outState)
         recyclerSearchCity?.lastCompletelyVisibleItemPosition
             ?.let { outState.putInt(KEY_RECYCLER_POSITION, it) }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        if (::locationCallback.isLazyInitialized) {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
     }
 
     @SuppressLint("ResourceType")
@@ -247,13 +280,7 @@ class SearchFragment : BaseFragment(), SearchContract.View {
     private fun performSearchUsingDeviceLocation() {
         context?.locationManager?.let {
             if (LocationManagerCompat.isLocationEnabled(it)) {
-                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                    if (location != null) {
-                        presenter?.searchCityByLocation(location)
-                    } else {
-                        showError(R.string.error_search_location_null)
-                    }
-                }
+                fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
             } else {
                 val title = getString(R.string.title_search_location_dialog)
                 val msg = getString(R.string.msg_search_location_dialog_location_off)

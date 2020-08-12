@@ -15,14 +15,25 @@ import kotlin.reflect.KProperty
 enum class UnitSystem {
     METRIC, IMPERIAL, INTERNATIONAL;
 
-    fun formatTemperature(temperature: Float, resources: Resources) =
-        when (this) {
+    fun formatTemperature(temperature: Float, resources: Resources, withEmoji: Boolean = false) =
+        (if (withEmoji) getFeelsLikeEmoji(temperature) + " " else "") + when (this) {
             METRIC -> R.string.format_temperature_metric to
                 (temperature * MULTIPLE_KELVIN_TO_CELSIUS + OFFSET_KELVIN_TO_CELSIUS)
             IMPERIAL -> R.string.format_temperature_imperial to
                 (temperature * MULTIPLE_KELVIN_TO_FAHRENHEIT + OFFSET_KELVIN_TO_FAHRENHEIT)
             INTERNATIONAL -> R.string.format_temperature_international to temperature
         }.let { (stringRes, unitTemperature) -> resources.getString(stringRes, unitTemperature) }
+
+    private fun getFeelsLikeEmoji(temperature: Float): String {
+        return when (temperature) {
+            in 0f..286f -> FeelsLikeEmoji.COLD
+            in 286f..293f -> FeelsLikeEmoji.NEUTRAL
+            in 293f..300f -> FeelsLikeEmoji.SMILE
+            in 300f..307f -> FeelsLikeEmoji.SWEAT
+            in 307f..314f -> FeelsLikeEmoji.HOT
+            else -> FeelsLikeEmoji.KNOCKED_OUT
+        }.toString()
+    }
 
     fun formatDistance(visibility: Int?, resources: Resources) =
         visibility?.div(METER_TO_KILOMETER)
@@ -63,3 +74,4 @@ private class UnitSystemDelegate<T>(private val initializer: () -> T) : ReadWrit
 
 fun <T> lazy(initializer: () -> T): ReadWriteProperty<Any?, T> =
     UnitSystemDelegate(initializer)
+

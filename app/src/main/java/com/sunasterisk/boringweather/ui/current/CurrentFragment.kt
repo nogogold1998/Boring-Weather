@@ -8,8 +8,10 @@ import androidx.core.view.GravityCompat
 import androidx.core.widget.NestedScrollView
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.setFragmentResultListener
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
 import com.sunasterisk.boringweather.R
+import com.sunasterisk.boringweather.base.AppbarStateChangeListener
 import com.sunasterisk.boringweather.base.BaseFragment
 import com.sunasterisk.boringweather.base.Single
 import com.sunasterisk.boringweather.data.model.City
@@ -23,8 +25,10 @@ import com.sunasterisk.boringweather.ui.search.SearchConstants
 import com.sunasterisk.boringweather.util.DefaultSharedPreferences
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.UnitSystem
+import com.sunasterisk.boringweather.util.blur
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
 import com.sunasterisk.boringweather.util.firstCompletelyVisibleItemPosition
+import com.sunasterisk.boringweather.util.gifUrl
 import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
 import com.sunasterisk.boringweather.util.lazy
 import com.sunasterisk.boringweather.util.load
@@ -42,19 +46,31 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
     DrawerLayout.DrawerListener {
 
     private var cityId = City.default.id
-
     private var todayDailyWeather = DailyWeather.default
-
-    private var unitSystem: UnitSystem by lazy { defaultSharedPreferences.unitSystem }
-
-    private var pendingDrawerCloseRunnable = Single<Runnable>()
-
-    private val pendingRestoreTodayRecyclerViewPosition = Single<Int>()
-
-    private val pendingRestoreForecastRecyclerViewPosition = Single<Int>()
 
     private val defaultSharedPreferences: DefaultSharedPreferences
         by lazy { requireContext().defaultSharedPreferences }
+    private val unitSystem: UnitSystem by lazy { defaultSharedPreferences.unitSystem }
+
+    private val pendingDrawerCloseRunnable = Single<Runnable>()
+    private val pendingRestoreTodayRecyclerViewPosition = Single<Int>()
+    private val pendingRestoreForecastRecyclerViewPosition = Single<Int>()
+    private var expandedCollapsingToolbar = true
+
+    private val appbarStateChangeListener = object : AppbarStateChangeListener() {
+        override fun onStateChanged(appBarLayout: AppBarLayout?, state: State?) {
+            when (state) {
+                State.EXPANDED -> {
+                    swipeRefreshLayout.isEnabled = true
+                    expandedCollapsingToolbar = true
+                }
+                else -> {
+                    if (!swipeRefreshLayout.isRefreshing) swipeRefreshLayout.isEnabled = false
+                    if (state == State.COLLAPSED) expandedCollapsingToolbar = false
+                }
+            }
+        }
+    }
 
     override val layoutResource = R.layout.fragment_current
 
@@ -90,14 +106,15 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
         super.onViewCreated(view, savedInstanceState)
 
         presenter?.loadCityById(cityId)
-        initViews()
+        initViews(savedInstanceState)
         savedInstanceState?.let(::pendingRestoreRecyclerView)
-        navView.getHeaderView(0).imageOpenWeather.load(getString(R.string.url_open_weather_icon)) {
-            fitCenter()
-        }
+        navView.getHeaderView(0).imageOpenWeather
+            .load(getString(R.string.url_open_weather_icon)) {
+                fitCenter()
+            }
     }
 
-    private fun initViews() {
+    private fun initViews(savedInstanceState: Bundle?) {
         navView.setNavigationItemSelectedListener(this)
         drawerLayout.addDrawerListener(this)
 
@@ -107,15 +124,28 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             if (!swipeRefreshLayout.isRefreshing) swipeRefreshLayout.isEnabled = false
             if (scrollView.verticalScrollProgress == 0f) swipeRefreshLayout.isEnabled = true
         }
+        with(appbarCurrent) {
+            post {
+                val isExpanded =
+                    savedInstanceState?.getBoolean(KEY_EXPANDED_COLLAPSING_TOOL_BAR)
+                        ?: expandedCollapsingToolbar
+                setExpanded(isExpanded)
+                expandedCollapsingToolbar = isExpanded
 
-        appbarCurrent.toolbarSearch
-            .setNavigationOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
+                addOnOffsetChangedListener(appbarStateChangeListener)
+            }
+        }
+        appbarCurrent.toolbarSearch.setNavigationOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
 
         toolbarSearch.setOnMenuItemClickListener {
             if (it.itemId == R.id.searchCity) {
                 findNavigator()?.navigateToSearchFragment()
                 true
-            } else false
+            } else {
+                false
+            }
         }
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -132,7 +162,7 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
         super.onSaveInstanceState(outState)
 
         outState.putInt(KEY_CITY_ID, cityId)
-
+        outState.putBoolean(KEY_EXPANDED_COLLAPSING_TOOL_BAR, expandedCollapsingToolbar)
         saveRecyclerViewsState(outState)
     }
 
@@ -143,6 +173,7 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             recyclerTodaySummaryWeather?.firstCompletelyVisibleItemPosition
         pendingRestoreForecastRecyclerViewPosition.value =
             recyclerForecastSummaryWeather?.firstCompletelyVisibleItemPosition
+        appbarCurrent.removeOnOffsetChangedListener(appbarStateChangeListener)
     }
 
     private fun initRecyclerViews() {
@@ -231,6 +262,14 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             showForecastSummaryWeather(forecastSummary)
             finishRefresh()
         }, animTime)
+        currentWeather.currentWeather.weathers.firstOrNull()?.gifUrl?.let(::loadDecorImages)
+    }
+
+    private fun loadDecorImages(url: String) {
+        imageToolbar.load(url)
+        imageCurrentBackground.load(url) {
+            blur(5, 2)
+        }
     }
 
     override fun showError(errorStringRes: Int) {
@@ -245,12 +284,12 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
         textDateTime.text =
             TimeUtils.formatToString(TimeUtils.FORMAT_DATE_LONG_TIME_SHORT_, dateTime)
         textCurrentTemperature.text = unitSystem.formatTemperature(temperature, resources)
-        textFeelsLike.text = unitSystem.formatTemperature(feelsLike, resources)
+        textFeelsLike.text = unitSystem.formatTemperature(feelsLike, resources, true)
         textWeatherDescription.text =
             weathers.getOrNull(0)?.description ?: getString(R.string.title_holder_description)
         textVisibility.text = unitSystem.formatDistance(visibility, resources)
         textWindSpeed.text = unitSystem.formatSpeed(windSpeed, resources)
-        textUVIndex.text = uvIndex?.toString() ?: getString(R.string.title_holder_float_number)
+        uvIndex?.takeIf { it > 0 }?.toString()?.let { textUVIndex.text = it }
         textPressure.text = unitSystem.formatPressure(pressure, resources)
         textCloud.text = getString(R.string.format_percent_decimal, clouds)
         textHumidity.text = getString(R.string.format_percent_decimal, humidity)
@@ -282,9 +321,10 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
     }
 
     private fun finishRefresh() {
-        requireView().swipeRefreshLayout.post {
-            swipeRefreshLayout.isRefreshing = false
-            swipeRefreshLayout.isEnabled = scrollView.verticalScrollProgress == 0f
+        requireView().swipeRefreshLayout.run {
+            post {
+                isRefreshing = false
+            }
         }
     }
 
@@ -292,6 +332,7 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
         private const val KEY_TODAY_RECYCLER_POSITION = "today_recycler_pos"
         private const val KEY_FORECAST_RECYCLER_POSITION = "forecast_recycler_pos"
         private const val KEY_CITY_ID = "city_id"
+        private const val KEY_EXPANDED_COLLAPSING_TOOL_BAR = "expanded_collapsing_tool_bar"
 
         private const val ARGUMENT_CITY_ID = "arg_city_id"
 
