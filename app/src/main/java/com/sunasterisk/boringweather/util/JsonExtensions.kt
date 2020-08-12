@@ -25,17 +25,6 @@ inline fun <R> JSONObject.tryOrNull(tryBlock: JSONObject.() -> R): R? {
     }
 }
 
-/**
- * try to get something in [tryBlock] if the value with given name is exists then it's returned, else
- * return [default] value
- * @param default type [R]
- * @param tryBlock the block try to get a value
- * @return [R] - if it exists else [default]
- * @throws JSONException if the exception is not [JSONException]: JSONObject[".."] not found.
- */
-inline fun <R> JSONObject.tryOrElse(default: R, tryBlock: JSONObject.() -> R): R =
-    tryOrNull(tryBlock) ?: default
-
 inline fun <R> JSONArray.map(transform: (JSONObject) -> R?): List<R> =
     mutableListOf<R>().also { list ->
         repeat(length()) {

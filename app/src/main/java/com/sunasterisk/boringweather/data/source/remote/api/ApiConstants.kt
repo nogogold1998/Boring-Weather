@@ -15,10 +15,7 @@ object ApiConstants {
     const val QUERY_EXCLUDE = "exclude"
     const val QUERY_API_KEY = "appid"
 
-    const val PARAM_EXCLUDE_CURRENT = "current"
     const val PARAM_EXCLUDE_MINUTELY = "minutely"
-    const val PARAM_EXCLUDE_HOURLY = "hourly"
-    const val PARAM_EXCLUDE_DAILY = "daily"
 
     const val METHOD_GET = "GET"
 }

@@ -14,15 +14,6 @@ val ScrollingView.verticalScrollProgress: Float
         return offset / (range - extent).toFloat()
     }
 
-val ScrollingView.horizontalScrollProgress: Float
-    get() {
-        val offset = computeHorizontalScrollOffset()
-        val extent = computeHorizontalScrollExtent()
-        val range = computeHorizontalScrollRange()
-
-        return offset / (range - extent).toFloat()
-    }
-
 val RecyclerView.lastCompletelyVisibleItemPosition: Int
     get() = (layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: 0
 

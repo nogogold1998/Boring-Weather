@@ -20,8 +20,6 @@ object Constants {
 
     const val DAY_TO_HOURS = 24
 
-    const val DAY_TO_SECONDS = DAY_TO_HOURS * HOUR_TO_MINUTES * MINUTE_TO_SECONDS
-
     const val NOTIFICATION_ID_PREPOPULATE_DATABASE_SERVICE = 16
 
     const val EXTRA_URL_STRING_PREPOPULATE_DATABASE = "url_string_prepopulate_database"

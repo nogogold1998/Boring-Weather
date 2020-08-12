@@ -1,16 +1,10 @@
 package com.sunasterisk.boringweather.data.model
 
 import android.content.ContentValues
-import android.content.res.Resources
 import android.database.Cursor
-import androidx.annotation.RawRes
-import androidx.annotation.WorkerThread
 import com.sunasterisk.boringweather.data.source.local.CityTable
 import com.sunasterisk.boringweather.util.getOrElse
-import com.sunasterisk.boringweather.util.map
-import org.json.JSONArray
 import org.json.JSONObject
-import java.io.BufferedReader
 
 data class City(
     val id: Int,
@@ -49,13 +43,6 @@ data class City(
 
     companion object {
         val default = City(0, "", "", CityTable.DEFAULT_COL_LAST_FETCH, Coordinate())
-
-        @WorkerThread
-        fun getFromRaw(resource: Resources, @RawRes rawId: Int): List<City> {
-            val inputStream = resource.openRawResource(rawId)
-            val jsonString = inputStream.bufferedReader().use(BufferedReader::readText)
-            return JSONArray(jsonString).map(::City)
-        }
 
         private const val ID = "id"
         private const val NAME = "name"
