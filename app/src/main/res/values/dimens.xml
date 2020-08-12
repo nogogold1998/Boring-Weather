@@ -9,11 +9,14 @@
     <dimen name="dp_16">16dp</dimen>
     <dimen name="dp_24">24dp</dimen>
     <dimen name="dp_32">32dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
     <dimen name="dp_48">48dp</dimen>
     <dimen name="dp_72">72dp</dimen>
     <dimen name="dp_120">120dp</dimen>
     <dimen name="dp_200">200dp</dimen>
     <dimen name="dp_240">240dp</dimen>
+    <dimen name="dp_250">250dp</dimen>
+    <dimen name="widget_margin">@dimen/dp_8</dimen>
 
     <dimen name="sp_2">2sp</dimen>
     <dimen name="dp_10">10dp</dimen>

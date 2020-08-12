@@ -1,5 +1,8 @@
 package com.sunasterisk.boringweather.ui.current
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -10,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.setFragmentResultListener
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
+import com.sunasterisk.boringweather.CurrentWeatherWidget
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.AppbarStateChangeListener
 import com.sunasterisk.boringweather.base.BaseFragment
@@ -263,6 +267,22 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             finishRefresh()
         }, animTime)
         currentWeather.currentWeather.weathers.firstOrNull()?.gifUrl?.let(::loadDecorImages)
+
+        if (cityId == defaultSharedPreferences.selectedCityId) updateCurrentWeatherWidget()
+    }
+
+    private fun updateCurrentWeatherWidget() {
+        val context = requireContext()
+        val intent = Intent(context, CurrentWeatherWidget::class.java).apply {
+            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        }
+        val idArr = AppWidgetManager.getInstance(context)?.getAppWidgetIds(
+            ComponentName(context.applicationContext, CurrentWeatherWidget::class.java)
+        )
+        idArr?.let {
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, it)
+            context.sendBroadcast(intent)
+        }
     }
 
     private fun loadDecorImages(url: String) {

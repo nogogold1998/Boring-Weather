@@ -74,4 +74,3 @@ private class UnitSystemDelegate<T>(private val initializer: () -> T) : ReadWrit
 
 fun <T> lazy(initializer: () -> T): ReadWriteProperty<Any?, T> =
     UnitSystemDelegate(initializer)
-
