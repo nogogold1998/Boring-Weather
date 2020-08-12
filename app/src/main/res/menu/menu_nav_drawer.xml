@@ -7,14 +7,17 @@
         android:title="@string/menu_current" />
     <item
         android:id="@+id/itemForecast"
+        android:enabled="false"
         android:icon="@drawable/ic_round_week_calendar_24"
         android:title="@string/menu_forecast" />
     <item
         android:id="@+id/itemHistory"
+        android:enabled="false"
         android:icon="@drawable/ic_round_history_24"
         android:title="@string/menu_history" />
     <item
         android:id="@+id/itemLocations"
+        android:enabled="false"
         android:icon="@drawable/ic_round_location_24"
         android:title="@string/menu_locations" />
     <item

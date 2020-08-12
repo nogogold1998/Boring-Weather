@@ -28,7 +28,7 @@
     <item name="scaling_text_title_start" format="float" type="dimen">1.0</item>
     <item name="scaling_text_title_end" format="float" type="dimen">0.625</item>
     <item name="scaling_image_background_start" format="float" type="dimen">1.0</item>
-    <item name="scaling_image_background_end" format="float" type="dimen">1.2</item>
+    <item name="scaling_image_background_end" format="float" type="dimen">1.375</item>
 
     <item name="scaling_animation_small" format="float" type="dimen">0.9</item>
     <item name="scaling_animation_normal" format="float" type="dimen">0.9</item>

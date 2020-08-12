@@ -59,7 +59,6 @@
             <CustomAttribute
                 motion:attributeName="imageAlpha"
                 motion:customIntegerValue="0" />
-            <PropertySet android:visibility="invisible" />
             <Transform
                 android:scaleX="@dimen/scaling_image_background_start"
                 android:scaleY="@dimen/scaling_image_background_start"
@@ -86,7 +85,7 @@
         <Constraint android:id="@+id/textToolbarTitle">
             <Layout
                 android:layout_height="wrap_content"
-                motion:layout_constraintStart_toEndOf="@id/imageUpButton"
+                motion:layout_constraintStart_toStartOf="@id/textTitleDetail"
                 motion:layout_constraintTop_toTopOf="parent" />
             <Transform
                 android:elevation="@dimen/dp_2"
@@ -102,7 +101,6 @@
         </Constraint>
 
         <Constraint android:id="@+id/imageBackground">
-            <PropertySet android:visibility="visible" />
             <CustomAttribute
                 motion:attributeName="imageAlpha"
                 motion:customIntegerValue="255" />
@@ -123,6 +121,10 @@
                 motion:layout_constraintBottom_toTopOf="parent" />
             <PropertySet android:visibility="invisible" />
             <Transform android:elevation="@dimen/dp_2" />
+        </Constraint>
+
+        <Constraint android:id="@+id/viewBackgroundWeatherDailyHeader">
+            <PropertySet android:visibility="invisible" />
         </Constraint>
     </ConstraintSet>
 </MotionScene>

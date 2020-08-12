@@ -28,14 +28,20 @@ class CityDaoImpl private constructor(sqLiteOpenHelper: SQLiteOpenHelper) : City
 
     // FIXME: wrong result due to calculating distance
     override fun getCityByCoordinate(coordinate: Coordinate): City? {
-        val deltaLon = "(${CityTable.COL_COORDINATE_LON} - ${coordinate.longitude})"
-        val deltaLat = "(${CityTable.COL_COORDINATE_LAT} - ${coordinate.latitude})"
+        val deltaLon = "(${CityTable.COL_COORDINATE_LON} - ?)"
+        val deltaLat = "(${CityTable.COL_COORDINATE_LAT} - ?)"
         val cursor = readableDb.rawQuery(
             """
             |SELECT * FROM ${CityTable.TABLE_NAME}
             |ORDER BY ($deltaLon*$deltaLon + $deltaLat*$deltaLat) ASC
             |LIMIT 1;""".trimMargin()
-            , null
+            ,
+            floatArrayOf(
+                coordinate.longitude, coordinate.longitude,
+                coordinate.latitude, coordinate.latitude
+            )
+                .map(Float::toString)
+                .toTypedArray()
         )
         return cursor?.use { if (it.moveToFirst()) City(it) else null }
     }

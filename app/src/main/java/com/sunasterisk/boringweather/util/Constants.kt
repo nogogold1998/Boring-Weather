@@ -16,6 +16,8 @@ object Constants {
 
     const val HOUR_TO_MINUTES = 60
 
+    const val HOUR_TO_SECONDS = HOUR_TO_MINUTES * MINUTE_TO_SECONDS
+
     const val DAY_TO_HOURS = 24
 
     const val DAY_TO_SECONDS = DAY_TO_HOURS * HOUR_TO_MINUTES * MINUTE_TO_SECONDS

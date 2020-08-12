@@ -5,6 +5,7 @@ import com.sunasterisk.boringweather.base.Result
 import com.sunasterisk.boringweather.data.source.CityDataSource
 import com.sunasterisk.boringweather.data.source.OneCallWeatherDataSource
 import com.sunasterisk.boringweather.ui.detail.model.LoadDetailWeatherRequest
+import com.sunasterisk.boringweather.util.LastFetchOutDateException
 
 class DetailPresenter(
     override val view: DetailContract.View,
@@ -23,11 +24,11 @@ class DetailPresenter(
                     ) { detailResult ->
                         when (detailResult) {
                             is Result.Success -> view.showDetailWeather(detailResult.data)
-                            is Result.Error -> {
-                                view.showCity(city)
-                                view.showError(R.string.error_refresh_result_null)
-                            }
+                            is Result.Error -> if (detailResult.exception is LastFetchOutDateException) {
+                                detailResult.exception.errStringRes.let(view::showError)
+                            } else view.showError(R.string.error_refresh_result_null)
                         }
+                        view.showCity(city)
                         view.finishRefresh()
                     }
                 }

@@ -1,7 +1,6 @@
 package com.sunasterisk.boringweather.ui.detail
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
@@ -22,8 +21,11 @@ import com.sunasterisk.boringweather.ui.detail.model.HourlyWeatherItem
 import com.sunasterisk.boringweather.ui.detail.model.LoadDetailWeatherRequest
 import com.sunasterisk.boringweather.ui.main.findNavigator
 import com.sunasterisk.boringweather.util.TimeUtils
+import com.sunasterisk.boringweather.util.blur
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
+import com.sunasterisk.boringweather.util.gifUrl
 import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
+import com.sunasterisk.boringweather.util.load
 import com.sunasterisk.boringweather.util.setupDefaultItemDecoration
 import com.sunasterisk.boringweather.util.showToast
 import com.sunasterisk.boringweather.util.verticalScrollProgress
@@ -41,6 +43,8 @@ class DetailFragment : BaseFragment(), DetailContract.View {
 
     private var adapter: DetailWeatherAdapter? = null
 
+    private var gifUrl: String? = null
+
     private val pendingRestoreExpandedItem = Single<List<Long>>()
 
     private val pendingRestoreRecyclerScrollPosition = Single<Int>()
@@ -51,19 +55,17 @@ class DetailFragment : BaseFragment(), DetailContract.View {
         resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
     }
 
-    private val actionBarSize: Int by lazy {
-        val typedValue = TypedValue()
-        return@lazy if (requireContext().theme
-                .resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
-        ) {
-            TypedValue.complexToDimensionPixelSize(typedValue.data, resources.displayMetrics)
-        } else 0
-    }
-
-    private val imageBackgroundScaling: Float by lazy {
-        val typedValue = TypedValue()
-        resources.getValue(R.dimen.scaling_image_background_end, typedValue, true)
-        typedValue.float
+    private val motionListener: BaseTransitionListener by lazy {
+        object : BaseTransitionListener() {
+            override fun onTransitionCompleted(layout: MotionLayout, completedState: Int) {
+                when (completedState) {
+                    layout.endState -> {
+                        if (!swipeRefreshLayout.isRefreshing) swipeRefreshLayout.isEnabled = false
+                    }
+                    layout.startState -> swipeRefreshLayout.isEnabled = true
+                }
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,6 +97,7 @@ class DetailFragment : BaseFragment(), DetailContract.View {
         presenter?.loadDetailWeather(LoadDetailWeatherRequest(cityId, dailyWeatherDateTime))
 
         savedInstanceState?.let(::pendingRestoreRecyclerView)
+        savedInstanceState?.getString(KEY_GIF_URL)?.let(::loadDecorImages)
     }
 
     private fun pendingRestoreRecyclerView(savedInstanceState: Bundle) = with(savedInstanceState) {
@@ -108,10 +111,21 @@ class DetailFragment : BaseFragment(), DetailContract.View {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        presenter?.cancel()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         saveRecyclerViewState(outState)
+        outState.putString(KEY_GIF_URL, gifUrl)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        motionDetail.removeTransitionListener(motionListener)
     }
 
     private fun saveRecyclerViewState(outState: Bundle) {
@@ -127,19 +141,7 @@ class DetailFragment : BaseFragment(), DetailContract.View {
     }
 
     private fun setupMotionDetail() {
-        motionDetail.addTransitionListener(object : BaseTransitionListener() {
-            override fun onTransitionCompleted(layout: MotionLayout, completedState: Int) {
-                when (completedState) {
-                    layout.endState -> {
-                        if (!swipeRefreshLayout.isRefreshing)
-                            swipeRefreshLayout.isEnabled = false
-                    }
-                    layout.startState -> {
-                        swipeRefreshLayout.isEnabled = true
-                    }
-                }
-            }
-        })
+        motionDetail.addTransitionListener(motionListener)
     }
 
     private fun setupSwipeRefreshLayout() {
@@ -163,14 +165,9 @@ class DetailFragment : BaseFragment(), DetailContract.View {
         setOnScrollChangeListener { _: View, _: Int, _: Int, _: Int, _: Int ->
             val scrollProgress = verticalScrollProgress
             if (scrollProgress > 0f) motionDetail?.transitionToEnd()
-            translateBackgroundImage(scrollProgress)
         }
 
         setupDefaultItemDecoration()
-    }
-
-    private fun translateBackgroundImage(scrollProgress: Float) {
-        imageBackground.translationY = (1 - scrollProgress * actionBarSize) * imageBackgroundScaling
     }
 
     override fun showError(errorStringRes: Int) {
@@ -191,6 +188,7 @@ class DetailFragment : BaseFragment(), DetailContract.View {
                 }
             }
         ).executeOnExecutor(detailWeather)
+        detailWeather.dailyWeather.weathers.firstOrNull()?.gifUrl?.let(::loadDecorImages) ?: Unit
     }
 
     override fun finishRefresh() {
@@ -201,6 +199,14 @@ class DetailFragment : BaseFragment(), DetailContract.View {
     override fun showCity(city: City) {
         this.cityId = city.id
         textToolbarTitle.text = city.name
+    }
+
+    private fun loadDecorImages(url: String) {
+        gifUrl = url
+        imageToolbar.load(url)
+        imageBackground.load(url) {
+            blur(5, 2)
+        }
     }
 
     private fun findFocusItemPosition(list: List<DetailWeatherAdapterItem<*>>) {
@@ -242,6 +248,7 @@ class DetailFragment : BaseFragment(), DetailContract.View {
 
         private const val KEY_EXPANDED_ITEMS = "expanded_items"
         private const val KEY_SCROLL_POSITION = "scroll_progress"
+        private const val KEY_GIF_URL = "gif_url"
 
         fun newInstance(
             cityId: Int,

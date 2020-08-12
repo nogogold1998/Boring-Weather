@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/dp_200"
-    android:background="@color/color_ziggurat"
     tools:ignore="Overdraw">
 
     <TextView
@@ -118,7 +117,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="@dimen/dp_8"
         android:text="@string/title_holder_temperature"
-        app:drawableStartCompat="@drawable/ic_round_faces_24"
+        android:textSize="@dimen/sp_20"
         app:layout_constraintBaseline_toBaselineOf="@+id/textDateTime"
         app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical" />
 

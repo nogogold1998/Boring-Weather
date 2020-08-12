@@ -30,6 +30,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:navigationIcon="@drawable/ic_round_arrow_back_24"
-            app:title="@string/title_settings" />
+            app:title="@string/title_settings"
+            app:titleTextColor="?android:attr/colorForegroundInverse" />
     </com.google.android.material.appbar.AppBarLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
