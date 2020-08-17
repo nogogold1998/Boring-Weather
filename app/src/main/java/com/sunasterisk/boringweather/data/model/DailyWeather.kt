@@ -2,6 +2,7 @@ package com.sunasterisk.boringweather.data.model
 
 import android.content.ContentValues
 import android.database.Cursor
+import com.google.gson.annotations.SerializedName
 import com.sunasterisk.boringweather.data.source.local.DailyWeatherTable
 import com.sunasterisk.boringweather.util.get
 import com.sunasterisk.boringweather.util.getOrElse
@@ -11,20 +12,21 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 data class DailyWeather(
-    val dateTime: Long,
-    val sunrise: Long,
-    val sunset: Long,
-    val temperature: Temperature,
-    val pressure: Int,
-    val humidity: Int,
-    val dewPoint: Float,
-    val windSpeed: Float,
-    val windDegrees: Int,
-    val weathers: List<Weather>,
-    val clouds: Int,
-    val uvIndex: Float
+    @SerializedName(DT) val dateTime: Long,
+    @SerializedName(SUNRISE) val sunrise: Long,
+    @SerializedName(SUNSET) val sunset: Long,
+    @SerializedName(TEMP) val temperature: Temperature,
+    @SerializedName(PRESSURE) val pressure: Int,
+    @SerializedName(HUMIDITY) val humidity: Int,
+    @SerializedName(DEW_POINT) val dewPoint: Float,
+    @SerializedName(WIND_SPEED) val windSpeed: Float,
+    @SerializedName(WIND_DEGREES) val windDegrees: Int,
+    @SerializedName(WEATHER) val weathers: List<Weather>,
+    @SerializedName(CLOUDS) val clouds: Int,
+    @SerializedName(UVI) val uvIndex: Float
 ) {
 
+    @Deprecated("use gson library instead")
     constructor(jsonObject: JSONObject) : this(
         jsonObject.getOrElse(DT, default.dateTime),
         jsonObject.getOrElse(SUNRISE, default.sunrise),

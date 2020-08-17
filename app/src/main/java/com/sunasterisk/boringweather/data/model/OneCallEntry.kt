@@ -1,5 +1,6 @@
 package com.sunasterisk.boringweather.data.model
 
+import com.google.gson.annotations.SerializedName
 import com.sunasterisk.boringweather.util.getOrElse
 import com.sunasterisk.boringweather.util.getOrNull
 import com.sunasterisk.boringweather.util.map
@@ -7,15 +8,16 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 data class OneCallEntry(
-    var latitude: Float,
-    var longitude: Float,
-    var timeZone: String,
-    var timeZoneOffset: Long,
-    var current: HourlyWeather,
-    var hourly: List<HourlyWeather>,
-    var daily: List<DailyWeather>
+    @SerializedName(LAT) val latitude: Float,
+    @SerializedName(LON) val longitude: Float,
+    @SerializedName(TIMEZONE) val timeZone: String,
+    @SerializedName(TIMEZONE_OFFSET) val timeZoneOffset: Long,
+    @SerializedName(CURRENT) val current: HourlyWeather,
+    @SerializedName(HOURLY) val hourly: List<HourlyWeather>,
+    @SerializedName(DAILY) val daily: List<DailyWeather>
 ) {
 
+    @Deprecated("use gson library instead")
     constructor(jsonObject: JSONObject) : this(
         jsonObject.getOrElse(LAT, default.latitude),
         jsonObject.getOrElse(LON, default.longitude),

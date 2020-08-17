@@ -2,6 +2,7 @@ package com.sunasterisk.boringweather.data.model
 
 import android.content.ContentValues
 import android.database.Cursor
+import com.google.gson.annotations.SerializedName
 import com.sunasterisk.boringweather.data.source.local.HourlyWeatherTable
 import com.sunasterisk.boringweather.util.get
 import com.sunasterisk.boringweather.util.getOrElse
@@ -11,23 +12,24 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 data class HourlyWeather(
-    val dateTime: Long,
-    val temperature: Float,
-    val feelsLike: Float,
-    val pressure: Int,
-    val humidity: Int,
-    val dewPoint: Float,
-    val clouds: Int,
-    val windSpeed: Float,
-    val windDegrees: Int,
-    val weathers: List<Weather>,
-    val visibility: Int?,
-    val windGust: Float?,
-    val rain: Volume?,
-    val snow: Volume?,
-    val uvIndex: Float?
+    @SerializedName(DT) val dateTime: Long,
+    @SerializedName(TEMP) val temperature: Float,
+    @SerializedName(FEELS_LIKE) val feelsLike: Float,
+    @SerializedName(PRESSURE) val pressure: Int,
+    @SerializedName(HUMIDITY) val humidity: Int,
+    @SerializedName(DEW_POINT) val dewPoint: Float,
+    @SerializedName(CLOUDS) val clouds: Int,
+    @SerializedName(WIND_SPEED) val windSpeed: Float,
+    @SerializedName(WIND_DEGREES) val windDegrees: Int,
+    @SerializedName(WEATHER) val weathers: List<Weather>,
+    @SerializedName(VISIBILITY) val visibility: Int?,
+    @SerializedName(WIND_GUST) val windGust: Float?,
+    @SerializedName(RAIN) val rain: Volume?,
+    @SerializedName(SNOW) val snow: Volume?,
+    @SerializedName(UV_INDEX) val uvIndex: Float?
 ) {
 
+    @Deprecated("use retrofit gson library instead")
     constructor(jsonObject: JSONObject) : this(
         jsonObject.getOrElse(DT, default.dateTime),
         jsonObject.getOrElse(TEMP, default.temperature),
