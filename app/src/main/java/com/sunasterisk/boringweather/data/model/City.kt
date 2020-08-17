@@ -2,16 +2,21 @@ package com.sunasterisk.boringweather.data.model
 
 import android.content.ContentValues
 import android.database.Cursor
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.sunasterisk.boringweather.data.source.local.CityTable
 import com.sunasterisk.boringweather.util.getOrElse
 import org.json.JSONObject
 
+@Entity
 data class City(
-    val id: Int,
+    @PrimaryKey val id: Int,
     val name: String,
     val country: String,
-    val lastFetch: Long,
-    val coordinate: Coordinate
+    @ColumnInfo(defaultValue = "0") val lastFetch: Long,
+    @Embedded val coordinate: Coordinate
 ) {
     constructor(jsonObject: JSONObject) : this(
         jsonObject.getInt(ID),

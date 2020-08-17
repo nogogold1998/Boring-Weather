@@ -162,10 +162,39 @@ object DummyJsonData {
     ) to TestHelper.readContentFromFilePath(TestHelper.ONE_CALL_JSON_FILE_PATH)
 
     val hanoi = City(
-        1581130,
-        "Ha Noi",
-        "VN",
-        City.default.lastFetch,
+        1581130, "Ha Noi", "VN", City.default.lastFetch,
         Coordinate(105.841171f, 21.0245f)
+    )
+
+    val haiphong = City(
+        1581297, "Thành Phố Hải Phòng", "VN", City.default.lastFetch,
+        Coordinate(106.583328f, 20.83333f)
+    )
+
+    val cities = listOf(
+        City(
+            1581047, "Ha Tinh", "VN", 0,
+            Coordinate(105.900002f, 18.33333f)
+        ),
+        City(
+            1581052, "Ha Tien", "VN", 0,
+            Coordinate(105.900002f, 18.33333f)
+        ),
+        City(
+            1581088, "Tỉnh Gia Lai", "VN", 0,
+            Coordinate(105.900002f, 18.33333f)
+        ),
+        City(
+            1581129, "Thủ Ðô Hà Nội", "VN", 0,
+            Coordinate(105.900002f, 18.33333f)
+        ),
+        City(
+            7535696, "Spitsbergen", "SJ", 0,
+            Coordinate(17.709961f, 78.052902f)
+        ),
+        City(
+            7535697, "Spitsbergen", "SJ", 0,
+            Coordinate(78.052902f, 17.709961f)
+        )
     )
 }
