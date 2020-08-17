@@ -6,10 +6,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.sunasterisk.boringweather.data.model.City
 
-@Database(entities = [City::class], version = 1, exportSchema = false)
+@Database(
+    entities = [City::class, DailyWeatherEntity::class, HourlyWeatherEntity::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class AppRoomDatabase : RoomDatabase() {
 
     abstract fun cityDao(): CityDao
+
+    abstract fun dailyWeatherDao(): DailyWeatherDao
+
+    abstract fun hourlyWeatherDao(): HourlyWeatherDao
 
     companion object {
         private const val DATABASE_NAME = "boring-room-database"

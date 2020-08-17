@@ -2,6 +2,7 @@ package com.sunasterisk.boringweather.data.model
 
 import android.content.ContentValues
 import android.database.Cursor
+import androidx.room.Ignore
 import com.google.gson.annotations.SerializedName
 import com.sunasterisk.boringweather.data.source.local.HourlyWeatherTable
 import com.sunasterisk.boringweather.util.get
@@ -11,7 +12,7 @@ import com.sunasterisk.boringweather.util.map
 import org.json.JSONArray
 import org.json.JSONObject
 
-data class HourlyWeather(
+data class HourlyWeather @JvmOverloads constructor(
     @SerializedName(DT) val dateTime: Long,
     @SerializedName(TEMP) val temperature: Float,
     @SerializedName(FEELS_LIKE) val feelsLike: Float,
@@ -21,11 +22,11 @@ data class HourlyWeather(
     @SerializedName(CLOUDS) val clouds: Int,
     @SerializedName(WIND_SPEED) val windSpeed: Float,
     @SerializedName(WIND_DEGREES) val windDegrees: Int,
-    @SerializedName(WEATHER) val weathers: List<Weather>,
+    @SerializedName(WEATHER) @Ignore val weathers: List<Weather> = emptyList(),
     @SerializedName(VISIBILITY) val visibility: Int?,
     @SerializedName(WIND_GUST) val windGust: Float?,
-    @SerializedName(RAIN) val rain: Volume?,
-    @SerializedName(SNOW) val snow: Volume?,
+    @SerializedName(RAIN) @Ignore val rain: Volume? = null,
+    @SerializedName(SNOW) @Ignore val snow: Volume? = null,
     @SerializedName(UV_INDEX) val uvIndex: Float?
 ) {
 

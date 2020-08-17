@@ -26,6 +26,8 @@ class CityDaoTest {
     private lateinit var cityDao: CityDao
 
     private val prepopulateCities = DummyJsonData.cities
+    private val hanoi = DummyJsonData.hanoi
+    private val haiphong = DummyJsonData.haiphong
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
@@ -51,8 +53,6 @@ class CityDaoTest {
         cityDao.getAllCities().first().let {
             assertThat(it.size, equalTo(prepopulateCities.size))
         }
-        val hanoi = DummyJsonData.hanoi
-        val haiphong = DummyJsonData.haiphong
         // when
         cityDao.insertCity(hanoi)
         cityDao.getAllCities().first().let { allCities ->
@@ -66,7 +66,7 @@ class CityDaoTest {
         cityDao.getAllCities().first().let { allCities ->
             // then
             assertThat(allCities.size, equalTo(prepopulateCities.size + 2))
-            assert(setOf(hanoi, haiphong).all(allCities::contains))
+            assert(allCities.containsAll(setOf(hanoi, haiphong)))
         }
 
         // when
@@ -81,7 +81,6 @@ class CityDaoTest {
 
     @Test
     fun getCityByCoordinate() = runBlockingTest {
-        val hanoi = DummyJsonData.hanoi
         cityDao.insertCity(hanoi)
 
         run {
@@ -101,7 +100,6 @@ class CityDaoTest {
 
     @Test
     fun getCityById() = runBlockingTest {
-        val hanoi = DummyJsonData.hanoi
         val expectedCities = DummyJsonData.cities
         expectedCities.forEach { expected ->
             val actual = cityDao.getCityById(expected.id)
@@ -114,7 +112,6 @@ class CityDaoTest {
 
     @Test
     fun findCityByName() = runBlockingTest {
-        val hanoi = DummyJsonData.hanoi
         cityDao.insertCity(hanoi)
         // given
         val names = listOf(hanoi.name, "Ha", "Ha noi", "ha noi", "noi", " ", "", "a", "n", "oi")
@@ -125,5 +122,27 @@ class CityDaoTest {
             assert(actualCities.contains(hanoi))
             println("with: $it, result count=${actualCities.size}")
         }
+    }
+
+    @Test
+    fun getFetchedCities() = runBlockingTest {
+        val hanoi = hanoi.copy(lastFetch = 1)
+        val haiphong = haiphong.copy(lastFetch = 1)
+
+        cityDao.insertCity(hanoi, haiphong)
+
+        val actual = cityDao.getFetchedCities().first()
+        assert(actual.containsAll(setOf(hanoi, haiphong)))
+    }
+
+    @Test
+    fun updateFetchedCity() = runBlockingTest {
+        cityDao.insertCity(hanoi)
+
+        val hanoi = hanoi.copy(lastFetch = 2000)
+        cityDao.updateFetchedCity(hanoi.id, hanoi.lastFetch)
+
+        val actual = cityDao.getFetchedCities().first()
+        assert(actual.contains(hanoi))
     }
 }

@@ -10,7 +10,7 @@ import com.sunasterisk.boringweather.data.source.local.CityTable
 import com.sunasterisk.boringweather.util.getOrElse
 import org.json.JSONObject
 
-@Entity
+@Entity(tableName = CityTable.TABLE_NAME)
 data class City(
     @PrimaryKey val id: Int,
     val name: String,
@@ -18,6 +18,7 @@ data class City(
     @ColumnInfo(defaultValue = "0") val lastFetch: Long,
     @Embedded val coordinate: Coordinate
 ) {
+    @Deprecated("use gson instead")
     constructor(jsonObject: JSONObject) : this(
         jsonObject.getInt(ID),
         jsonObject.getString(NAME),
@@ -26,6 +27,7 @@ data class City(
         jsonObject.getJSONObject(COORDINATE).let(::Coordinate)
     )
 
+    @Deprecated("use room instead")
     constructor(cursor: Cursor) : this(
         cursor.getOrElse(CityTable.COL_ID, default.id),
         cursor.getOrElse(CityTable.COL_NAME, default.name),
@@ -37,6 +39,7 @@ data class City(
         )
     )
 
+    @Deprecated("use room instead")
     fun getContentValues() = ContentValues().apply {
         put(CityTable.COL_ID, id)
         put(CityTable.COL_NAME, name)

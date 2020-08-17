@@ -18,16 +18,18 @@ abstract class CityDao {
     suspend fun getCityByCoordinate(coordinate: Coordinate) =
         getCityByLatLon(coordinate.latitude, coordinate.longitude)
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     @Query("SELECT * FROM city ORDER BY ((latitude - :lat) * (latitude - :lat) + (longitude - :lon) * (longitude - :lon)) ASC LIMIT 1")
-    abstract suspend fun getCityByLatLon(lat: Float, lon: Float): City?
+    protected abstract suspend fun getCityByLatLon(lat: Float, lon: Float): City?
 
     @Query("SELECT * FROM city where id = :cityId LIMIT 1")
     abstract suspend fun getCityById(cityId: Int): City?
 
     // // the || is sql string concatenation operator
     @Query("SELECT * FROM city where name LIKE '%' || :cityName || '%' LIMIT :limit")
-    abstract fun findCityByName(cityName: String, limit: Int): Flow<List<City>>
+    abstract fun findCityByName(
+        cityName: String,
+        limit: Int = SEARCH_LIMIT_DEFAULT
+    ): Flow<List<City>>
 
     @Query("SELECT * FROM city where lastFetch > 0 ORDER BY lastFetch DESC")
     abstract fun getFetchedCities(): Flow<List<City>>
@@ -38,4 +40,8 @@ abstract class CityDao {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     @Query("SELECT * FROM city")
     abstract fun getAllCities(): Flow<List<City>>
+
+    companion object {
+        const val SEARCH_LIMIT_DEFAULT = 500
+    }
 }
