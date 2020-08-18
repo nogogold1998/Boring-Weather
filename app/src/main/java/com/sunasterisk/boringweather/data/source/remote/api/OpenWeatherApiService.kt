@@ -12,6 +12,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+/**
+ * Retrofit 2 version
+ */
 interface OpenWeatherApiService {
 
     @GET("${ApiConstants.PATH_DATA}/${ApiConstants.PATH_2_5}/${ApiConstants.PATH_ONE_CALL}")

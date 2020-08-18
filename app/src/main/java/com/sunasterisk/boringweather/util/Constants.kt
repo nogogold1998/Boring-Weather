@@ -1,6 +1,8 @@
 package com.sunasterisk.boringweather.util
 
 object Constants {
+    const val SEARCH_LIMIT_DEFAULT = 500
+
     const val METER_TO_KILOMETER = 1000F
     const val KILOPASCAL_TO_HECTOPASCAL = 10F
     const val KILOMETER_TO_MILES = 0.621371192F

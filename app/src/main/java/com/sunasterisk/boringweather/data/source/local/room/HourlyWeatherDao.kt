@@ -4,54 +4,28 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sunasterisk.boringweather.data.model.HourlyWeather
-import kotlinx.coroutines.Dispatchers
+import com.sunasterisk.boringweather.util.Constants
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 @Dao
-abstract class HourlyWeatherDao {
-
-    suspend fun insertHourlyWeather(
-        cityId: Int,
-        vararg hourlyWeather: HourlyWeather
-    ) {
-        val hourlyWeatherEntities = withContext(Dispatchers.Default) {
-            hourlyWeather.map { HourlyWeatherEntity(cityId, it) }.toTypedArray()
-        }
-        insertHourlyWeatherEntity(*hourlyWeatherEntities)
-    }
+interface HourlyWeatherDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    protected abstract suspend fun insertHourlyWeatherEntity(
-        vararg hourlyWeatherEntity: HourlyWeatherEntity
-    )
-
-    suspend fun getHourWeather(cityId: Int, upperDateTime: Long) =
-        getHourlyWeatherEntity(cityId, upperDateTime)?.toHourlyWeather()
+    suspend fun insertHourlyWeatherEntity(vararg hourlyWeatherEntity: HourlyWeatherEntity)
 
     @Query("SELECT * FROM hourly_weather WHERE cityId = :cityId AND dateTime <= :upperDateTime ORDER BY dateTime DESC LIMIT 1")
-    protected abstract suspend fun getHourlyWeatherEntity(
+    suspend fun getHourlyWeatherEntity(
         cityId: Int,
         upperDateTime: Long
     ): HourlyWeatherEntity?
 
-    suspend fun findHourlyWeather(
+    @Query("SELECT * FROM hourly_weather WHERE cityId = :cityId AND dateTime BETWEEN :fromDateTime AND :toDateTime LIMIT :limit")
+    fun findHourlyWeatherEntity(
         cityId: Int,
         fromDateTime: Long = 0, toDateTime: Long = Long.MAX_VALUE,
-        limit: Int = 500
-    ) =
-        findHourlyWeatherEntity(cityId, fromDateTime, toDateTime, limit)
-            .map { it.map(HourlyWeatherEntity::toHourlyWeather) }
-
-    @Query("SELECT * FROM hourly_weather WHERE cityId = :cityId AND dateTime BETWEEN :fromDateTime AND :toDateTime")
-    protected abstract suspend fun findHourlyWeatherEntity(
-        cityId: Int,
-        fromDateTime: Long = 0, toDateTime: Long = Long.MAX_VALUE,
-        limit: Int = 500
+        limit: Int = Constants.SEARCH_LIMIT_DEFAULT
     ): Flow<List<HourlyWeatherEntity>>
 
     @Query("DELETE FROM hourly_weather")
-    abstract suspend fun deleteAllHourWeather()
+    suspend fun deleteAllHourWeather()
 }

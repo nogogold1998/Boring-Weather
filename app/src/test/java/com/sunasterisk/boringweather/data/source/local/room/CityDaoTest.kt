@@ -5,7 +5,6 @@ import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.sunasterisk.boringweather.DummyJsonData
-import com.sunasterisk.boringweather.data.model.Coordinate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -84,7 +83,8 @@ class CityDaoTest {
         cityDao.insertCity(hanoi)
 
         run {
-            val actual = cityDao.getCityByCoordinate(hanoi.coordinate)
+            val actual =
+                cityDao.getCityByLatLon(hanoi.coordinate.latitude, hanoi.coordinate.longitude)
             assertThat(actual, `is`(hanoi))
         }
 
@@ -93,7 +93,7 @@ class CityDaoTest {
             val random = { seed: Float, scale: Int ->
                 (seed + (Math.random() - 0.5) * (Math.random() / scale)).toFloat()
             }
-            val actual = cityDao.getCityByCoordinate(Coordinate(random(lon, 10), random(lat, 10)))
+            val actual = cityDao.getCityByLatLon(random(lat, 10), random(lon, 10))
             assertThat(actual, `is`(hanoi))
         }
     }
@@ -117,7 +117,7 @@ class CityDaoTest {
         val names = listOf(hanoi.name, "Ha", "Ha noi", "ha noi", "noi", " ", "", "a", "n", "oi")
         names.forEach {
             // when
-            val actualCities = cityDao.findCityByName(it, 100).first()
+            val actualCities = cityDao.findCityByName(it, 100)
             // then
             assert(actualCities.contains(hanoi))
             println("with: $it, result count=${actualCities.size}")
