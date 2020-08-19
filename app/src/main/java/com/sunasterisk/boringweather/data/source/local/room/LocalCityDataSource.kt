@@ -10,7 +10,9 @@ import kotlinx.coroutines.withContext
 class LocalCityDataSource(
     private val cityDao: CityDao,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : CityDataSource {
+) : CityDataSource.Local {
+
+    override fun getCityByIdFlow(cityId: Int): Flow<City?> = cityDao.getCityByIdFlow(cityId)
 
     override suspend fun getCityById(cityId: Int): City? =
         withContext(dispatcher) { cityDao.getCityById(cityId) }

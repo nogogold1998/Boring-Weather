@@ -1,5 +1,7 @@
 package com.sunasterisk.boringweather
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.data.model.Coordinate
 import com.sunasterisk.boringweather.data.model.DailyWeather
@@ -9,6 +11,8 @@ import com.sunasterisk.boringweather.data.model.Temperature
 import com.sunasterisk.boringweather.data.model.Weather
 
 object DummyJsonData {
+    private val gson = Gson()
+
     val weather1 = Weather(804, "Clouds", "overcast clouds", "04n") to """{
         "id": 804,
         "main": "Clouds",
@@ -161,6 +165,16 @@ object DummyJsonData {
         emptyList()
     ) to TestHelper.readContentFromFilePath(TestHelper.ONE_CALL_JSON_FILE_PATH)
 
+    val oneCallEntry2 =
+        OneCallEntry.default to TestHelper.readContentFromFilePath(TestHelper.ONE_CALL_2_JSON_FILE_PATH)
+
+    val oneCallEntries: List<OneCallEntry> by lazy {
+        listOf(
+            jsonStringToOneCallEntry(oneCallEntry.second),
+            jsonStringToOneCallEntry(oneCallEntry2.second)
+        )
+    }
+
     val hanoi = City(
         1581130, "Ha Noi", "VN", City.default.lastFetch,
         Coordinate(105.841171f, 21.0245f)
@@ -197,4 +211,9 @@ object DummyJsonData {
             Coordinate(78.052902f, 17.709961f)
         )
     )
+
+    private fun jsonStringToOneCallEntry(string: String): OneCallEntry {
+        val oneCallTypeToken = TypeToken.get(OneCallEntry::class.java).type
+        return gson.fromJson(string, oneCallTypeToken)
+    }
 }

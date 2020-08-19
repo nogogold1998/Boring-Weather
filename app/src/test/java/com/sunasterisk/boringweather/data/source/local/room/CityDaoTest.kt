@@ -1,5 +1,6 @@
 package com.sunasterisk.boringweather.data.source.local.room
 
+import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -10,16 +11,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class CityDaoTest {
     private lateinit var appDatabase: AppRoomDatabase
     private lateinit var cityDao: CityDao
@@ -118,9 +120,9 @@ class CityDaoTest {
         names.forEach {
             // when
             val actualCities = cityDao.findCityByName(it, 100)
-            // then
-            assert(actualCities.contains(hanoi))
             println("with: $it, result count=${actualCities.size}")
+            // then
+            assertThat(actualCities, hasItems(hanoi))
         }
     }
 
@@ -132,7 +134,7 @@ class CityDaoTest {
         cityDao.insertCity(hanoi, haiphong)
 
         val actual = cityDao.getFetchedCities().first()
-        assert(actual.containsAll(setOf(hanoi, haiphong)))
+        assertThat(actual, containsInAnyOrder(hanoi, haiphong))
     }
 
     @Test
@@ -143,6 +145,6 @@ class CityDaoTest {
         cityDao.updateFetchedCity(hanoi.id, hanoi.lastFetch)
 
         val actual = cityDao.getFetchedCities().first()
-        assert(actual.contains(hanoi))
+        assertThat(actual, contains(hanoi))
     }
 }

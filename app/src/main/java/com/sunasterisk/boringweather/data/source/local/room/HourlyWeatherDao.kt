@@ -19,7 +19,7 @@ interface HourlyWeatherDao {
         upperDateTime: Long
     ): HourlyWeatherEntity?
 
-    @Query("SELECT * FROM hourly_weather WHERE cityId = :cityId AND dateTime BETWEEN :fromDateTime AND :toDateTime LIMIT :limit")
+    @Query("SELECT * FROM hourly_weather WHERE cityId = :cityId AND :fromDateTime <= dateTime AND dateTime < :toDateTime LIMIT :limit")
     fun findHourlyWeatherEntity(
         cityId: Int,
         fromDateTime: Long = 0, toDateTime: Long = Long.MAX_VALUE,

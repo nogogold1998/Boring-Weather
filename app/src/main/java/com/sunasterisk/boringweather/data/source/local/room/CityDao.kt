@@ -21,6 +21,9 @@ interface CityDao {
     @Query("SELECT * FROM city where id = :cityId LIMIT 1")
     suspend fun getCityById(cityId: Int): City?
 
+    @Query("SELECT * FROM city where id = :cityId LIMIT 1")
+    fun getCityByIdFlow(cityId: Int): Flow<City?>
+
     // // the || is sql string concatenation operator
     @Query("SELECT * FROM city where name LIKE '%' || :cityName || '%' LIMIT :limit")
     suspend fun findCityByName(

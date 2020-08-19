@@ -1,6 +1,5 @@
 package com.sunasterisk.boringweather.data.source.local.room
 
-import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.data.model.OneCallEntry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -51,27 +50,28 @@ class LocalOneCalWeatherDataSource(
 
     @ExperimentalCoroutinesApi
     override fun getRawCurrentWeather(
-        city: City,
+        cityId: Int,
         startOfDay: Long,
         endOfDay: Long
     ): Flow<Pair<List<HourlyWeatherEntity>, List<DailyWeatherEntity>>> {
         val hourlyWeathersFlow =
-            hourlyWeatherDao.findHourlyWeatherEntity(city.id, startOfDay, endOfDay)
+            hourlyWeatherDao.findHourlyWeatherEntity(cityId, startOfDay, endOfDay)
         val dailyWeathersFlow =
-            dailyWeatherDao.findDailyWeatherEntity(city.id, startOfDay, endOfDay)
+            dailyWeatherDao.findDailyWeatherEntity(cityId, startOfDay)
         return hourlyWeathersFlow.combine(dailyWeathersFlow) { f1, f2 -> f1 to f2 }
     }
 
     @ExperimentalCoroutinesApi
     override fun getRawDetailWeather(
-        city: City,
+        cityId: Int,
+        dailyWeatherDateTime: Long,
         startOfDay: Long,
         endOfDay: Long
     ): Flow<Pair<DailyWeatherEntity?, List<HourlyWeatherEntity>>> {
         val dailyWeather =
-            dailyWeatherDao.getDailyWeatherEntity(city.id, startOfDay)
+            dailyWeatherDao.getDailyWeatherEntity(cityId, dailyWeatherDateTime)
         val hourlyWeather =
-            hourlyWeatherDao.findHourlyWeatherEntity(city.id, startOfDay, endOfDay)
+            hourlyWeatherDao.findHourlyWeatherEntity(cityId, startOfDay, endOfDay)
         return combine(dailyWeather, hourlyWeather) { f1, f2 -> f1 to f2 }
     }
 }

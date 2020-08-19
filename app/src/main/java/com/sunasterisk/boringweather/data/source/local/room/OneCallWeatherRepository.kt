@@ -11,14 +11,16 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class OneCallWeatherRepository(
     private val remote: OneCallWeatherDataSource.Remote,
     private val local: OneCallWeatherDataSource.Local,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val cityDataSource: CityDataSource.Local,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val timeUtils: TimeUtils = TimeUtils
 ) : OneCallWeatherDataSource {
     override suspend fun fetchWeatherData(city: City) = withContext(dispatcher) {
@@ -28,19 +30,18 @@ class OneCallWeatherRepository(
 
     @ExperimentalCoroutinesApi
     override fun getCurrentWeather(
-        city: City,
+        cityId: Int,
         currentDateTime: Long
     ): Flow<CurrentWeather> {
         val (startOfDay, endOfDay) = timeUtils.getStartEndOfDay(currentDateTime)
-        return local.getRawCurrentWeather(city, startOfDay, endOfDay)
-            .flowOn(Dispatchers.Default)
-            .map { (hourlyEntities, dailyEntities) ->
+        return local.getRawCurrentWeather(cityId, startOfDay, endOfDay)
+            .combine(cityDataSource.getCityByIdFlow(cityId)) { (hourlyEntities, dailyEntities), city ->
                 val hourlyWeathers = hourlyEntities.map(HourlyWeatherEntity::toHourlyWeather)
                 val current = hourlyWeathers.lastOrNull { it.dateTime <= currentDateTime }
                 val dailyWeathers = dailyEntities.map(DailyWeatherEntity::toDailyWeather)
-                val today = dailyWeathers.lastOrNull { it.dateTime <= currentDateTime }
+                val today = dailyWeathers.lastOrNull { it.dateTime <= endOfDay }
                 CurrentWeather(
-                    city,
+                    city ?: City.default,
                     current ?: HourlyWeather.default,
                     today ?: DailyWeather.default,
                     hourlyWeathers.map {
@@ -59,23 +60,25 @@ class OneCallWeatherRepository(
                     }
                 )
             }
+            .flowOn(dispatcher)
+            .conflate()
     }
 
     @ExperimentalCoroutinesApi
     override fun getDetailWeather(
-        city: City,
-        dailyWeatherDateTime: Long,
-        forceNetwork: Boolean
+        cityId: Int,
+        dailyWeatherDateTime: Long
     ): Flow<DetailWeather> {
         val (startOfDay, endOfDay) = timeUtils.getStartEndOfDay(dailyWeatherDateTime)
-        return local.getRawDetailWeather(city, startOfDay, endOfDay)
-            .flowOn(Dispatchers.Default)
-            .map { (dailyEntity, hourlyEntities) ->
+        return local.getRawDetailWeather(cityId, dailyWeatherDateTime, startOfDay, endOfDay)
+            .combine(cityDataSource.getCityByIdFlow(cityId)) { (dailyEntity, hourlyEntities), city ->
                 DetailWeather(
-                    city,
+                    city ?: City.default,
                     dailyEntity?.toDailyWeather() ?: DailyWeather.default,
                     hourlyEntities.map(HourlyWeatherEntity::toHourlyWeather)
                 )
             }
+            .flowOn(dispatcher)
+            .conflate()
     }
 }

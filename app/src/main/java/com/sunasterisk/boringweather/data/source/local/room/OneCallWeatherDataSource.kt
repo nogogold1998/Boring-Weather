@@ -11,14 +11,13 @@ interface OneCallWeatherDataSource {
     suspend fun fetchWeatherData(city: City)
 
     fun getCurrentWeather(
-        city: City,
+        cityId: Int,
         currentDateTime: Long
     ): Flow<CurrentWeather>
 
     fun getDetailWeather(
-        city: City,
-        dailyWeatherDateTime: Long,
-        forceNetwork: Boolean
+        cityId: Int,
+        dailyWeatherDateTime: Long
     ): Flow<DetailWeather>
 
     interface Local {
@@ -29,13 +28,14 @@ interface OneCallWeatherDataSource {
         )
 
         fun getRawCurrentWeather(
-            city: City,
+            cityId: Int,
             startOfDay: Long,
             endOfDay: Long
         ): Flow<Pair<List<HourlyWeatherEntity>, List<DailyWeatherEntity>>>
 
         fun getRawDetailWeather(
-            city: City,
+            cityId: Int,
+            dailyWeatherDateTime: Long,
             startOfDay: Long,
             endOfDay: Long
         ): Flow<Pair<DailyWeatherEntity?, List<HourlyWeatherEntity>>>
