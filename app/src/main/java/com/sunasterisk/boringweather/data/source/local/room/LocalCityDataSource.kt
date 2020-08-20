@@ -32,7 +32,7 @@ class LocalCityDataSource(
 
     override fun getFetchedCities(): Flow<List<City>> = cityDao.getFetchedCities()
 
-    override suspend fun getCityByCoordinate(coordinate: Coordinate): City? =
+    override suspend fun getCityByCoordinate(coordinate: Coordinate): List<City> =
         withContext(dispatcher) {
             cityDao.getCityByLatLon(coordinate.latitude, coordinate.longitude)
         }

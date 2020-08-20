@@ -15,7 +15,7 @@ interface CityDataSource {
 
     fun getFetchedCities(): Flow<List<City>>
 
-    suspend fun getCityByCoordinate(coordinate: Coordinate): City?
+    suspend fun getCityByCoordinate(coordinate: Coordinate): List<City>
 
     interface Local : CityDataSource
 }

@@ -87,7 +87,7 @@ class CityDaoTest {
         run {
             val actual =
                 cityDao.getCityByLatLon(hanoi.coordinate.latitude, hanoi.coordinate.longitude)
-            assertThat(actual, `is`(hanoi))
+            assertThat(actual, hasItems(hanoi))
         }
 
         repeat(50) {
@@ -96,7 +96,7 @@ class CityDaoTest {
                 (seed + (Math.random() - 0.5) * (Math.random() / scale)).toFloat()
             }
             val actual = cityDao.getCityByLatLon(random(lat, 10), random(lon, 10))
-            assertThat(actual, `is`(hanoi))
+            assertThat(actual, hasItems(hanoi))
         }
     }
 

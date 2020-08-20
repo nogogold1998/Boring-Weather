@@ -23,7 +23,8 @@ class LocalOneCalWeatherDataSource(
         coroutineScope {
             val dbCityId = async(dispatcher) {
                 cityId
-                    ?: cityDao.getCityByLatLon(oneCallEntry.latitude, oneCallEntry.longitude)?.id
+                    ?: cityDao.getCityByLatLon(oneCallEntry.latitude, oneCallEntry.longitude)
+                        .firstOrNull()?.id
                     ?: throw IllegalArgumentException(
                         "Could not find a properly cityId with given " +
                             "cityId: $cityId and oneCallEntry: $oneCallEntry"

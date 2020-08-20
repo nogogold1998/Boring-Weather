@@ -15,6 +15,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.withTimeout
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.After
@@ -119,21 +120,23 @@ class OneCallWeatherRepositoryTest {
     fun getCurrentWeather() = testScope.runBlockingTest {
         val oneCallEntries = DummyJsonData.oneCallEntries
         oneCallEntries.forEach { entry ->
-            `when`(remote.fetchOneCallWeatherByCoordinate(hanoi.coordinate)).thenReturn(entry)
+            withTimeout(3000L) {
+                `when`(remote.fetchOneCallWeatherByCoordinate(hanoi.coordinate)).thenReturn(entry)
 
-            repo.fetchWeatherData(hanoi)
+                repo.fetchWeatherData(hanoi)
 
-            // check
-            val actualHanoi = cityDataSource.getCityById(hanoi.id)
-                ?: throw IllegalStateException("city must not be null")
+                // check
+                val actualHanoi = cityDataSource.getCityById(hanoi.id)
+                    ?: throw IllegalStateException("city must not be null")
 
-            val actualCurrentWeather =
-                repo.getCurrentWeather(hanoi.id, actualHanoi.lastFetch).first()
-            assertThat(actualCurrentWeather.city, `is`(actualHanoi))
-            assertThat(actualCurrentWeather.currentWeather, `is`(entry.current))
-            assertThat(actualCurrentWeather.dailyWeather, isIn(entry.daily))
-            assertThat(actualCurrentWeather.currentWeather, equalTo(entry.current))
-            assertThat(actualCurrentWeather.forecastSummaryWeathers.size, equalTo(entry.daily.size))
+                val actualCurrentWeather =
+                    repo.getCurrentWeather(hanoi.id, actualHanoi.lastFetch).first()
+                assertThat(actualCurrentWeather.city, `is`(actualHanoi))
+                assertThat(actualCurrentWeather.currentWeather, `is`(entry.current))
+                assertThat(actualCurrentWeather.dailyWeather, isIn(entry.daily))
+                assertThat(actualCurrentWeather.currentWeather, equalTo(entry.current))
+                assertThat(actualCurrentWeather.forecastSummaryWeathers.size, equalTo(entry.daily.size))
+            }
         }
     }
 

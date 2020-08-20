@@ -6,72 +6,47 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
-import android.text.SpannableStringBuilder
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.core.os.bundleOf
-import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import androidx.fragment.app.viewModels
 import com.sunasterisk.boringweather.R
-import com.sunasterisk.boringweather.base.BaseFragment
-import com.sunasterisk.boringweather.base.CallbackAsyncTask
-import com.sunasterisk.boringweather.base.Result
 import com.sunasterisk.boringweather.base.Single
 import com.sunasterisk.boringweather.data.model.City
-import com.sunasterisk.boringweather.di.Injector
+import com.sunasterisk.boringweather.databinding.FragmentSearchBinding
+import com.sunasterisk.boringweather.di.NewInjector
 import com.sunasterisk.boringweather.ui.main.findNavigator
-import com.sunasterisk.boringweather.ui.search.model.CityItem
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
-import com.sunasterisk.boringweather.util.isLazyInitialized
 import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
 import com.sunasterisk.boringweather.util.locationManager
-import com.sunasterisk.boringweather.util.networkState
 import com.sunasterisk.boringweather.util.setupDefaultItemDecoration
 import com.sunasterisk.boringweather.util.showSoftInput
 import com.sunasterisk.boringweather.util.showToast
 import kotlinx.android.synthetic.main.fragment_search.*
 
-class SearchFragment : BaseFragment(), SearchContract.View {
-    override val layoutResource: Int get() = R.layout.fragment_search
+class SearchFragment : Fragment() {
 
-    override var presenter: SearchContract.Presenter? = null
+    private lateinit var binding: FragmentSearchBinding
+
+    private val searchViewModel: SearchViewModel by viewModels<SearchViewModel> {
+        val context = requireContext()
+        SearchViewModel.Factory(
+            NewInjector.provideCityRepository(context),
+            NewInjector.provideLocationLiveData(context),
+            context.defaultSharedPreferences
+        )
+    }
 
     private val defaultSharedPreferences by lazy { requireContext().defaultSharedPreferences }
 
     private val pendingRestoreRecyclerViewPosition = Single<Int>()
-
-    private val fusedLocationClient: FusedLocationProviderClient by lazy {
-        LocationServices.getFusedLocationProviderClient(requireContext())
-    }
-
-    private val locationRequest: LocationRequest by lazy {
-        LocationRequest.create().apply {
-            interval = 60000
-            fastestInterval = 5000
-            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        }
-    }
-    private val locationCallback: LocationCallback by lazy {
-        object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                for (location in locationResult.locations) {
-                    if (location != null) {
-                        presenter?.searchCityByLocation(location)
-                    } else {
-                        showError(R.string.error_search_location_null)
-                    }
-                }
-            }
-        }
-    }
 
     private val cityAdapter: CityAdapter by lazy {
         CityAdapter(
@@ -92,20 +67,23 @@ class SearchFragment : BaseFragment(), SearchContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        presenter = SearchPresenter(this, Injector.getCityRepository(requireContext()))
         savedInstanceState?.getInt(KEY_RECYCLER_POSITION)
             ?.let { pendingRestoreRecyclerViewPosition.value = it }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.searchViewModel = searchViewModel
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        if (context?.networkState == null) {
-            context?.defaultSharedPreferences?.lastSearchInput = ""
-            showError(R.string.error_network_no_connection)
-        } else {
-            requestInputFocus(editTextSearch)
-        }
         initView()
         initListener()
         searchCity()
@@ -117,29 +95,22 @@ class SearchFragment : BaseFragment(), SearchContract.View {
             ?.let { outState.putInt(KEY_RECYCLER_POSITION, it) }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        if (::locationCallback.isLazyInitialized) {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
-    }
-
     @SuppressLint("ResourceType")
     private fun initView() {
-        with(recyclerSearchCity) {
+        with(binding.recyclerSearchCity) {
             adapter = cityAdapter
             setupDefaultItemDecoration()
         }
-        defaultSharedPreferences.lastSearchInput
-            .takeIf { it.isNotBlank() }
-            ?.let(::SpannableStringBuilder)
-            ?.let { editTextSearch.text = it }
+        // TODO wrong logic
+        // defaultSharedPreferences.lastSearchInput
+        //     .takeIf { it.isNotBlank() }
+        //     ?.let(::SpannableStringBuilder)
+        //     ?.let { editTextSearch.text = it }
 
         toggleStartIcon()
     }
 
-    private fun initListener() {
+    private fun initListener() = with(binding) {
         textInputLayoutSearch.setStartIconOnClickListener {
             if (defaultSharedPreferences.selectedCityId != City.default.id) {
                 findNavigator()?.popBackStack()
@@ -148,24 +119,21 @@ class SearchFragment : BaseFragment(), SearchContract.View {
             }
         }
 
-        editTextSearch.addTextChangedListener { searchCity() }
-
         textInputLayoutSearch.setEndIconOnClickListener {
             editTextSearch.takeUnless { it.text.isNullOrEmpty() }?.run { text = null }
                 ?: searchUsingDeviceLocation()
         }
     }
 
+    // TODO observe search input
     private fun searchCity() {
         editTextSearch.text?.toString()?.let { input ->
             defaultSharedPreferences.lastSearchInput = input.trim()
             toggleEndIcon(input)
             imageBackground.setImageResource(R.drawable.ic_round_search_24)
             if (input.isNotBlank()) {
-                presenter?.searchCity(input, defaultSharedPreferences.citySearchingLimit)
                 textBackground.setText(R.string.title_search_text_background)
             } else if (input.isEmpty()) {
-                presenter?.getFetchedCities()
                 imageBackground.setImageResource(R.drawable.ic_round_collections_bookmark_24)
                 textBackground.setText(R.string.title_search_available_cities)
             }
@@ -175,6 +143,7 @@ class SearchFragment : BaseFragment(), SearchContract.View {
         }
     }
 
+    // TODO observe search input
     private fun toggleEndIcon(input: String) = input.isEmpty().let { empty ->
         textInputLayoutSearch.endIconDrawable = ContextCompat.getDrawable(
             requireContext(),
@@ -187,6 +156,7 @@ class SearchFragment : BaseFragment(), SearchContract.View {
         textInputLayoutSearch.suffixText = getString(suffixStringRes)
     }
 
+    // TODO observe search input
     private fun toggleStartIcon() {
         if (defaultSharedPreferences.selectedCityId == City.default.id) {
             textInputLayoutSearch.setStartIconDrawable(R.drawable.ic_round_help_outline_24)
@@ -195,44 +165,24 @@ class SearchFragment : BaseFragment(), SearchContract.View {
         }
     }
 
+    // TODO add in onViewCreated
     private fun requestInputFocus(view: View) {
         view.requestFocus()
         context?.showSoftInput(view)
     }
 
+    @Deprecated("wrong logic")
     private fun toggleSelectedCity(cityId: Int) = with(defaultSharedPreferences) {
         selectedCityId = if (selectedCityId != cityId) cityId else City.default.id
         toggleStartIcon()
     }
 
-    override fun showSearchResult(cities: List<City>) {
-        CallbackAsyncTask<List<City>, List<CityItem>>(
-            handler = {
-                val selectedCity = defaultSharedPreferences.selectedCityId
-                it.map { city -> CityItem(city, city.id == selectedCity) }
-            },
-            onFinishedListener = { result ->
-                when (result) {
-                    is Result.Success -> cityAdapter.submitList(result.data) {
-                        pendingRestoreRecyclerViewPosition.value
-                            ?.let { recyclerSearchCity.scrollToPosition(it) }
-                    }
-                    is Result.Error -> showError(R.string.error_search_result_error)
-                    null -> showError(R.string.error_unknown)
-                }
-            }
-        ).executeOnExecutor(cities)
-    }
-
-    override fun showError(errorStringRes: Int) {
+    fun showError(errorStringRes: Int) {
         context?.showToast(getString(errorStringRes))
     }
 
+    @Deprecated("wrong logic")
     private fun searchUsingDeviceLocation() {
-        val permissions = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
         val requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { isGranted ->
                 if (isGranted.all { it.value }) {
@@ -242,24 +192,24 @@ class SearchFragment : BaseFragment(), SearchContract.View {
                 }
             }
         when {
-            ifPermissionGranted(permissions) -> performSearchUsingDeviceLocation()
-            permissions.any(::shouldShowRequestPermissionRationale) -> {
+            allRequestedPermissionsGranted() -> performSearchUsingDeviceLocation()
+            requestedPermissions.any(::shouldShowRequestPermissionRationale) -> {
                 val title = getString(R.string.title_search_location_dialog)
                 val msg = getString(
                     R.string.format_msg_search_location_dialog_location_require,
-                    permissions.joinToString(", ")
+                    requestedPermissions.joinToString(", ")
                 )
                 showLocationDialog(title, msg) {
                     setPositiveButton(android.R.string.yes) { _, _ ->
-                        requestPermissionLauncher.launch(permissions)
+                        requestPermissionLauncher.launch(requestedPermissions)
                     }
                 }
             }
-            else -> requestPermissionLauncher.launch(permissions)
+            else -> requestPermissionLauncher.launch(requestedPermissions)
         }
     }
 
-    private fun ifPermissionGranted(permissions: Array<String>) = permissions.all {
+    private fun allRequestedPermissionsGranted() = requestedPermissions.all {
         ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
 
@@ -280,7 +230,7 @@ class SearchFragment : BaseFragment(), SearchContract.View {
     private fun performSearchUsingDeviceLocation() {
         context?.locationManager?.let {
             if (LocationManagerCompat.isLocationEnabled(it)) {
-                fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+                TODO("observe LocationLiveData")
             } else {
                 val title = getString(R.string.title_search_location_dialog)
                 val msg = getString(R.string.msg_search_location_dialog_location_off)
@@ -300,5 +250,10 @@ class SearchFragment : BaseFragment(), SearchContract.View {
 
     companion object {
         private const val KEY_RECYCLER_POSITION = "recycler_pos"
+
+        private val requestedPermissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
     }
 }

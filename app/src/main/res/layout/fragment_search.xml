@@ -1,87 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/imageBackground"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/dp_48"
-        android:contentDescription="@null"
-        android:padding="@dimen/dp_48"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appbarSearch"
-        app:srcCompat="@drawable/ic_round_search_24"
-        app:tint="@android:color/secondary_text_dark" />
+    <data>
 
-    <TextView
-        android:id="@+id/textBackground"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:maxHeight="@dimen/dp_72"
-        android:text="@string/title_search_text_background"
-        android:textAlignment="center"
-        android:textColor="@android:color/secondary_text_dark_nodisable"
-        android:textSize="@dimen/sp_30"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toBottomOf="@+id/imageBackground"
-        app:layout_constraintEnd_toEndOf="@id/imageBackground"
-        app:layout_constraintStart_toStartOf="@+id/imageBackground" />
+        <variable
+            name="searchViewModel"
+            type="com.sunasterisk.boringweather.ui.search.SearchViewModel" />
+    </data>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerSearchCity"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appbarSearch"
-        tools:listitem="@layout/item_city_search" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/appbarSearch"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/color_ziggurat"
-        android:elevation="@dimen/dp_2"
-        android:fitsSystemWindows="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/imageBackground"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/dp_48"
+            android:contentDescription="@null"
+            android:padding="@dimen/dp_48"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appbarSearch"
+            app:srcCompat="@drawable/ic_round_search_24"
+            app:tint="@android:color/secondary_text_dark" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayoutSearch"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/textBackground"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dp_10"
-            android:background="@drawable/background_search_input_round"
-            app:endIconDrawable="@drawable/ic_round_my_location_24"
-            app:endIconMode="custom"
-            app:endIconTint="?attr/colorPrimaryDark"
-            app:hintEnabled="false"
-            app:startIconDrawable="@drawable/ic_round_arrow_back_24"
-            app:startIconTint="?attr/colorPrimaryDark"
-            app:suffixText="@string/title_search_use_device_location"
-            app:suffixTextAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:suffixTextColor="@android:color/secondary_text_dark_nodisable">
+            android:maxHeight="@dimen/dp_72"
+            android:text="@string/title_search_text_background"
+            android:textAlignment="center"
+            android:textColor="@android:color/secondary_text_dark_nodisable"
+            android:textSize="@dimen/sp_30"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="@+id/imageBackground"
+            app:layout_constraintEnd_toEndOf="@id/imageBackground"
+            app:layout_constraintStart_toStartOf="@+id/imageBackground" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextSearch"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSearchCity"
+            cityList="@{searchViewModel.cityItems}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appbarSearch"
+            tools:listitem="@layout/item_city_search" />
+
+        <FrameLayout
+            android:id="@+id/appbarSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/color_ziggurat"
+            android:elevation="@dimen/dp_2"
+            android:fitsSystemWindows="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/title_search_city"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLines="1"
-                android:textColor="?attr/colorPrimaryDark" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </FrameLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_margin="@dimen/dp_10"
+                android:background="@drawable/background_search_input_round"
+                app:endIconDrawable="@drawable/ic_round_my_location_24"
+                app:endIconMode="custom"
+                app:endIconTint="?attr/colorPrimaryDark"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_round_arrow_back_24"
+                app:startIconTint="?attr/colorPrimaryDark"
+                app:suffixText="@string/title_search_use_device_location"
+                app:suffixTextAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:suffixTextColor="@android:color/secondary_text_dark_nodisable">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/title_search_city"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:text="@={searchViewModel.searchInput}"
+                    android:textColor="?attr/colorPrimaryDark" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -55,6 +55,7 @@ fun Context.buildNotification(@StringRes channelId: Int): Notification =
 val Context.defaultSharedPreferences: DefaultSharedPreferences
     get() = DefaultSharedPreferences.getInstance(this)
 
+@Deprecated("", replaceWith = ReplaceWith(".data.live.NetworkState"))
 enum class NetworkState {
     WIFI, CELLULAR
 }
@@ -62,6 +63,7 @@ enum class NetworkState {
 val Context.connectivityManager: ConnectivityManager?
     get() = ContextCompat.getSystemService(this, ConnectivityManager::class.java)
 
+@Deprecated("", replaceWith = ReplaceWith(".data.live.NetworkLiveData"))
 val Context.networkState: NetworkState?
     get() = connectivityManager?.getNetworkCapabilities(connectivityManager?.activeNetwork)?.run {
         when {
