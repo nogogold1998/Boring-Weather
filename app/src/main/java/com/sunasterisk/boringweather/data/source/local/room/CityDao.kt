@@ -15,7 +15,7 @@ interface CityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCity(vararg city: City)
 
-    @Query("SELECT * FROM city ORDER BY ((latitude - :lat) * (latitude - :lat) + (longitude - :lon) * (longitude - :lon)) ASC")
+    @Query("SELECT * FROM city ORDER BY ((lat - :lat) * (lat - :lat) + (lon - :lon) * (lon - :lon)) ASC")
     suspend fun getCityByLatLon(lat: Float, lon: Float): List<City>
 
     @Query("SELECT * FROM city where id = :cityId LIMIT 1")

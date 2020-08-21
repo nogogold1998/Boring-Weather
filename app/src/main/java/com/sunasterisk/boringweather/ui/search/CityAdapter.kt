@@ -7,12 +7,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.BaseViewHolder
+import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.ui.search.model.CityItem
 import com.sunasterisk.boringweather.ui.search.model.isFetched
 import kotlinx.android.synthetic.main.item_city_search.view.*
 
 class CityAdapter(
-    private val onclickListener: (Int) -> Unit,
+    private val onclickListener: (City) -> Unit,
     private val onBookMarkListener: (Int) -> Unit
 ) : ListAdapter<CityItem, CityAdapter.CityVH>(CityItemDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityVH {
@@ -26,7 +27,7 @@ class CityAdapter(
     }
 
     class CityVH(
-        view: View, onclickListener: (Int) -> Unit, onBookMarkListener: (Int) -> Unit
+        view: View, onclickListener: (City) -> Unit, onBookMarkListener: (Int) -> Unit
     ) : BaseViewHolder<CityItem>(view) {
         private var cityItem: CityItem? = null
 
@@ -37,7 +38,7 @@ class CityAdapter(
             ContextCompat.getDrawable(view.context, R.drawable.ic_round_bookmark_border_24)
 
         init {
-            view.linearContainerCity.setOnClickListener { cityItem?.data?.id?.let(onclickListener) }
+            view.linearContainerCity.setOnClickListener { cityItem?.data?.let(onclickListener) }
             view.imageBookMark.setOnClickListener { cityItem?.data?.id?.let(onBookMarkListener) }
         }
 

@@ -6,6 +6,6 @@ import com.sunasterisk.boringweather.ui.search.CityAdapter
 import com.sunasterisk.boringweather.ui.search.model.CityItem
 
 @BindingAdapter("cityList")
-fun RecyclerView.submitCityItems(cityItems: List<CityItem>) {
+fun RecyclerView.submitCityItems(cityItems: List<CityItem>?) {
     (adapter as? CityAdapter)?.submitList(cityItems)
 }

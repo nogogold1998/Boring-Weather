@@ -30,16 +30,17 @@ import com.sunasterisk.boringweather.util.setupDefaultItemDecoration
 import com.sunasterisk.boringweather.util.showSoftInput
 import com.sunasterisk.boringweather.util.showToast
 import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
 
-    private val searchViewModel: SearchViewModel by viewModels<SearchViewModel> {
+    @ExperimentalCoroutinesApi
+    private val searchViewModel by viewModels<SearchViewModel> {
         val context = requireContext()
         SearchViewModel.Factory(
             NewInjector.provideCityRepository(context),
-            NewInjector.provideLocationLiveData(context),
             context.defaultSharedPreferences
         )
     }
@@ -51,15 +52,8 @@ class SearchFragment : Fragment() {
     private val cityAdapter: CityAdapter by lazy {
         CityAdapter(
             onclickListener = {
-                if (defaultSharedPreferences.selectedCityId == City.default.id) {
-                    toggleSelectedCity(it)
-                }
-                sendFragmentResult(it)
-                findNavigator()?.popBackStack()
             },
             onBookMarkListener = {
-                toggleSelectedCity(it)
-                searchCity()
             }
         )
     }
@@ -71,14 +65,15 @@ class SearchFragment : Fragment() {
             ?.let { pendingRestoreRecyclerViewPosition.value = it }
     }
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
         binding.searchViewModel = searchViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -86,7 +81,6 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         initListener()
-        searchCity()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -95,19 +89,11 @@ class SearchFragment : Fragment() {
             ?.let { outState.putInt(KEY_RECYCLER_POSITION, it) }
     }
 
-    @SuppressLint("ResourceType")
     private fun initView() {
         with(binding.recyclerSearchCity) {
             adapter = cityAdapter
             setupDefaultItemDecoration()
         }
-        // TODO wrong logic
-        // defaultSharedPreferences.lastSearchInput
-        //     .takeIf { it.isNotBlank() }
-        //     ?.let(::SpannableStringBuilder)
-        //     ?.let { editTextSearch.text = it }
-
-        toggleStartIcon()
     }
 
     private fun initListener() = with(binding) {
@@ -125,63 +111,16 @@ class SearchFragment : Fragment() {
         }
     }
 
-    // TODO observe search input
-    private fun searchCity() {
-        editTextSearch.text?.toString()?.let { input ->
-            defaultSharedPreferences.lastSearchInput = input.trim()
-            toggleEndIcon(input)
-            imageBackground.setImageResource(R.drawable.ic_round_search_24)
-            if (input.isNotBlank()) {
-                textBackground.setText(R.string.title_search_text_background)
-            } else if (input.isEmpty()) {
-                imageBackground.setImageResource(R.drawable.ic_round_collections_bookmark_24)
-                textBackground.setText(R.string.title_search_available_cities)
-            }
-            if (defaultSharedPreferences.selectedCityId == City.default.id) {
-                textBackground.setText(R.string.title_search_text_background_first_time)
-            }
-        }
-    }
-
-    // TODO observe search input
-    private fun toggleEndIcon(input: String) = input.isEmpty().let { empty ->
-        textInputLayoutSearch.endIconDrawable = ContextCompat.getDrawable(
-            requireContext(),
-            if (empty) R.drawable.ic_round_my_location_24
-            else R.drawable.ic_round_cancel_24
-        )
-
-        val suffixStringRes =
-            if (empty) R.string.title_search_use_device_location else R.string.title_search_clear
-        textInputLayoutSearch.suffixText = getString(suffixStringRes)
-    }
-
-    // TODO observe search input
-    private fun toggleStartIcon() {
-        if (defaultSharedPreferences.selectedCityId == City.default.id) {
-            textInputLayoutSearch.setStartIconDrawable(R.drawable.ic_round_help_outline_24)
-        } else {
-            textInputLayoutSearch.setStartIconDrawable(R.drawable.ic_round_arrow_back_24)
-        }
-    }
-
     // TODO add in onViewCreated
     private fun requestInputFocus(view: View) {
         view.requestFocus()
         context?.showSoftInput(view)
     }
 
-    @Deprecated("wrong logic")
-    private fun toggleSelectedCity(cityId: Int) = with(defaultSharedPreferences) {
-        selectedCityId = if (selectedCityId != cityId) cityId else City.default.id
-        toggleStartIcon()
-    }
-
     fun showError(errorStringRes: Int) {
         context?.showToast(getString(errorStringRes))
     }
 
-    @Deprecated("wrong logic")
     private fun searchUsingDeviceLocation() {
         val requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { isGranted ->
@@ -230,7 +169,7 @@ class SearchFragment : Fragment() {
     private fun performSearchUsingDeviceLocation() {
         context?.locationManager?.let {
             if (LocationManagerCompat.isLocationEnabled(it)) {
-                TODO("observe LocationLiveData")
+                // TODO Implement later: Show Dialog or navigate to another fragment
             } else {
                 val title = getString(R.string.title_search_location_dialog)
                 val msg = getString(R.string.msg_search_location_dialog_location_off)
