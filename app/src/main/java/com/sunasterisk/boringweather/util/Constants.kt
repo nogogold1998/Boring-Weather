@@ -16,6 +16,8 @@ object Constants {
 
     const val MINUTE_TO_SECONDS = 60
 
+    const val MINUTE_TO_MILLIS = (MINUTE_TO_SECONDS * SECOND_TO_MILLIS).toLong()
+
     const val HOUR_TO_MINUTES = 60
 
     const val HOUR_TO_SECONDS = HOUR_TO_MINUTES * MINUTE_TO_SECONDS

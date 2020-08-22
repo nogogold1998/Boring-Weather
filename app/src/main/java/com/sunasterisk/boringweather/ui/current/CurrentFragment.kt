@@ -16,6 +16,7 @@ import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.AppbarStateChangeListener
 import com.sunasterisk.boringweather.base.BaseDataBindingFragment
 import com.sunasterisk.boringweather.base.Single
+import com.sunasterisk.boringweather.base.observeEvent
 import com.sunasterisk.boringweather.databinding.FragmentCurrentBinding
 import com.sunasterisk.boringweather.di.NewInjector
 import com.sunasterisk.boringweather.ui.main.findNavigator
@@ -84,7 +85,19 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
 
         initViews(savedInstanceState)
         savedInstanceState?.let(::pendingRestoreRecyclerView)
+    }
+
+    override fun observeLiveData() {
         viewModel.errorRes.observe(viewLifecycleOwner) { it?.let(this::showError) }
+        viewModel.navigationEvent.observeEvent(viewLifecycleOwner) {
+            if (it is NavigateToDetailsFragmentRequest) {
+                findNavigator()?.navigateToDetailsFragment(
+                    it.cityId,
+                    it.dailyWeatherDateTime,
+                    it.focusHourlyWeatherDateTime
+                )
+            }
+        }
     }
 
     private fun initViews(savedInstanceState: Bundle?) = with(binding) {
@@ -146,13 +159,12 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
     private fun initRecyclerViews() = with(binding) {
         recyclerTodaySummaryWeather.adapter =
             SummaryWeatherAdapter(this@CurrentFragment.unitSystem, TimeUtils.FORMAT_TIME_SHORT) {
-                // findNavigator()
-                //     ?.navigateToDetailsFragment(cityId, todayDailyWeather.dateTime, it.dt)
+                this@CurrentFragment.viewModel.navigateToDetailsFragment(it.dt)
             }
 
         recyclerForecastSummaryWeather.adapter =
             SummaryWeatherAdapter(this@CurrentFragment.unitSystem, TimeUtils.FORMAT_DATE_SHORT) {
-                // findNavigator()?.navigateToDetailsFragment(cityId, it.dt)
+                this@CurrentFragment.viewModel.navigateToDetailsFragment(it.dt)
             }
 
         recyclerTodaySummaryWeather.setupDefaultItemDecoration()

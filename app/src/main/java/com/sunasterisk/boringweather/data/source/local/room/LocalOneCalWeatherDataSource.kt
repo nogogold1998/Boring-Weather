@@ -19,7 +19,7 @@ class LocalOneCalWeatherDataSource(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : OneCallWeatherDataSource.Local {
 
-    override suspend fun insertOneCallWeather(cityId: Int?, oneCallEntry: OneCallEntry) =
+    override suspend fun insertOneCallWeather(cityId: Int?, oneCallEntry: OneCallEntry): Unit =
         coroutineScope {
             val dbCityId = async(dispatcher) {
                 cityId
@@ -30,7 +30,7 @@ class LocalOneCalWeatherDataSource(
                             "cityId: $cityId and oneCallEntry: $oneCallEntry"
                     )
             }
-            launch(dispatcher) {
+            val hourlyJob = launch(dispatcher) {
                 val hourlyWeatherEntities = withContext(Dispatchers.Default) {
                     arrayOf(oneCallEntry.current, *oneCallEntry.hourly.toTypedArray())
                         .map { HourlyWeatherEntity(dbCityId.await(), it) }.toTypedArray()
@@ -38,7 +38,7 @@ class LocalOneCalWeatherDataSource(
                 yield()
                 hourlyWeatherDao.insertHourlyWeatherEntity(*hourlyWeatherEntities)
             }
-            launch(dispatcher) {
+            val dailyJob = launch(dispatcher) {
                 val dailyWeatherEntities = withContext(Dispatchers.Default) {
                     oneCallEntry.daily.map { DailyWeatherEntity(dbCityId.await(), it) }
                         .toTypedArray()
@@ -46,7 +46,13 @@ class LocalOneCalWeatherDataSource(
                 yield()
                 dailyWeatherDao.insertDailyWeather(*dailyWeatherEntities)
             }
-            cityDao.updateFetchedCity(dbCityId.await(), oneCallEntry.current.dateTime)
+            launch(dispatcher) {
+                hourlyJob.join()
+                dailyJob.join()
+                yield()
+                val cityId1 = dbCityId.await()
+                cityDao.updateFetchedCity(cityId1, oneCallEntry.current.dateTime)
+            }
         }
 
     @ExperimentalCoroutinesApi

@@ -16,12 +16,15 @@ import retrofit2.http.Query
  * Retrofit 2 version
  */
 interface OpenWeatherApiService {
-
+    /**
+     * note: api returns the same unix timestamp for each 10 minutes period
+     * [OneCallEntry.current] has the same dateTime
+     */
     @GET("${ApiConstants.PATH_DATA}/${ApiConstants.PATH_2_5}/${ApiConstants.PATH_ONE_CALL}")
     suspend fun fetchOneCallEntry(
         @Query(ApiConstants.QUERY_LATITUDE) latitude: Float,
         @Query(ApiConstants.QUERY_LONGITUDE) longitude: Float,
-        @Query(ApiConstants.QUERY_EXCLUDE) exclude: String
+        @Query(ApiConstants.QUERY_EXCLUDE) exclude: String,
     ): OneCallEntry
 
     companion object {

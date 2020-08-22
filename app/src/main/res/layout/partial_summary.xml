@@ -145,7 +145,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/dp_8"
-            android:text="@{(isDisplayCurrent ? hourlyWeather.firstWeather : dailyWeather.firstWeather).description}"
+            android:text="@{(isDisplayCurrent ? hourlyWeather.firstWeather : dailyWeather.firstWeather).description, default=@string/title_holder_description}"
             android:textSize="@dimen/sp_25"
             app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
             app:layout_constraintStart_toStartOf="@+id/guidelineStart"

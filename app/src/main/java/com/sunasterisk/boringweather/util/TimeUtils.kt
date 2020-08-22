@@ -6,6 +6,7 @@ import java.util.Calendar
 object TimeUtils {
     fun getCurrentInSeconds() = System.currentTimeMillis() / Constants.SECOND_TO_MILLIS
 
+    @JvmStatic
     fun formatToString(inFormat: String, unixTimeStamp: Long) = DateFormat
         .format(inFormat, unixTimeStamp * Constants.SECOND_TO_MILLIS)
         .toString()

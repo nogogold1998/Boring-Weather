@@ -7,6 +7,8 @@
 
         <import type="com.sunasterisk.boringweather.data.model.HourlyWeather" />
 
+        <import type="com.sunasterisk.boringweather.util.TimeUtils" />
+
         <variable
             name="unitSystem"
             type="com.sunasterisk.boringweather.util.UnitSystem" />
@@ -25,7 +27,7 @@
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:onRefreshListener="@{() -> viewModel.refreshCurrentWeather()}"
+            app:onRefreshListener="@{() -> viewModel.refreshCurrentWeather(viewModel.currentWeather.city)}"
             app:refreshing="@{viewModel.isRefreshing}">
 
             <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -162,7 +164,7 @@
                         app:expandedTitleMarginEnd="@dimen/dp_16"
                         app:expandedTitleMarginStart="@dimen/dp_16"
                         app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-                        app:title="@{viewModel.currentWeather.city.name}">
+                        app:title="@{viewModel.currentWeather.city.name, default=@string/title_holder_title_collapsing_toolbar}">
 
                         <ImageView
                             android:id="@+id/imageToolbar"
@@ -183,6 +185,15 @@
                             android:layout_marginStart="@dimen/dp_72"
                             android:layout_marginTop="@dimen/dp_16"
                             android:text="@string/details_current" />
+
+                        <TextView
+                            android:id="@+id/textToolbarSubtitleLastFetch"
+                            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_16"
+                            android:layout_marginTop="?attr/actionBarSize"
+                            android:text="@{@string/format_last_fetch(TimeUtils.formatToString(@string/format_date_long_time_short, viewModel.currentWeather.city.lastFetch)), default=@string/title_holder_date_time}" />
 
                         <View
                             android:id="@+id/viewBlur"

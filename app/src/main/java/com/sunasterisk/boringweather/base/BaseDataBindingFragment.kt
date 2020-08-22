@@ -22,10 +22,15 @@ abstract class BaseDataBindingFragment<out T : ViewDataBinding> : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = createBinding(inflater, container, savedInstanceState)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeLiveData()
     }
 
     override fun onDestroyView() {
@@ -39,6 +44,8 @@ abstract class BaseDataBindingFragment<out T : ViewDataBinding> : Fragment() {
     abstract fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): T
+
+    open fun observeLiveData() = Unit
 }
