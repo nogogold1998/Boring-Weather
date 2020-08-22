@@ -14,10 +14,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.sunasterisk.boringweather.R
+import com.sunasterisk.boringweather.base.BaseDataBindingFragment
 import com.sunasterisk.boringweather.base.Single
 import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.databinding.FragmentSearchBinding
@@ -32,9 +32,7 @@ import com.sunasterisk.boringweather.util.showToast
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class SearchFragment : Fragment() {
-
-    private lateinit var binding: FragmentSearchBinding
+class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
 
     @ExperimentalCoroutinesApi
     private val searchViewModel by viewModels<SearchViewModel> {
@@ -66,15 +64,15 @@ class SearchFragment : Fragment() {
     }
 
     @ExperimentalCoroutinesApi
-    override fun onCreateView(
+    override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
-        binding.searchViewModel = searchViewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-        return binding.root
+    ): FragmentSearchBinding {
+        return FragmentSearchBinding.inflate(inflater, container, false).also {
+            it.searchViewModel = searchViewModel
+            it.lifecycleOwner = viewLifecycleOwner
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -29,6 +29,7 @@ data class HourlyWeather @JvmOverloads constructor(
     @SerializedName(SNOW) @Ignore val snow: Volume? = null,
     @SerializedName(UV_INDEX) val uvIndex: Float?
 ) {
+    val firstWeather: Weather? get() = weathers.firstOrNull()
 
     @Deprecated("use retrofit gson library instead")
     constructor(jsonObject: JSONObject) : this(

@@ -1,160 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_240">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/textTitlePressure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/details_pressure"
-        app:layout_constraintBottom_toTopOf="@+id/textTitleCloud"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
-        app:layout_constraintTop_toBottomOf="@+id/textTitleUVIndex" />
+    <data>
 
-    <TextView
-        android:id="@+id/textTitleUVIndex"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/details_uv_index"
-        app:layout_constraintBottom_toTopOf="@+id/textTitlePressure"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
-        app:layout_constraintTop_toBottomOf="@+id/textTitleWindSpeed" />
+        <import type="android.view.View" />
 
-    <TextView
-        android:id="@+id/textTitleVisibility"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/details_visibility"
-        app:layout_constraintBottom_toTopOf="@+id/textTitleWindSpeed"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
-        app:layout_constraintTop_toBottomOf="@+id/textTitleHumidity" />
+        <variable
+            name="isDisplayCurrent"
+            type="Boolean" />
 
-    <TextView
-        android:id="@+id/textTitleWindSpeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/details_wind_speed"
-        app:layout_constraintBottom_toTopOf="@+id/textTitleUVIndex"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
-        app:layout_constraintTop_toBottomOf="@+id/textTitleVisibility" />
+        <variable
+            name="dailyWeather"
+            type="com.sunasterisk.boringweather.data.model.DailyWeather" />
 
-    <TextView
-        android:id="@+id/textTitleCloud"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/details_cloud"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineDetailBottom"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
-        app:layout_constraintTop_toBottomOf="@+id/textTitlePressure" />
+        <variable
+            name="hourlyWeather"
+            type="com.sunasterisk.boringweather.data.model.HourlyWeather" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineDetailTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/dp_16" />
+        <variable
+            name="unitSystem"
+            type="com.sunasterisk.boringweather.util.UnitSystem" />
+    </data>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineDetailBottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/dp_16" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_240">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineDetailStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/dp_32" />
+        <TextView
+            android:id="@+id/textTitlePressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/details_pressure"
+            app:layout_constraintBottom_toTopOf="@+id/textTitleCloud"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
+            app:layout_constraintTop_toBottomOf="@+id/textTitleUVIndex" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineDetailEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/dp_16" />
+        <TextView
+            android:id="@+id/textTitleUVIndex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/details_uv_index"
+            app:layout_constraintBottom_toTopOf="@+id/textTitlePressure"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
+            app:layout_constraintTop_toBottomOf="@+id/textTitleWindSpeed" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineDetailMiddle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.35" />
+        <TextView
+            android:id="@+id/textTitleVisibility"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/details_visibility"
+            android:visibility="@{isDisplayCurrent ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toTopOf="@+id/textTitleWindSpeed"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
+            app:layout_constraintTop_toBottomOf="@+id/textTitleHumidity" />
 
-    <TextView
-        android:id="@+id/textHumidity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_holder_percent"
-        app:layout_constraintBottom_toTopOf="@+id/textVisibility"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/textTitleTile"
-        app:layout_constraintVertical_chainStyle="spread" />
+        <TextView
+            android:id="@+id/textTitleWindSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/details_wind_speed"
+            app:layout_constraintBottom_toTopOf="@+id/textTitleUVIndex"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
+            app:layout_constraintTop_toBottomOf="@+id/textTitleVisibility" />
 
-    <TextView
-        android:id="@+id/textVisibility"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_holder_decimal_number"
-        app:layout_constraintBottom_toTopOf="@+id/textWindSpeed"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/textHumidity" />
+        <TextView
+            android:id="@+id/textTitleCloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/details_cloud"
+            app:layout_constraintBottom_toTopOf="@+id/guidelineDetailBottom"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
+            app:layout_constraintTop_toBottomOf="@+id/textTitlePressure" />
 
-    <TextView
-        android:id="@+id/textWindSpeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_holder_decimal_number"
-        app:layout_constraintBottom_toTopOf="@+id/textUVIndex"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/textVisibility" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineDetailTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/dp_16" />
 
-    <TextView
-        android:id="@+id/textUVIndex"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_holder_float_number"
-        app:layout_constraintBottom_toTopOf="@+id/textPressure"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/textWindSpeed" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineDetailBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="@dimen/dp_16" />
 
-    <TextView
-        android:id="@+id/textPressure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_holder_pressure"
-        app:layout_constraintBottom_toTopOf="@+id/textCloud"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/textUVIndex" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineDetailStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/dp_32" />
 
-    <TextView
-        android:id="@+id/textCloud"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_holder_percent"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineDetailBottom"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/textPressure" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineDetailEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/dp_16" />
 
-    <TextView
-        android:id="@+id/textTitleTile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/details_current_details"
-        android:textSize="@dimen/sp_25"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
-        app:layout_constraintTop_toTopOf="@+id/guidelineDetailTop"
-        app:layout_constraintVertical_chainStyle="spread" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineDetailMiddle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
 
-    <TextView
-        android:id="@+id/textTitleHumidity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/details_humidity"
-        app:layout_constraintBottom_toTopOf="@+id/textTitleVisibility"
-        app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
-        app:layout_constraintTop_toBottomOf="@+id/textTitleTile" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textHumidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/format_percent_decimal(isDisplayCurrent ? hourlyWeather.humidity : dailyWeather.humidity)}"
+            app:layout_constraintBottom_toTopOf="@+id/textVisibility"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
+            app:layout_constraintTop_toBottomOf="@+id/textTitleTile"
+            app:layout_constraintVertical_chainStyle="spread"
+            tools:text="@string/title_holder_percent" />
+
+        <TextView
+            android:id="@+id/textVisibility"
+            distance="@{hourlyWeather.visibility}"
+            unitSystem="@{unitSystem}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{isDisplayCurrent ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toTopOf="@+id/textWindSpeed"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
+            app:layout_constraintTop_toBottomOf="@+id/textHumidity"
+            tools:text="@string/title_holder_decimal_number" />
+
+        <TextView
+            android:id="@+id/textWindSpeed"
+            speed="@{isDisplayCurrent ? hourlyWeather.windSpeed : dailyWeather.windSpeed}"
+            unitSystem="@{unitSystem}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/textUVIndex"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
+            app:layout_constraintTop_toBottomOf="@+id/textVisibility"
+            tools:text="@string/title_holder_decimal_number" />
+
+        <TextView
+            android:id="@+id/textUVIndex"
+            titleTextViewId="@{@id/textTitleUVIndex}"
+            uvIndexWeatherEntry="@{isDisplayCurrent ? hourlyWeather : dailyWeather}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_holder_float_number"
+            app:layout_constraintBottom_toTopOf="@+id/textPressure"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
+            app:layout_constraintTop_toBottomOf="@+id/textWindSpeed" />
+
+        <TextView
+            android:id="@+id/textPressure"
+            pressure="@{isDisplayCurrent ? hourlyWeather.pressure : dailyWeather.pressure}"
+            unitSystem="@{unitSystem}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/textCloud"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
+            app:layout_constraintTop_toBottomOf="@+id/textUVIndex"
+            tools:text="@string/title_holder_pressure" />
+
+        <TextView
+            android:id="@+id/textCloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/format_percent_decimal(isDisplayCurrent ? hourlyWeather.clouds : dailyWeather.clouds)}"
+            app:layout_constraintBottom_toTopOf="@+id/guidelineDetailBottom"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailMiddle"
+            app:layout_constraintTop_toBottomOf="@+id/textPressure"
+            tools:text="@string/title_holder_percent" />
+
+        <TextView
+            android:id="@+id/textTitleTile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/details_current_details"
+            android:textSize="@dimen/sp_25"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
+            app:layout_constraintTop_toTopOf="@+id/guidelineDetailTop"
+            app:layout_constraintVertical_chainStyle="spread" />
+
+        <TextView
+            android:id="@+id/textTitleHumidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/details_humidity"
+            app:layout_constraintBottom_toTopOf="@+id/textTitleVisibility"
+            app:layout_constraintStart_toStartOf="@+id/guidelineDetailStart"
+            app:layout_constraintTop_toBottomOf="@+id/textTitleTile" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

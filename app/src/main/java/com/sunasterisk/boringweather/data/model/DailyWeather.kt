@@ -27,6 +27,7 @@ data class DailyWeather @JvmOverloads constructor(
     @SerializedName(CLOUDS) val clouds: Int,
     @SerializedName(UVI) val uvIndex: Float
 ) {
+    val firstWeather: Weather? get() = weathers.firstOrNull()
 
     @Deprecated("use gson library instead")
     constructor(jsonObject: JSONObject) : this(

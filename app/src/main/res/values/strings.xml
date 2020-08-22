@@ -59,6 +59,10 @@
 
     <string name="format_pressure">%1$.1f kPa</string>
 
+    <string name="format_time_short">h:mm a</string>
+    <string name="format_date_time">MMM, dd yyyy</string>
+    <string name="format_date_long_time_short">MMM, dd yyyy, h:mm a</string>
+
     <string name="error_refresh_result_null">No result returned</string>
     <string name="error_refresh_city_null">Loading city failed</string>
     <string name="error_refresh_city_not_outdated">Nope! Your data is recent</string>

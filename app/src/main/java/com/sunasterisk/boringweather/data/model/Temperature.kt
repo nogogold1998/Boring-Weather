@@ -18,6 +18,12 @@ data class Temperature(
             .average()
             .toFloat()
 
+    val feelsLike: Float
+        get() = arrayOf(max, min)
+            .filter { it != 0f }
+            .average()
+            .toFloat()
+
     constructor(jsonObject: JSONObject) : this(
         jsonObject.getOrElse(DAY, default.day),
         jsonObject.getOrElse(MIN, default.min),
