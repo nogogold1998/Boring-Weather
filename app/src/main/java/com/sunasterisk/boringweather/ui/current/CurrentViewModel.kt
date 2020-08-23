@@ -66,7 +66,7 @@ class CurrentViewModel(
         viewModelScope.launch {
             _isRefreshing.postValue(true)
             try {
-                withTimeout(REQUEST_TIMED_OUT) {
+                withTimeout(Constants.REQUEST_TIMED_OUT) {
                     city?.let { oneCallWeatherRepo.fetchWeatherData(it) }
                         ?: throw IllegalArgumentException("Refresh current weather with a null City reference!")
                 }
@@ -79,14 +79,13 @@ class CurrentViewModel(
         }
     }
 
-    fun navigateToDetailsFragment(dateTime: Long) {
-        val startOfDay = timeUtils.getStartEndOfDay(dateTime).first
-        currentWeather.value?.city?.id?.let {
+    fun navigateToDetailsFragment(dateTime: Long, isToday: Boolean) {
+        currentWeather.value?.let {
             _navigationEvent.postValue(
                 Event(
-                    NavigateToDetailsFragmentRequest(it,
-                        startOfDay,
-                        if (startOfDay != dateTime) dateTime else null
+                    NavigateToDetailsFragmentRequest(it.city.id,
+                        if (isToday) it.dailyWeather.dateTime else dateTime,
+                        if (isToday) dateTime else null
                     )
                 )
             )
@@ -96,14 +95,10 @@ class CurrentViewModel(
     class Factory(
         private val oneCallWeatherRepo: OneCallWeatherDataSource,
         private val defaultSharedPreferences: DefaultSharedPreferences,
-    ) : ViewModelProvider.NewInstanceFactory() {
+    ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return CurrentViewModel(oneCallWeatherRepo, defaultSharedPreferences) as T
         }
-    }
-
-    companion object {
-        private const val REQUEST_TIMED_OUT = Constants.MINUTE_TO_MILLIS / 2
     }
 }

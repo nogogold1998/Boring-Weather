@@ -19,7 +19,7 @@ abstract class DailyWeatherDao {
         toDateTime: Long = Long.MAX_VALUE
     ): Flow<List<DailyWeatherEntity>>
 
-    @Query("SELECT * FROM daily_weather WHERE cityId = :cityId AND dateTime = :upperDateTime ORDER BY dateTime LIMIT 1")
+    @Query("SELECT * FROM daily_weather WHERE cityId = :cityId AND dateTime <= :upperDateTime ORDER BY dateTime DESC LIMIT 1")
     abstract fun getDailyWeatherEntity(
         cityId: Int,
         upperDateTime: Long

@@ -23,7 +23,6 @@ import com.sunasterisk.boringweather.ui.main.findNavigator
 import com.sunasterisk.boringweather.util.DefaultSharedPreferences
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.UnitSystem
-import com.sunasterisk.boringweather.util.centerItemPosition
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
 import com.sunasterisk.boringweather.util.lazy
 import com.sunasterisk.boringweather.util.load
@@ -44,17 +43,6 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
             requireContext().defaultSharedPreferences
         )
     }
-
-    override fun createBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ) =
-        FragmentCurrentBinding.inflate(inflater, container, false).also {
-            it.viewModel = viewModel
-            it.unitSystem = defaultSharedPreferences.unitSystem
-            it.lifecycleOwner = viewLifecycleOwner
-        }
 
     private val defaultSharedPreferences: DefaultSharedPreferences
         by lazy { requireContext().defaultSharedPreferences }
@@ -79,6 +67,17 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
             }
         }
     }
+
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ) =
+        FragmentCurrentBinding.inflate(inflater, container, false).also {
+            it.viewModel = viewModel
+            it.unitSystem = defaultSharedPreferences.unitSystem
+            it.lifecycleOwner = viewLifecycleOwner
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -143,28 +142,35 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
         super.onSaveInstanceState(outState)
 
         outState.putBoolean(KEY_EXPANDED_COLLAPSING_TOOL_BAR, expandedCollapsingToolbar)
-        with(binding) {
-            recyclerTodaySummaryWeather.centerItemPosition
-                .let { outState.putInt(KEY_TODAY_RECYCLER_POSITION, it) }
-            recyclerForecastSummaryWeather.centerItemPosition
-                .let { outState.putInt(KEY_FORECAST_RECYCLER_POSITION, it) }
-        }
+        /* FIXME configuration changes
+            single fragment: onSaveInstanceState -> onDestroyView
+            fragment A in foreground, fragment B in back stack
+            fragment B onDestroyView invoked when it's replaced by A
+            but onSaveInstanceState then later be invoked due to its host activity saveState
+        */
+        // with(binding) {
+        //     recyclerTodaySummaryWeather.centerItemPosition
+        //         .let { outState.putInt(KEY_TODAY_RECYCLER_POSITION, it) }
+        //     recyclerForecastSummaryWeather.centerItemPosition
+        //         .let { outState.putInt(KEY_FORECAST_RECYCLER_POSITION, it) }
+        // }
     }
 
     override fun onDestroyView() {
         binding.appbarCurrent.removeOnOffsetChangedListener(appbarStateChangeListener)
+        binding.drawerLayout.removeDrawerListener(this)
         super.onDestroyView()
     }
 
     private fun initRecyclerViews() = with(binding) {
         recyclerTodaySummaryWeather.adapter =
             SummaryWeatherAdapter(this@CurrentFragment.unitSystem, TimeUtils.FORMAT_TIME_SHORT) {
-                this@CurrentFragment.viewModel.navigateToDetailsFragment(it.dt)
+                this@CurrentFragment.viewModel.navigateToDetailsFragment(it.dt, true)
             }
 
         recyclerForecastSummaryWeather.adapter =
             SummaryWeatherAdapter(this@CurrentFragment.unitSystem, TimeUtils.FORMAT_DATE_SHORT) {
-                this@CurrentFragment.viewModel.navigateToDetailsFragment(it.dt)
+                this@CurrentFragment.viewModel.navigateToDetailsFragment(it.dt, false)
             }
 
         recyclerTodaySummaryWeather.setupDefaultItemDecoration()

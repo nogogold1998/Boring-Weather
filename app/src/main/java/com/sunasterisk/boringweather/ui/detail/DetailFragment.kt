@@ -1,59 +1,42 @@
 package com.sunasterisk.boringweather.ui.detail
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
-import com.sunasterisk.boringweather.R
-import com.sunasterisk.boringweather.base.BaseFragment
+import androidx.lifecycle.ViewModelProvider
+import com.sunasterisk.boringweather.base.BaseDataBindingFragment
 import com.sunasterisk.boringweather.base.BaseTransitionListener
-import com.sunasterisk.boringweather.base.CallbackAsyncTask
-import com.sunasterisk.boringweather.base.Result
 import com.sunasterisk.boringweather.base.Single
 import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.data.model.DailyWeather
-import com.sunasterisk.boringweather.data.model.DetailWeather
-import com.sunasterisk.boringweather.data.model.HourlyWeather
-import com.sunasterisk.boringweather.di.Injector
+import com.sunasterisk.boringweather.databinding.FragmentDetailBinding
+import com.sunasterisk.boringweather.di.NewInjector
+import com.sunasterisk.boringweather.ui.current.NavigateToDetailsFragmentRequest
 import com.sunasterisk.boringweather.ui.detail.model.DailyWeatherItem
-import com.sunasterisk.boringweather.ui.detail.model.DetailWeatherAdapterItem
-import com.sunasterisk.boringweather.ui.detail.model.HourlyWeatherItem
-import com.sunasterisk.boringweather.ui.detail.model.LoadDetailWeatherRequest
 import com.sunasterisk.boringweather.ui.main.findNavigator
 import com.sunasterisk.boringweather.util.TimeUtils
-import com.sunasterisk.boringweather.util.blur
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
-import com.sunasterisk.boringweather.util.gifUrl
 import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
-import com.sunasterisk.boringweather.util.load
+import com.sunasterisk.boringweather.util.scrollToPositionScrollChangeListenerAware
 import com.sunasterisk.boringweather.util.setupDefaultItemDecoration
 import com.sunasterisk.boringweather.util.showToast
 import com.sunasterisk.boringweather.util.verticalScrollProgress
 import kotlinx.android.synthetic.main.fragment_detail.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
-class DetailFragment : BaseFragment(), DetailContract.View {
-
-    override val layoutResource = R.layout.fragment_detail
-
-    private var cityId = City.default.id
-
-    private var dailyWeatherDateTime: Long = DailyWeather.default.dateTime
-
-    override var presenter: DetailContract.Presenter? = null
+@ExperimentalCoroutinesApi
+@FlowPreview
+class DetailFragment : BaseDataBindingFragment<FragmentDetailBinding>() {
 
     private var adapter: DetailWeatherAdapter? = null
-
-    private var gifUrl: String? = null
 
     private val pendingRestoreExpandedItem = Single<List<Long>>()
 
     private val pendingRestoreRecyclerScrollPosition = Single<Int>()
-
-    private val pendingFocusToHourlyWeatherItemDateTime = Single<Long>()
-
-    private val animTime: Long by lazy {
-        resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
-    }
 
     private val motionListener: BaseTransitionListener by lazy {
         object : BaseTransitionListener() {
@@ -68,23 +51,45 @@ class DetailFragment : BaseFragment(), DetailContract.View {
         }
     }
 
+    private val viewModel: DetailViewModel by lazy {
+        ViewModelProvider(
+            this,
+            DetailViewModel.Factory(NewInjector.provideOneCallWeatherRepository(requireContext()))
+        ).get(DetailViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            cityId = it.getInt(ARGUMENT_CITY_ID, cityId)
-            dailyWeatherDateTime =
-                it.getLong(ARGUMENT_DAILY_WEATHER_DATE_TIME, dailyWeatherDateTime)
-            if (savedInstanceState == null)
-                pendingFocusToHourlyWeatherItemDateTime.value =
-                    it.getLong(ARGUMENT_FOCUS_HOURLY_WEATHER_DATE_TIME)
+            viewModel.loadDetailWeather(
+                NavigateToDetailsFragmentRequest(
+                    it.getInt(ARGUMENT_CITY_ID, City.default.id),
+                    it.getLong(ARGUMENT_DAILY_WEATHER_DATE_TIME, DailyWeather.default.dateTime),
+                    it.getLong(ARGUMENT_FOCUS_HOURLY_WEATHER_DATE_TIME, 0)
+                )
+            )
         }
+    }
 
-        presenter = DetailPresenter(
-            this,
-            Injector.getOneCallRepository(requireContext()),
-            Injector.getCityRepository(requireContext())
-        )
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ) = FragmentDetailBinding.inflate(inflater, container, false).apply {
+        viewModel = this@DetailFragment.viewModel
+        lifecycleOwner = viewLifecycleOwner
+    }
+
+    override fun observeLiveData() {
+        viewModel.isRefreshing.observe(viewLifecycleOwner) {
+            if (motionDetail.currentState == motionDetail.endState) {
+                swipeRefreshLayout.isEnabled = false
+            }
+        }
+        viewModel.errorRes.observe(viewLifecycleOwner) {
+            if (it != null) showError(it)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,12 +97,8 @@ class DetailFragment : BaseFragment(), DetailContract.View {
 
         setupAppBar()
         setupMotionDetail()
-        setupSwipeRefreshLayout()
         setupRecyclerViewDetail()
-        presenter?.loadDetailWeather(LoadDetailWeatherRequest(cityId, dailyWeatherDateTime))
-
         savedInstanceState?.let(::pendingRestoreRecyclerView)
-        savedInstanceState?.getString(KEY_GIF_URL)?.let(::loadDecorImages)
     }
 
     private fun pendingRestoreRecyclerView(savedInstanceState: Bundle) = with(savedInstanceState) {
@@ -111,31 +112,18 @@ class DetailFragment : BaseFragment(), DetailContract.View {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        presenter?.cancel()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         saveRecyclerViewState(outState)
-        outState.putString(KEY_GIF_URL, gifUrl)
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         motionDetail.removeTransitionListener(motionListener)
+        super.onDestroyView()
     }
 
     private fun saveRecyclerViewState(outState: Bundle) {
-        adapter?.currentList
-            ?.filterIsInstance(HourlyWeatherItem::class.java)
-            ?.filter(HourlyWeatherItem::expanded)
-            ?.map { it.data.dateTime }
-            ?.toLongArray()
-            ?.let { outState.putLongArray(KEY_EXPANDED_ITEMS, it) }
-
         recyclerViewDetail?.takeUnless { it.verticalScrollProgress == 0f }
             ?.let { outState.putInt(KEY_SCROLL_POSITION, it.lastCompletelyVisibleItemPosition) }
     }
@@ -144,19 +132,11 @@ class DetailFragment : BaseFragment(), DetailContract.View {
         motionDetail.addTransitionListener(motionListener)
     }
 
-    private fun setupSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener {
-            presenter?.loadDetailWeather(
-                LoadDetailWeatherRequest(cityId, dailyWeatherDateTime, true)
-            )
-        }
-    }
-
     private fun setupRecyclerViewDetail() = with(recyclerViewDetail) {
         adapter = DetailWeatherAdapter(
             requireContext().defaultSharedPreferences.unitSystem,
             TimeUtils.FORMAT_TIME_SHORT
-        ) { recyclerViewDetail.scrollToPosition(it) }.also {
+        ) { recyclerViewDetail.scrollToPositionScrollChangeListenerAware(it) }.also {
             this@DetailFragment.adapter = it
             post { it.submitList(listOf(DailyWeatherItem(DailyWeather.default))) }
         }
@@ -170,75 +150,8 @@ class DetailFragment : BaseFragment(), DetailContract.View {
         setupDefaultItemDecoration()
     }
 
-    override fun showError(errorStringRes: Int) {
+    fun showError(errorStringRes: Int) {
         context?.showToast(getString(errorStringRes))
-    }
-
-    override fun showDetailWeather(detailWeather: DetailWeather) = with(detailWeather) {
-        showCity(city)
-        CallbackAsyncTask<DetailWeather, List<DetailWeatherAdapterItem<*>>>(
-            handler = {
-                generateDetailWeatherAdapterItemList(it).also(::findFocusItemPosition)
-            },
-            onFinishedListener = {
-                when (it) {
-                    is Result.Success -> submitListRecyclerView(it.data)
-                    is Result.Error -> showError(R.string.error_show_detail_weather)
-                    null -> showError(R.string.error_unknown)
-                }
-            }
-        ).executeOnExecutor(detailWeather)
-        detailWeather.dailyWeather.weathers.firstOrNull()?.gifUrl?.let(::loadDecorImages) ?: Unit
-    }
-
-    override fun finishRefresh() {
-        swipeRefreshLayout.isRefreshing = false
-        if (motionDetail.currentState == motionDetail.endState) swipeRefreshLayout.isEnabled = false
-    }
-
-    override fun showCity(city: City) {
-        this.cityId = city.id
-        textToolbarTitle.text = city.name
-    }
-
-    private fun loadDecorImages(url: String) {
-        gifUrl = url
-        imageToolbar.load(url)
-        imageBackground.load(url) {
-            blur(5, 2)
-        }
-    }
-
-    private fun findFocusItemPosition(list: List<DetailWeatherAdapterItem<*>>) {
-        pendingFocusToHourlyWeatherItemDateTime.value?.let { focusDateTime ->
-            list.indexOfFirst { (it as? HourlyWeatherItem)?.data?.dateTime == focusDateTime }
-                .let {
-                    pendingRestoreRecyclerScrollPosition.value = it
-                    (list.getOrNull(it) as? HourlyWeatherItem)?.expanded = true
-                }
-        }
-    }
-
-    private fun generateDetailWeatherAdapterItemList(
-        detail: DetailWeather
-    ): List<DetailWeatherAdapterItem<*>> {
-        val expandedMap = pendingRestoreExpandedItem.value
-            ?.associateWith { it != HourlyWeather.default.dateTime }
-        return listOf(
-            DailyWeatherItem(detail.dailyWeather),
-            *detail.hourlyWeathers
-                .map { HourlyWeatherItem(it, expandedMap?.get(it.dateTime) ?: false) }
-                .toTypedArray()
-        )
-    }
-
-    private fun submitListRecyclerView(items: List<DetailWeatherAdapterItem<*>>) {
-        recyclerViewDetail?.postDelayed({
-            adapter?.submitList(items) {
-                pendingRestoreRecyclerScrollPosition.value
-                    ?.let { recyclerViewDetail?.scrollToPosition(it) }
-            }
-        }, animTime)
     }
 
     companion object {
@@ -248,7 +161,6 @@ class DetailFragment : BaseFragment(), DetailContract.View {
 
         private const val KEY_EXPANDED_ITEMS = "expanded_items"
         private const val KEY_SCROLL_POSITION = "scroll_progress"
-        private const val KEY_GIF_URL = "gif_url"
 
         fun newInstance(
             cityId: Int,

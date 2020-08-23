@@ -18,6 +18,8 @@ object Constants {
 
     const val MINUTE_TO_MILLIS = (MINUTE_TO_SECONDS * SECOND_TO_MILLIS).toLong()
 
+    const val REQUEST_TIMED_OUT = MINUTE_TO_MILLIS / 2
+
     const val HOUR_TO_MINUTES = 60
 
     const val HOUR_TO_SECONDS = HOUR_TO_MINUTES * MINUTE_TO_SECONDS

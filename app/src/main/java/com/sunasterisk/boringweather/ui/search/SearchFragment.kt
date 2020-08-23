@@ -50,6 +50,7 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
     private val cityAdapter: CityAdapter by lazy {
         CityAdapter(
             onclickListener = {
+                defaultSharedPreferences.selectedCityId = it.id
             },
             onBookMarkListener = {
             }

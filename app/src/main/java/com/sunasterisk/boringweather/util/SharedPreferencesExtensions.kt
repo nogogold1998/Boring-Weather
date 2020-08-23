@@ -28,7 +28,6 @@ class DefaultSharedPreferences(
             preCachedStrings[R.string.pref_value_is_first_launch_default].toBoolean()
         )
 
-    @Deprecated("use Flow")
     var selectedCityId: Int
         set(value) = edit {
             putInt(preCachedStrings[R.string.pref_key_selected_city_id], value)

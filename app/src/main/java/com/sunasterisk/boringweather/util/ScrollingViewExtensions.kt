@@ -32,3 +32,8 @@ fun RecyclerView.setupDefaultItemDecoration() {
     (layoutManager as? LinearLayoutManager)?.orientation
         ?.let { addItemDecoration(DividerItemDecoration(context, it)) }
 }
+
+fun RecyclerView.scrollToPositionScrollChangeListenerAware(pos: Int) {
+    scrollBy(0, 1)
+    scrollToPosition(pos)
+}

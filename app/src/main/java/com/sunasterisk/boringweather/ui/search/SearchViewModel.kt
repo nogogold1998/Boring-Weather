@@ -62,8 +62,8 @@ class SearchViewModel(
 
     class Factory(
         private val cityRepository: CityDataSource,
-        private val defaultSharedPreferences: DefaultSharedPreferences
-    ) : ViewModelProvider.NewInstanceFactory() {
+        private val defaultSharedPreferences: DefaultSharedPreferences,
+    ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return SearchViewModel(cityRepository, defaultSharedPreferences) as T
