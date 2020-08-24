@@ -5,9 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import com.sunasterisk.boringweather.R
@@ -19,13 +19,16 @@ import com.sunasterisk.boringweather.util.Constants
 import com.sunasterisk.boringweather.util.DefaultSharedPreferences
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.gifUrl
+import com.sunasterisk.boringweather.util.isOutDated
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.combineTransform
-import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 
+@FlowPreview
 class CurrentViewModel(
     private val oneCallWeatherRepo: OneCallWeatherDataSource,
     private val defaultSharedPreferences: DefaultSharedPreferences,
@@ -40,12 +43,16 @@ class CurrentViewModel(
         }
     }
 
-    private val _currentWeather = _cityId.asFlow()
-        .combineTransform(minutelyFlow) { city, currentInSeconds ->
-            emitAll(oneCallWeatherRepo.getCurrentWeather(city, currentInSeconds))
-        }
-
-    val currentWeather: LiveData<CurrentWeather> = _currentWeather.asLiveData()
+    val currentWeather: LiveData<CurrentWeather> = _cityId.switchMap { cityId ->
+        minutelyFlow
+            .flatMapConcat {
+                oneCallWeatherRepo.getCurrentWeather(cityId, it)
+            }
+            .onEach {
+                if (it.city.isOutDated) refreshCurrentWeather(it.city)
+            }
+            .asLiveData()
+    }
 
     private val _errorRes = MutableLiveData<@StringRes Int>()
     val errorRes: LiveData<Int> = _errorRes

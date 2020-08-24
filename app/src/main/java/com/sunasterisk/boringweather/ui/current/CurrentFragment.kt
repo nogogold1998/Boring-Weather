@@ -9,7 +9,8 @@ import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.core.widget.NestedScrollView
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
@@ -32,12 +33,14 @@ import com.sunasterisk.boringweather.util.verticalScrollProgress
 import kotlinx.android.synthetic.main.fragment_current.*
 import kotlinx.android.synthetic.main.fragment_current.view.*
 import kotlinx.android.synthetic.main.partial_nav_view_header.view.*
+import kotlinx.coroutines.FlowPreview
 
+@FlowPreview
 class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
     NavigationView.OnNavigationItemSelectedListener,
     DrawerLayout.DrawerListener {
 
-    private val viewModel: CurrentViewModel by activityViewModels {
+    private val viewModel: CurrentViewModel by viewModels {
         CurrentViewModel.Factory(
             NewInjector.provideOneCallWeatherRepository(requireContext()),
             requireContext().defaultSharedPreferences
@@ -65,6 +68,20 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
                     if (state == State.COLLAPSED) expandedCollapsingToolbar = false
                 }
             }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launchWhenStarted {
+            findNavController().currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<Int>(CITY_ID)
+                ?.observe(requireActivity()) {
+                    if (it != null) {
+                        viewModel.loadCurrentWeather(it)
+                    }
+                }
         }
     }
 

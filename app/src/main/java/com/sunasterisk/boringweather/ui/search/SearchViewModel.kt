@@ -12,17 +12,25 @@ import com.sunasterisk.boringweather.ui.search.model.CityItem
 import com.sunasterisk.boringweather.util.DefaultSharedPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.supervisorScope
 
 @ExperimentalCoroutinesApi
+@FlowPreview
 class SearchViewModel(
     private val cityRepository: CityDataSource,
     private val defaultSharedPreferences: DefaultSharedPreferences
 ) : ViewModel() {
+
+    private val _selectedCityId = ConflatedBroadcastChannel(defaultSharedPreferences.selectedCityId)
+    private val _selectedCityFlow = _selectedCityId.asFlow()
+    val selectedCityId = _selectedCityFlow.asLiveData()
 
     val searchInput = object : MutableLiveData<String>(defaultSharedPreferences.lastSearchInput) {
         override fun setValue(value: String?) {
@@ -48,13 +56,18 @@ class SearchViewModel(
             }
         }
 
-    val cityItems: LiveData<List<CityItem>> = searchResult.map { cities ->
-        val selectedCityId = defaultSharedPreferences.selectedCityId
-        cities.map { CityItem(it, it.id == selectedCityId) }
-    }
+    val cityItems: LiveData<List<CityItem>> = _selectedCityFlow
+        .onEach { defaultSharedPreferences.selectedCityId = it }
+        .combine(searchResult) { selectedCityId, cities ->
+            cities.map { CityItem(it, it.id == selectedCityId) }
+        }
         .flowOn(Dispatchers.Default)
         .conflate()
         .asLiveData()
+
+    fun changeSelectedCityId(cityId: Int) {
+        _selectedCityId.offer(cityId)
+    }
 
     class Factory(
         private val cityRepository: CityDataSource,

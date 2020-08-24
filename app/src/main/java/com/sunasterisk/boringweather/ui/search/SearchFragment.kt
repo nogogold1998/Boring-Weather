@@ -13,11 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
-import androidx.core.os.bundleOf
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.fragment.findNavController
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.BaseDataBindingFragment
@@ -25,7 +21,7 @@ import com.sunasterisk.boringweather.base.Single
 import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.databinding.FragmentSearchBinding
 import com.sunasterisk.boringweather.di.NewInjector
-import com.sunasterisk.boringweather.ui.current.CurrentViewModel
+import com.sunasterisk.boringweather.ui.current.CurrentFragment
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
 import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
 import com.sunasterisk.boringweather.util.locationManager
@@ -34,10 +30,12 @@ import com.sunasterisk.boringweather.util.showSoftInput
 import com.sunasterisk.boringweather.util.showToast
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
 
-    @ExperimentalCoroutinesApi
     private val searchViewModel by viewModels<SearchViewModel> {
         val context = requireContext()
         SearchViewModel.Factory(
@@ -46,23 +44,15 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
         )
     }
 
-    private lateinit var savedStateHandle: SavedStateHandle
-
-    private val defaultSharedPreferences by lazy { requireContext().defaultSharedPreferences }
-
     private val pendingRestoreRecyclerViewPosition = Single<Int>()
-
-    private val currentVM: CurrentViewModel by activityViewModels()
 
     private val cityAdapter: CityAdapter by lazy {
         CityAdapter(
             onclickListener = {
-                defaultSharedPreferences.selectedCityId = it.id
-                currentVM.loadCurrentWeather(it.id)
-                findNavController().popBackStack()
+                sendFragmentResult(it.id)
             },
             onBookMarkListener = {
-                defaultSharedPreferences.selectedCityId = it
+                searchViewModel.changeSelectedCityId(it)
             }
         )
     }
@@ -74,7 +64,6 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
             ?.let { pendingRestoreRecyclerViewPosition.value = it }
     }
 
-    @ExperimentalCoroutinesApi
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -89,7 +78,6 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        savedStateHandle = findNavController().previousBackStackEntry!!.savedStateHandle
         initView()
         initListener()
     }
@@ -109,7 +97,8 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
 
     private fun initListener() = with(binding) {
         textInputLayoutSearch.setStartIconOnClickListener {
-            if (defaultSharedPreferences.selectedCityId != City.default.id) {
+            val value = this@SearchFragment.searchViewModel.selectedCityId.value
+            if (value != null && value != City.default.id) {
                 findNavController().popBackStack()
             } else {
                 showError(R.string.error_search_need_select_city)
@@ -193,10 +182,12 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun sendFragmentResult(cityId: Int) = setFragmentResult(
-        SearchConstants.KEY_REQUEST_SEARCH_CITY,
-        bundleOf(SearchConstants.KEY_BUNDLE_CITY_ID to cityId)
-    )
+    private fun sendFragmentResult(cityId: Int?) {
+        findNavController().previousBackStackEntry
+            ?.savedStateHandle
+            ?.set(CurrentFragment.CITY_ID, cityId)
+        findNavController().popBackStack()
+    }
 
     companion object {
         private const val KEY_RECYCLER_POSITION = "recycler_pos"
