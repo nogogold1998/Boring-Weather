@@ -14,15 +14,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.fragment.findNavController
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.BaseDataBindingFragment
 import com.sunasterisk.boringweather.base.Single
 import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.databinding.FragmentSearchBinding
 import com.sunasterisk.boringweather.di.NewInjector
-import com.sunasterisk.boringweather.ui.main.findNavigator
+import com.sunasterisk.boringweather.ui.current.CurrentViewModel
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
 import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
 import com.sunasterisk.boringweather.util.locationManager
@@ -43,16 +46,23 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
         )
     }
 
+    private lateinit var savedStateHandle: SavedStateHandle
+
     private val defaultSharedPreferences by lazy { requireContext().defaultSharedPreferences }
 
     private val pendingRestoreRecyclerViewPosition = Single<Int>()
+
+    private val currentVM: CurrentViewModel by activityViewModels()
 
     private val cityAdapter: CityAdapter by lazy {
         CityAdapter(
             onclickListener = {
                 defaultSharedPreferences.selectedCityId = it.id
+                currentVM.loadCurrentWeather(it.id)
+                findNavController().popBackStack()
             },
             onBookMarkListener = {
+                defaultSharedPreferences.selectedCityId = it
             }
         )
     }
@@ -78,6 +88,8 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        savedStateHandle = findNavController().previousBackStackEntry!!.savedStateHandle
         initView()
         initListener()
     }
@@ -98,7 +110,7 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
     private fun initListener() = with(binding) {
         textInputLayoutSearch.setStartIconOnClickListener {
             if (defaultSharedPreferences.selectedCityId != City.default.id) {
-                findNavigator()?.popBackStack()
+                findNavController().popBackStack()
             } else {
                 showError(R.string.error_search_need_select_city)
             }
@@ -116,7 +128,7 @@ class SearchFragment : BaseDataBindingFragment<FragmentSearchBinding>() {
         context?.showSoftInput(view)
     }
 
-    fun showError(errorStringRes: Int) {
+    private fun showError(errorStringRes: Int) {
         context?.showToast(getString(errorStringRes))
     }
 

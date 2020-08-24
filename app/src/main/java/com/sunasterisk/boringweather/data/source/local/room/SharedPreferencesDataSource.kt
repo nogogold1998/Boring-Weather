@@ -7,6 +7,5 @@ import com.sunasterisk.boringweather.util.DefaultSharedPreferences
  * idea: make preferences as flow
  */
 class SharedPreferencesDataSource(
-    private val defaultSharedPreferences: DefaultSharedPreferences
-) {
-}
+    private val defaultSharedPreferences: DefaultSharedPreferences,
+)

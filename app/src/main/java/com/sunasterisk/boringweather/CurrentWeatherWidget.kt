@@ -4,12 +4,9 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.widget.RemoteViews
-import com.sunasterisk.boringweather.base.Result
 import com.sunasterisk.boringweather.data.model.CurrentWeather
-import com.sunasterisk.boringweather.di.Injector
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.UnitSystem
-import com.sunasterisk.boringweather.util.defaultSharedPreferences
 
 /**
  * Implementation of App Widget functionality.
@@ -20,28 +17,6 @@ class CurrentWeatherWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        val cityRepository = Injector.getCityRepository(context)
-        val oneCallRepository = Injector.getOneCallRepository(context)
-        val unitSystem = context.defaultSharedPreferences.unitSystem
-        val selectedCityId = context.defaultSharedPreferences.selectedCityId
-        val current = TimeUtils.getCurrentInSeconds()
-        cityRepository.getCityById(selectedCityId) { cityResult ->
-            if (cityResult is Result.Success) {
-                oneCallRepository.getCurrentWeather(cityResult.data, current, false) {
-                    if (it is Result.Success) {
-                        for (appWidgetId in appWidgetIds) {
-                            updateAppWidget(
-                                context,
-                                appWidgetManager,
-                                appWidgetId,
-                                it.data,
-                                unitSystem
-                            )
-                        }
-                    }
-                }
-            }
-        }
     }
 
     override fun onEnabled(context: Context) = Unit

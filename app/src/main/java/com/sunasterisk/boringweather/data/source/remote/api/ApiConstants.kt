@@ -16,6 +16,4 @@ object ApiConstants {
     const val QUERY_API_KEY = "appid"
 
     const val PARAM_EXCLUDE_MINUTELY = "minutely"
-
-    const val METHOD_GET = "GET"
 }

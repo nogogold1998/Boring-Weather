@@ -9,6 +9,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavDirections
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.Event
 import com.sunasterisk.boringweather.data.model.City
@@ -55,8 +56,8 @@ class CurrentViewModel(
     val decorImageUrl: LiveData<String?> =
         currentWeather.map { it.currentWeather.weathers.firstOrNull()?.gifUrl }
 
-    private val _navigationEvent = MutableLiveData<Event<CurrentFragmentNavigationRequest>>()
-    val navigationEvent: LiveData<Event<CurrentFragmentNavigationRequest>> get() = _navigationEvent
+    private val _navigationEvent = MutableLiveData<Event<NavDirections>>()
+    val navigationEvent: LiveData<Event<NavDirections>> get() = _navigationEvent
 
     fun loadCurrentWeather(cityId: Int) {
         _cityId.value = cityId
@@ -83,9 +84,9 @@ class CurrentViewModel(
         currentWeather.value?.let {
             _navigationEvent.postValue(
                 Event(
-                    NavigateToDetailsFragmentRequest(it.city.id,
+                    CurrentFragmentDirections.actionCurrentToDetail(it.city.id,
                         if (isToday) it.dailyWeather.dateTime else dateTime,
-                        if (isToday) dateTime else null
+                        if (isToday) dateTime else 0
                     )
                 )
             )

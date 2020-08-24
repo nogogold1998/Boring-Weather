@@ -50,14 +50,14 @@ class OneCallWeatherRepositoryTest {
     @Mock
     lateinit var remote: OneCallWeatherDataSource.Remote
 
-    lateinit var database: AppRoomDatabase
+    private lateinit var database: AppRoomDatabase
 
-    lateinit var cityDataSource: CityDataSource.Local
+    private lateinit var cityDataSource: CityDataSource.Local
 
-    lateinit var local: OneCallWeatherDataSource.Local
+    private lateinit var local: OneCallWeatherDataSource.Local
 
     // Subject
-    lateinit var repo: OneCallWeatherDataSource
+    private lateinit var repo: OneCallWeatherDataSource
 
     @Before
     fun setUp() = runBlocking {

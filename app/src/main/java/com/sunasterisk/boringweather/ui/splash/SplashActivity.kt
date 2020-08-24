@@ -18,7 +18,6 @@ import com.sunasterisk.boringweather.util.Constants
 import com.sunasterisk.boringweather.util.connectivityManager
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
 import com.sunasterisk.boringweather.util.load
-import com.sunasterisk.boringweather.util.networkState
 import kotlinx.android.synthetic.main.activity_splash.*
 
 class SplashActivity : AppCompatActivity() {
@@ -47,7 +46,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         if (defaultSharedPreferences.isFirstLaunch) {
-            if (networkState == null) showError()
+            // if (networkState == null) showError() TODO
             single.value = { startPrepopulateDatabaseService() }
         }
 

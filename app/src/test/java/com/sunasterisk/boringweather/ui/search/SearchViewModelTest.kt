@@ -34,12 +34,12 @@ class SearchViewModelTest {
     val taskExecutor = InstantTaskExecutorRule()
 
     // subject
-    lateinit var searchViewModel: SearchViewModel
+    private lateinit var searchViewModel: SearchViewModel
 
     @Mock
     lateinit var cityRepository: CityDataSource
 
-    lateinit var defaultSharedPreferences: DefaultSharedPreferences
+    private lateinit var defaultSharedPreferences: DefaultSharedPreferences
 
     private val hanoi = DummyJsonData.hanoi
     private val haiphong = DummyJsonData.haiphong

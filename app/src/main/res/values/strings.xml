@@ -13,7 +13,8 @@
     <string name="title_powered">powered</string>
     <string name="title_today">Today</string>
     <string name="title_forecast">Forecast</string>
-    <string name="title_detail">Detail</string>
+    <string name="title_detail">Details</string>
+    <string name="title_current">Current</string>
     <string name="title_search">Search</string>
     <string name="title_search_city">Search city</string>
     <string name="title_search_text_background_first_time">First, let find a city</string>

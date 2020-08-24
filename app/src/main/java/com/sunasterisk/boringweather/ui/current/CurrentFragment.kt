@@ -9,7 +9,8 @@ import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.core.widget.NestedScrollView
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
 import com.sunasterisk.boringweather.R
@@ -19,7 +20,6 @@ import com.sunasterisk.boringweather.base.Single
 import com.sunasterisk.boringweather.base.observeEvent
 import com.sunasterisk.boringweather.databinding.FragmentCurrentBinding
 import com.sunasterisk.boringweather.di.NewInjector
-import com.sunasterisk.boringweather.ui.main.findNavigator
 import com.sunasterisk.boringweather.util.DefaultSharedPreferences
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.UnitSystem
@@ -37,7 +37,7 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
     NavigationView.OnNavigationItemSelectedListener,
     DrawerLayout.DrawerListener {
 
-    private val viewModel: CurrentViewModel by viewModels {
+    private val viewModel: CurrentViewModel by activityViewModels {
         CurrentViewModel.Factory(
             NewInjector.provideOneCallWeatherRepository(requireContext()),
             requireContext().defaultSharedPreferences
@@ -88,14 +88,8 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
 
     override fun observeLiveData() {
         viewModel.errorRes.observe(viewLifecycleOwner) { it?.let(this::showError) }
-        viewModel.navigationEvent.observeEvent(viewLifecycleOwner) {
-            if (it is NavigateToDetailsFragmentRequest) {
-                findNavigator()?.navigateToDetailsFragment(
-                    it.cityId,
-                    it.dailyWeatherDateTime,
-                    it.focusHourlyWeatherDateTime
-                )
-            }
+        viewModel.navigationEvent.observeEvent(viewLifecycleOwner) { action ->
+            findNavController().navigate(action)
         }
     }
 
@@ -130,7 +124,7 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
 
         toolbarSearch.setOnMenuItemClickListener {
             if (it.itemId == R.id.searchCity) {
-                findNavigator()?.navigateToSearchFragment()
+                findNavController().navigate(CurrentFragmentDirections.actionCurrentToSearch())
                 true
             } else {
                 false
@@ -197,12 +191,11 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
             false
         }
         R.id.itemSettings -> {
-            pendingDrawerCloseRunnable.value =
-                Runnable { findNavigator()?.navigateToSettingsFragment() }
+            findNavController().navigate(CurrentFragmentDirections.actionCurrentToSettings())
             true
         }
         else -> false
-    }.also { if (it) drawerLayout.closeDrawers() }
+    }
 
     override fun onDrawerClosed(drawerView: View) {
         pendingDrawerCloseRunnable.value?.run()
@@ -214,20 +207,15 @@ class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
 
     override fun onDrawerOpened(drawerView: View) = Unit
 
-    fun showError(errorStringRes: Int) {
+    private fun showError(errorStringRes: Int) {
         requireContext().showToast(getString(errorStringRes), Toast.LENGTH_LONG)
     }
 
     companion object {
         private const val KEY_TODAY_RECYCLER_POSITION = "today_recycler_pos"
         private const val KEY_FORECAST_RECYCLER_POSITION = "forecast_recycler_pos"
-        private const val KEY_CITY_ID = "city_id"
         private const val KEY_EXPANDED_COLLAPSING_TOOL_BAR = "expanded_collapsing_tool_bar"
 
-        private const val ARGUMENT_CITY_ID = "arg_city_id"
-
-        fun newInstance(cityId: Int? = null) = CurrentFragment().apply {
-            arguments = Bundle().apply { if (cityId != null) putInt(ARGUMENT_CITY_ID, cityId) }
-        }
+        const val CITY_ID = "city_id"
     }
 }

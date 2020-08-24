@@ -1,6 +1,5 @@
 package com.sunasterisk.boringweather.data.model
 
-import android.content.ContentValues
 import android.database.Cursor
 import androidx.room.Ignore
 import com.google.gson.annotations.SerializedName
@@ -77,26 +76,6 @@ data class HourlyWeather @JvmOverloads constructor(
         null,
         cursor.get(HourlyWeatherTable.COL_UV_INDEX)
     )
-
-    fun getContentValues(cityId: Int) = ContentValues().apply {
-        val weather = weathers.firstOrNull() ?: Weather.default
-        put(HourlyWeatherTable.COL_DATE_TIME, dateTime)
-        put(HourlyWeatherTable.COL_CITY_ID, cityId)
-        put(HourlyWeatherTable.COL_TEMPERATURE, temperature)
-        put(HourlyWeatherTable.COL_FEELS_LIKE, feelsLike)
-        put(HourlyWeatherTable.COL_PRESSURE, pressure)
-        put(HourlyWeatherTable.COL_HUMIDITY, humidity)
-        put(HourlyWeatherTable.COL_DEW_POINT, dewPoint)
-        put(HourlyWeatherTable.COL_CLOUDS, clouds)
-        put(HourlyWeatherTable.COL_WIND_SPEED, windSpeed)
-        put(HourlyWeatherTable.COL_WIND_DEGREES, windDegrees)
-        put(HourlyWeatherTable.COL_WEATHER_ID, weather.id)
-        put(HourlyWeatherTable.COL_WEATHER_MAIN, weather.main)
-        put(HourlyWeatherTable.COL_WEATHER_DESCRIPTION, weather.description)
-        put(HourlyWeatherTable.COL_WEATHER_ICON, weather.icon)
-        put(HourlyWeatherTable.COL_VISIBILITY, visibility ?: 0)
-        put(HourlyWeatherTable.COL_UV_INDEX, uvIndex ?: 0f)
-    }
 
     companion object {
         val default =

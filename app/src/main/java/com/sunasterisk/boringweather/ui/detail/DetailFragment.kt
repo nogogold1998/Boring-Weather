@@ -5,18 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.sunasterisk.boringweather.base.BaseDataBindingFragment
 import com.sunasterisk.boringweather.base.BaseTransitionListener
 import com.sunasterisk.boringweather.base.Single
-import com.sunasterisk.boringweather.data.model.City
 import com.sunasterisk.boringweather.data.model.DailyWeather
 import com.sunasterisk.boringweather.databinding.FragmentDetailBinding
 import com.sunasterisk.boringweather.di.NewInjector
 import com.sunasterisk.boringweather.ui.current.NavigateToDetailsFragmentRequest
 import com.sunasterisk.boringweather.ui.detail.model.DailyWeatherItem
-import com.sunasterisk.boringweather.ui.main.findNavigator
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
 import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
@@ -62,11 +60,12 @@ class DetailFragment : BaseDataBindingFragment<FragmentDetailBinding>() {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
+            val args = DetailFragmentArgs.fromBundle(it)
             viewModel.loadDetailWeather(
                 NavigateToDetailsFragmentRequest(
-                    it.getInt(ARGUMENT_CITY_ID, City.default.id),
-                    it.getLong(ARGUMENT_DAILY_WEATHER_DATE_TIME, DailyWeather.default.dateTime),
-                    it.getLong(ARGUMENT_FOCUS_HOURLY_WEATHER_DATE_TIME, 0)
+                    args.cityId,
+                    args.dailyWeatherDateTime,
+                    args.forcusHourlyWeatherDt
                 )
             )
         }
@@ -108,7 +107,7 @@ class DetailFragment : BaseDataBindingFragment<FragmentDetailBinding>() {
 
     private fun setupAppBar() {
         imageUpButton.setOnClickListener {
-            findNavigator()?.popBackStack()
+            findNavController().popBackStack()
         }
     }
 
@@ -150,7 +149,7 @@ class DetailFragment : BaseDataBindingFragment<FragmentDetailBinding>() {
         setupDefaultItemDecoration()
     }
 
-    fun showError(errorStringRes: Int) {
+    private fun showError(errorStringRes: Int) {
         context?.showToast(getString(errorStringRes))
     }
 
@@ -161,17 +160,5 @@ class DetailFragment : BaseDataBindingFragment<FragmentDetailBinding>() {
 
         private const val KEY_EXPANDED_ITEMS = "expanded_items"
         private const val KEY_SCROLL_POSITION = "scroll_progress"
-
-        fun newInstance(
-            cityId: Int,
-            dailyWeatherDateTime: Long,
-            focusHourlyWeatherDateTime: Long? = null
-        ) = DetailFragment().apply {
-            arguments = bundleOf(
-                ARGUMENT_CITY_ID to cityId,
-                ARGUMENT_DAILY_WEATHER_DATE_TIME to dailyWeatherDateTime,
-                ARGUMENT_FOCUS_HOURLY_WEATHER_DATE_TIME to focusHourlyWeatherDateTime
-            )
-        }
     }
 }

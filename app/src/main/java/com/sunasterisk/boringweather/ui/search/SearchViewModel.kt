@@ -56,10 +56,6 @@ class SearchViewModel(
         .conflate()
         .asLiveData()
 
-    companion object {
-        private const val TAG = "SearchViewModel"
-    }
-
     class Factory(
         private val cityRepository: CityDataSource,
         private val defaultSharedPreferences: DefaultSharedPreferences,
