@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/color_white_blur_bright"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <include layout="@layout/partial_summary" />
+    <data>
 
-    <include layout="@layout/partial_detail" />
-</LinearLayout>
+        <variable
+            name="dailyWeather"
+            type="com.sunasterisk.boringweather.data.model.DailyWeather" />
+
+        <variable
+            name="unitSystem"
+            type="com.sunasterisk.boringweather.util.UnitSystem" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_white_blur_bright"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/partial_summary"
+            app:dailyWeather="@{dailyWeather}"
+            app:isDisplayCurrent="@{false}"
+            app:textDateTimeFormat="@{@string/format_date_long_time_short}"
+            app:unitSystem="@{unitSystem}" />
+
+        <include
+            layout="@layout/partial_detail"
+            app:dailyWeather="@{dailyWeather}"
+            app:isDisplayCurrent="@{false}"
+            app:unitSystem="@{unitSystem}" />
+    </LinearLayout>
+</layout>

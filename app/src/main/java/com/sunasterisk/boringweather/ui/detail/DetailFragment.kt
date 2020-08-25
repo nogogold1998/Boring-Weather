@@ -10,11 +10,9 @@ import androidx.navigation.fragment.findNavController
 import com.sunasterisk.boringweather.base.BaseDataBindingFragment
 import com.sunasterisk.boringweather.base.BaseTransitionListener
 import com.sunasterisk.boringweather.base.Single
-import com.sunasterisk.boringweather.data.model.DailyWeather
 import com.sunasterisk.boringweather.databinding.FragmentDetailBinding
 import com.sunasterisk.boringweather.di.NewInjector
 import com.sunasterisk.boringweather.ui.current.NavigateToDetailsFragmentRequest
-import com.sunasterisk.boringweather.ui.detail.model.DailyWeatherItem
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
 import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
@@ -137,7 +135,6 @@ class DetailFragment : BaseDataBindingFragment<FragmentDetailBinding>() {
             TimeUtils.FORMAT_TIME_SHORT
         ) { recyclerViewDetail.scrollToPositionScrollChangeListenerAware(it) }.also {
             this@DetailFragment.adapter = it
-            post { it.submitList(listOf(DailyWeatherItem(DailyWeather.default))) }
         }
 
         post { if (verticalScrollProgress > 0f) motionDetail?.transitionToEnd() }
