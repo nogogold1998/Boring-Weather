@@ -12,7 +12,7 @@ import com.sunasterisk.boringweather.data.source.OneCallWeatherDataSource
 import com.sunasterisk.boringweather.data.source.local.dao.CityDao
 import com.sunasterisk.boringweather.data.source.local.dao.DailyWeatherDao
 import com.sunasterisk.boringweather.data.source.local.dao.HourlyWeatherDao
-import com.sunasterisk.boringweather.util.Constants
+import com.sunasterisk.boringweather.util.TimeUtils
 
 class LocalOneCallWeatherDataSource(
     private val cityDao: CityDao,
@@ -39,6 +39,7 @@ class LocalOneCallWeatherDataSource(
                         arrayOf(oneCallEntry.current, *oneCallEntry.hourly.toTypedArray())
                     hourlyWeatherDao.insertHourlyWeather(dbCityId, *willBeInsertedHourlyWeatherArr)
                     dailyWeatherDao.insertDailyWeather(dbCityId, *oneCallEntry.daily.toTypedArray())
+                    cityDao.updateFetchedCity(dbCityId, oneCallEntry.current.dateTime)
                     true
                 },
                 onFinishedListener = {
@@ -62,7 +63,7 @@ class LocalOneCallWeatherDataSource(
                     val hourlyWeathers =
                         hourlyWeatherDao.findHourlyWeather(city.id, startOfDay, endOfDay)
                     val dailyWeathers =
-                        dailyWeatherDao.findDailyWeather(city.id, currentDateTime)
+                        dailyWeatherDao.findDailyWeather(city.id, startOfDay)
                     val todayDailyWeather = dailyWeathers.firstOrNull()
                     CurrentWeather(
                         city,
@@ -94,6 +95,7 @@ class LocalOneCallWeatherDataSource(
         dateTime: Long,
         callback: (Result<DetailWeather>) -> Unit
     ) {
+        val (startOfDay, endOfDay) = TimeUtils.getStartEndOfDay(dateTime)
         cancel()
         callbackAsyncTask =
             CallbackAsyncTask<Unit, DetailWeather>(
@@ -101,8 +103,8 @@ class LocalOneCallWeatherDataSource(
                     val dailyWeather = dailyWeatherDao.getDailyWeather(city.id, dateTime)
                     val hourlyWeathers = hourlyWeatherDao.findHourlyWeather(
                         city.id,
-                        dateTime,
-                        dateTime + Constants.DAY_TO_SECONDS
+                        startOfDay,
+                        endOfDay
                     )
                     DetailWeather(
                         city,

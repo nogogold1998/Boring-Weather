@@ -26,4 +26,6 @@ object TimeUtils {
     const val FORMAT_TIME_SHORT = "h:mm a"
 
     const val FORMAT_DATE_SHORT = "MMM dd"
+
+    const val FORMAT_DATE = "MMM, dd yyyy"
 }

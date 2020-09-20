@@ -6,5 +6,6 @@
         android:id="@+id/searchCity"
         android:icon="@drawable/ic_round_search_24"
         android:title="@string/title_search"
+        app:iconTint="?android:attr/colorControlNormal"
         app:showAsAction="always" />
 </menu>

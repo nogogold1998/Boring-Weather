@@ -12,6 +12,17 @@
             app:title="@string/title_setting_entry_unit"
             app:useSimpleSummaryProvider="true" />
 
+        <SeekBarPreference
+            android:max="500"
+            app:defaultValue="@string/pref_value_setting_search_limit_default"
+            app:icon="@drawable/ic_round_search_24"
+            app:key="@string/pref_key_setting_search_limit"
+            app:min="5"
+            app:showSeekBarValue="true"
+            app:summary="@string/title_setting_search_limit_summary"
+            app:title="@string/title_setting_search_limit" />
+
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/title_setting_category_notification">
@@ -24,9 +35,9 @@
             app:title="@string/title_setting_notification_entry" />
 
         <DropDownPreference
-            android:entries="@array/frequency_entries"
             app:defaultValue="@string/pref_value_setting_notification_frequency_default"
             app:dependency="@string/pref_key_setting_notification"
+            app:entries="@array/frequency_entries"
             app:entryValues="@array/frequency_values"
             app:title="@string/title_setting_frequency_entry"
             app:useSimpleSummaryProvider="true" />
@@ -52,6 +63,15 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/title_setting_category_more" />
+    <PreferenceCategory app:title="@string/title_setting_category_more">
+        <Preference
+            app:icon="@drawable/ic_round_info_24"
+            app:key="@string/pref_key_setting_info"
+            app:title="@string/title_setting_info">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/url_open_weather_api" />
+        </Preference>
+    </PreferenceCategory>
 
 </PreferenceScreen>

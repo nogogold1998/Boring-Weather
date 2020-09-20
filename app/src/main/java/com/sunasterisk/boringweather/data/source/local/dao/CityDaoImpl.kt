@@ -26,26 +26,41 @@ class CityDaoImpl private constructor(sqLiteOpenHelper: SQLiteOpenHelper) : City
         return cursor?.use { if (it.moveToFirst()) City(it) else null }
     }
 
+    // FIXME: wrong result due to calculating distance
     override fun getCityByCoordinate(coordinate: Coordinate): City? {
-        val cursor = readableDb.query(
-            CityTable.TABLE_NAME,
-            null,
-            "${CityTable.COL_COORDINATE_LAT} = ? AND ${CityTable.COL_COORDINATE_LON} = ?",
-            arrayOf(coordinate.latitude.toString(), coordinate.longitude.toString()),
-            null,
-            null,
-            null,
-            "1"
+        val deltaLon = "(${CityTable.COL_COORDINATE_LON} - ?)"
+        val deltaLat = "(${CityTable.COL_COORDINATE_LAT} - ?)"
+        val cursor = readableDb.rawQuery(
+            """
+            |SELECT * FROM ${CityTable.TABLE_NAME}
+            |ORDER BY ($deltaLon*$deltaLon + $deltaLat*$deltaLat) ASC
+            |LIMIT 1;""".trimMargin()
+            ,
+            floatArrayOf(
+                coordinate.longitude, coordinate.longitude,
+                coordinate.latitude, coordinate.latitude
+            )
+                .map(Float::toString)
+                .toTypedArray()
         )
         return cursor?.use { if (it.moveToFirst()) City(it) else null }
     }
 
     override fun findCityByName(cityName: String, limit: Int?): List<City> {
+        val list = cityName.split("\\?".toRegex(), 2)
+        val (whereClause, args) = when {
+            list.size == 2 ->
+                "${CityTable.COL_COUNTRY} LIKE ? AND ${CityTable.COL_NAME} LIKE ?" to
+                    arrayOf(list[0].trim(), "%${list[1].trim()}%")
+            cityName.contains('?') ->
+                "${CityTable.COL_COUNTRY} LIKE ?" to arrayOf(list[0].trim())
+            else -> "${CityTable.COL_NAME} LIKE ?" to arrayOf("%${cityName.trim()}%")
+        }
         val cursor = readableDb.query(
             CityTable.TABLE_NAME,
             null,
-            "${CityTable.COL_NAME} LIKE ?",
-            arrayOf("%$cityName%"),
+            whereClause,
+            args,
             null,
             null,
             null,
@@ -62,6 +77,26 @@ class CityDaoImpl private constructor(sqLiteOpenHelper: SQLiteOpenHelper) : City
             strategy
         ) > 0
     }
+
+    override fun getFetchedCities(): List<City> {
+        val cursor = readableDb.query(
+            CityTable.TABLE_NAME,
+            null,
+            "${CityTable.COL_LAST_FETCH} > ${CityTable.DEFAULT_COL_LAST_FETCH}",
+            null,
+            null,
+            null,
+            "${CityTable.COL_LAST_FETCH} DESC"
+        )
+        return cursor.use { it.map(::City) }
+    }
+
+    override fun updateFetchedCity(cityId: Int, lastFetch: Long) = writableDb.execSQL(
+        """
+        UPDATE ${CityTable.TABLE_NAME}
+        SET ${CityTable.COL_LAST_FETCH} = $lastFetch
+        WHERE ${CityTable.COL_ID} = $cityId;""".trimIndent()
+    )
 
     companion object {
         private var instance: CityDaoImpl? = null

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/dp_200"
-    android:background="@color/color_ziggurat">
+    tools:ignore="Overdraw">
 
     <TextView
         android:id="@+id/textDateTime"
@@ -29,9 +29,9 @@
         android:id="@+id/textSunrise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_sunrise_24"
         android:drawablePadding="@dimen/dp_8"
         android:text="@string/title_holder_time"
+        app:drawableStartCompat="@drawable/ic_sunrise_24"
         app:layout_constraintBottom_toTopOf="@+id/textDayTemperature"
         app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
         app:layout_constraintTop_toTopOf="@+id/textCurrentTemperature"
@@ -41,9 +41,9 @@
         android:id="@+id/textDayTemperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_sunny_24"
         android:drawablePadding="@dimen/dp_8"
         android:text="@string/title_holder_temperature"
+        app:drawableStartCompat="@drawable/ic_sunny_24"
         app:layout_constraintBottom_toTopOf="@+id/textSunset"
         app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
         app:layout_constraintTop_toBottomOf="@+id/textSunrise" />
@@ -52,9 +52,9 @@
         android:id="@+id/textSunset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_sunset_24"
         android:drawablePadding="@dimen/dp_8"
         android:text="@string/title_holder_time"
+        app:drawableStartCompat="@drawable/ic_sunset_24"
         app:layout_constraintBottom_toTopOf="@+id/textNightTemperature"
         app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
         app:layout_constraintTop_toBottomOf="@+id/textDayTemperature" />
@@ -63,9 +63,9 @@
         android:id="@+id/textNightTemperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_moon_24"
         android:drawablePadding="@dimen/dp_8"
         android:text="@string/title_holder_temperature"
+        app:drawableStartCompat="@drawable/ic_moon_24"
         app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
         app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
         app:layout_constraintTop_toBottomOf="@+id/textSunset" />
@@ -106,6 +106,7 @@
         android:layout_height="wrap_content"
         android:drawablePadding="@dimen/dp_8"
         android:text="@string/title_holder_description"
+        android:textSize="@dimen/sp_25"
         app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
         app:layout_constraintStart_toStartOf="@+id/guidelineStart"
         tools:text="Thunderstorm" />
@@ -114,9 +115,9 @@
         android:id="@+id/textFeelsLike"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_round_faces_24"
         android:drawablePadding="@dimen/dp_8"
         android:text="@string/title_holder_temperature"
+        android:textSize="@dimen/sp_20"
         app:layout_constraintBaseline_toBaselineOf="@+id/textDateTime"
         app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical" />
 

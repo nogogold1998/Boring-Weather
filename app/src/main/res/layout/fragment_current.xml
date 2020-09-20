@@ -15,6 +15,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <ImageView
+                android:id="@+id/imageCurrentBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop" />
+
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/scrollView"
                 android:layout_width="match_parent"
@@ -24,12 +31,25 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/color_white_blur_bright"
                     android:orientation="vertical"
                     android:paddingBottom="@dimen/dp_32">
 
-                    <include layout="@layout/partial_summary" />
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/color_ziggurat">
 
-                    <include layout="@layout/partial_detail" />
+                        <include layout="@layout/partial_summary" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/color_gull_gray">
+
+                        <include layout="@layout/partial_detail" />
+                    </FrameLayout>
 
                     <TextView
                         android:id="@+id/textTitleTodaySummaryWeather"
@@ -48,7 +68,7 @@
                         android:orientation="horizontal"
                         android:paddingHorizontal="@dimen/dp_16"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_summary_weather"/>
+                        tools:listitem="@layout/item_summary_weather" />
 
                     <TextView
                         android:id="@+id/textTitleForecastSummaryWeather"
@@ -69,22 +89,21 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_summary_weather" />
 
-                    <Button
-                        android:id="@+id/buttonHistory"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/dp_32"
-                        android:background="@drawable/background_ripple"
-                        android:text="@string/action_history"
-                        android:textColor="@color/color_gull_gray"
-                        android:textSize="@dimen/sp_20" />
-
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/dp_1"
                         android:layout_marginHorizontal="@dimen/dp_32"
+                        android:layout_marginTop="@dimen/dp_32"
                         android:background="?android:attr/listDivider" />
 
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_72"
+                        android:background="@drawable/background_ripple"
+                        android:text="@string/app_name"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_nevada"
+                        android:textSize="@dimen/sp_30" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
 
@@ -105,6 +124,7 @@
                     android:fitsSystemWindows="true"
                     app:contentScrim="?attr/colorPrimary"
                     app:expandedTitleGravity="bottom"
+                    app:expandedTitleMarginBottom="@dimen/dp_16"
                     app:expandedTitleMarginEnd="@dimen/dp_16"
                     app:expandedTitleMarginStart="@dimen/dp_16"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
@@ -129,15 +149,22 @@
                         android:layout_marginTop="@dimen/dp_16"
                         android:text="@string/details_current" />
 
+                    <View
+                        android:id="@+id/viewBlur"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        android:layout_gravity="bottom"
+                        android:background="@color/color_black_blur_dim" />
+
                     <androidx.appcompat.widget.Toolbar
                         android:id="@+id/toolbarSearch"
                         style="@style/Widget.AppCompat.Toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         app:layout_collapseMode="pin"
+                        app:menu="@menu/menu_current_fragment"
                         app:navigationIcon="@drawable/ic_round_hamburger"
-                        app:popupTheme="@style/ThemeOverlay.AppCompat"
-                        app:menu="@menu/menu_current_fragment"/>
+                        app:popupTheme="@style/ThemeOverlay.AppCompat" />
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
             </com.google.android.material.appbar.AppBarLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -149,7 +176,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:paddingTop="@dimen/dp_120"
-        app:headerLayout="@null"
+        app:headerLayout="@layout/partial_nav_view_header"
         app:menu="@menu/menu_nav_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -10,8 +10,15 @@
         android:id="@+id/motionDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutDescription="@xml/fragment_detail_scene"
-        app:showPaths="true">
+        app:layoutDescription="@xml/fragment_detail_scene">
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineBottomActionBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="?attr/actionBarSize" />
 
         <ImageView
             android:id="@+id/imageBackground"
@@ -19,6 +26,27 @@
             android:layout_height="match_parent"
             android:contentDescription="@null"
             android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:id="@+id/viewBackgroundWeatherDailyHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageToolbar">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_200"
+                android:background="@color/color_ziggurat" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_240"
+                android:background="@color/color_gull_gray" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewDetail"
@@ -37,40 +65,57 @@
             android:background="?colorPrimary"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic" />
 
         <ImageView
             android:id="@+id/imageUpButton"
+            style="@style/Toolbar.Button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/dp_8"
+            android:background="@drawable/background_circle_ripple"
+            android:contentDescription="@null"
+            android:padding="@dimen/dp_4"
+            android:src="@drawable/ic_round_arrow_back_24"
+            app:layout_constraintBottom_toTopOf="@id/guidelineBottomActionBar"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?android:attr/textColorPrimaryInverse" />
+
+        <TextView
+            android:id="@+id/textTitleDetail"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_ripple"
-            android:contentDescription="@null"
-            android:padding="@dimen/dp_16"
-            android:src="@drawable/ic_round_arrow_back_24"
-            android:tint="?android:attr/textColorPrimaryInverse"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginStart="@dimen/dp_24"
+            android:gravity="center_vertical"
+            android:text="@string/title_detail"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            app:layout_constraintBottom_toBottomOf="@id/imageUpButton"
+            app:layout_constraintStart_toEndOf="@id/imageUpButton"
+            app:layout_constraintTop_toTopOf="@id/imageUpButton" />
 
         <View
             android:id="@+id/viewBlur"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="?attr/actionBarSize"
             android:background="@color/color_black_blur_dim"
-            app:layout_constraintBottom_toBottomOf="@id/imageToolbar"
-            app:layout_constraintTop_toTopOf="@id/textTitle" />
+            app:layout_constraintBottom_toBottomOf="@id/imageToolbar" />
 
         <TextView
-            android:id="@+id/textTitle"
+            android:id="@+id/textToolbarTitle"
+            style="@style/TextAppearance.Design.CollapsingToolbar.Expanded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_8"
-            android:layout_marginBottom="@dimen/dp_16"
+            android:layout_marginStart="@dimen/dp_16"
+            android:gravity="center"
             android:text="@string/app_name"
             android:textColor="?android:attr/textColorPrimaryInverse"
-            android:textSize="@dimen/sp_25"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/imageToolbar"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@id/viewBlur"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/viewBlur" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 

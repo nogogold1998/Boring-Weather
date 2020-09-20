@@ -3,7 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/color_white_blur_bright">
+    android:background="@drawable/background_ripple">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/color_white_blur_bright"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageWeatherIcon"
@@ -11,10 +20,9 @@
         android:layout_height="0dp"
         android:contentDescription="@string/msg_weather_icon"
         android:scaleType="center"
-        android:src="@drawable/ic_round_arrow_back_24"
-        app:layout_constraintBottom_toBottomOf="@+id/textWeatherDescription"
+        app:layout_constraintBottom_toBottomOf="@id/textWeatherDescription"
         app:layout_constraintDimensionRatio="1"
-        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+        app:layout_constraintStart_toStartOf="@+id/guidelineItemWeatherHourlyStart"
         app:layout_constraintTop_toTopOf="@+id/textTime" />
 
     <TextView
@@ -27,7 +35,7 @@
         android:textSize="@dimen/sp_20"
         app:layout_constraintBottom_toTopOf="@+id/textWeatherDescription"
         app:layout_constraintStart_toEndOf="@+id/imageWeatherIcon"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:layout_constraintTop_toTopOf="@id/guidelineItemWeatherHourlyTop"
         app:layout_constraintVertical_chainStyle="spread" />
 
     <TextView
@@ -37,48 +45,76 @@
         android:layout_marginBottom="@dimen/dp_32"
         android:text="@string/title_holder_description"
         android:textSize="@dimen/sp_20"
-        app:layout_constraintBottom_toTopOf="@+id/containerDetail"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
         app:layout_constraintStart_toStartOf="@+id/textTime"
         app:layout_constraintTop_toBottomOf="@+id/textTime" />
 
-    <ImageButton
+    <TextView
+        android:id="@+id/textFeelsLikeHourly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_temperature"
+        android:textSize="@dimen/sp_20"
+        app:layout_constraintBottom_toBottomOf="@+id/textWeatherDescription"
+        app:layout_constraintEnd_toEndOf="@+id/textTemperature"
+        app:layout_constraintTop_toBottomOf="@+id/textTemperature" />
+
+    <TextView
+        android:id="@+id/textTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_24"
+        android:drawablePadding="@dimen/dp_8"
+        android:text="@string/title_holder_temperature"
+        android:textSize="@dimen/sp_35"
+        app:layout_constraintBottom_toTopOf="@+id/textFeelsLikeHourly"
+        app:layout_constraintEnd_toStartOf="@+id/buttonExpand"
+        app:layout_constraintTop_toBottomOf="@+id/guidelineItemWeatherHourlyTop"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    <ImageView
         android:id="@+id/buttonExpand"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1"
+        android:contentDescription="@string/msg_expand"
         android:padding="@dimen/dp_8"
-        android:background="@drawable/background_ripple"
         android:src="@drawable/ic_round_keyboard_arrow_down_24"
         app:layout_constraintBottom_toBottomOf="@+id/imageWeatherIcon"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineEnd"
-        app:layout_constraintTop_toTopOf="@+id/imageWeatherIcon"
-        android:contentDescription="@string/msg_expand" />
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineItemWeatherHourlyEnd"
+        app:layout_constraintTop_toTopOf="@+id/imageWeatherIcon" />
 
-    <include
-        android:id="@+id/containerDetail"
-        layout="@layout/partial_detail"
+    <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/color_gull_gray_blur"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include
+            android:id="@+id/containerDetail"
+            layout="@layout/partial_detail" />
+    </FrameLayout>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineStart"
+        android:id="@+id/guidelineItemWeatherHourlyStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/dp_32" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineTop"
+        android:id="@+id/guidelineItemWeatherHourlyTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="@dimen/dp_32" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineEnd"
+        android:id="@+id/guidelineItemWeatherHourlyEnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
