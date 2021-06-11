@@ -2,9 +2,9 @@ package com.sunasterisk.boringweather.ui.setting
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import com.sunasterisk.boringweather.R
-import com.sunasterisk.boringweather.ui.main.findNavigator
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -17,7 +17,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
 
         toolbarSettings.setNavigationOnClickListener {
-            findNavigator()?.popBackStack()
+            findNavController().popBackStack()
         }
     }
 }

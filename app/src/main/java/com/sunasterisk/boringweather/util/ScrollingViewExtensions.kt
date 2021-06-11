@@ -4,6 +4,7 @@ import androidx.core.view.ScrollingView
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.roundToInt
 
 val ScrollingView.verticalScrollProgress: Float
     get() {
@@ -14,22 +15,25 @@ val ScrollingView.verticalScrollProgress: Float
         return offset / (range - extent).toFloat()
     }
 
-val ScrollingView.horizontalScrollProgress: Float
-    get() {
-        val offset = computeHorizontalScrollOffset()
-        val extent = computeHorizontalScrollExtent()
-        val range = computeHorizontalScrollRange()
-
-        return offset / (range - extent).toFloat()
-    }
-
 val RecyclerView.lastCompletelyVisibleItemPosition: Int
     get() = (layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: 0
 
 val RecyclerView.firstCompletelyVisibleItemPosition: Int
     get() = (layoutManager as? LinearLayoutManager)?.findFirstCompletelyVisibleItemPosition() ?: 0
 
+// ugly code
+val RecyclerView.centerItemPosition: Int
+    get() = arrayOf(firstCompletelyVisibleItemPosition + lastCompletelyVisibleItemPosition)
+        .filter { it > 0 }
+        .average()
+        .roundToInt()
+
 fun RecyclerView.setupDefaultItemDecoration() {
     (layoutManager as? LinearLayoutManager)?.orientation
         ?.let { addItemDecoration(DividerItemDecoration(context, it)) }
+}
+
+fun RecyclerView.scrollToPositionScrollChangeListenerAware(pos: Int) {
+    scrollBy(0, 1)
+    scrollToPosition(pos)
 }

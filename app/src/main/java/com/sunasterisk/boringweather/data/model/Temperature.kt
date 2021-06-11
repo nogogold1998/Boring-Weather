@@ -1,5 +1,6 @@
 package com.sunasterisk.boringweather.data.model
 
+import com.google.gson.annotations.SerializedName
 import com.sunasterisk.boringweather.util.getOrElse
 import org.json.JSONObject
 
@@ -8,11 +9,17 @@ data class Temperature(
     val min: Float,
     val max: Float,
     val night: Float,
-    val evening: Float,
-    val morning: Float
+    @SerializedName(EVENING) val evening: Float,
+    @SerializedName(MORNING) val morning: Float
 ) {
     val average: Float
         get() = listOf(day, min, max, night, evening, morning)
+            .filter { it != 0f }
+            .average()
+            .toFloat()
+
+    val feelsLike: Float
+        get() = arrayOf(max, min)
             .filter { it != 0f }
             .average()
             .toFloat()

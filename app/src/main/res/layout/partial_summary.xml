@@ -1,130 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_200"
-    tools:ignore="Overdraw">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/textDateTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_holder_date_time"
-        android:textSize="@dimen/sp_25"
-        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
+    <data>
 
-    <TextView
-        android:id="@+id/textCurrentTemperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_holder_temperature"
-        android:textSize="@dimen/sp_60"
-        app:layout_constraintBottom_toTopOf="@+id/textWeatherDescription"
-        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@+id/textDateTime" />
+        <variable
+            name="textDateTimeFormat"
+            type="String" />
 
-    <TextView
-        android:id="@+id/textSunrise"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawablePadding="@dimen/dp_8"
-        android:text="@string/title_holder_time"
-        app:drawableStartCompat="@drawable/ic_sunrise_24"
-        app:layout_constraintBottom_toTopOf="@+id/textDayTemperature"
-        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
-        app:layout_constraintTop_toTopOf="@+id/textCurrentTemperature"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
+        <variable
+            name="isDisplayCurrent"
+            type="Boolean" />
 
-    <TextView
-        android:id="@+id/textDayTemperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawablePadding="@dimen/dp_8"
-        android:text="@string/title_holder_temperature"
-        app:drawableStartCompat="@drawable/ic_sunny_24"
-        app:layout_constraintBottom_toTopOf="@+id/textSunset"
-        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
-        app:layout_constraintTop_toBottomOf="@+id/textSunrise" />
+        <variable
+            name="hourlyWeather"
+            type="com.sunasterisk.boringweather.data.model.HourlyWeather" />
 
-    <TextView
-        android:id="@+id/textSunset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawablePadding="@dimen/dp_8"
-        android:text="@string/title_holder_time"
-        app:drawableStartCompat="@drawable/ic_sunset_24"
-        app:layout_constraintBottom_toTopOf="@+id/textNightTemperature"
-        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
-        app:layout_constraintTop_toBottomOf="@+id/textDayTemperature" />
+        <variable
+            name="dailyWeather"
+            type="com.sunasterisk.boringweather.data.model.DailyWeather" />
 
-    <TextView
-        android:id="@+id/textNightTemperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawablePadding="@dimen/dp_8"
-        android:text="@string/title_holder_temperature"
-        app:drawableStartCompat="@drawable/ic_moon_24"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
-        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
-        app:layout_constraintTop_toBottomOf="@+id/textSunset" />
+        <variable
+            name="unitSystem"
+            type="com.sunasterisk.boringweather.util.UnitSystem" />
+    </data>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/dp_32" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_200"
+        tools:ignore="Overdraw">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineBottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="@dimen/dp_16" />
+        <TextView
+            android:id="@+id/textDateTime"
+            dateTime="@{isDisplayCurrent ? hourlyWeather.dateTime : dailyWeather.dateTime}"
+            dateTimeFormat="@{textDateTimeFormat}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_holder_date_time"
+            android:textSize="@dimen/sp_25"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toTopOf="@+id/guidelineTop" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/dp_16" />
+        <TextView
+            android:id="@+id/textCurrentTemperature"
+            emojiEnabled="@{false}"
+            temperature="@{isDisplayCurrent? hourlyWeather.temperature : dailyWeather.temperature.average}"
+            unitSystem="@{unitSystem}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_holder_temperature"
+            android:textSize="@dimen/sp_60"
+            app:layout_constraintBottom_toTopOf="@+id/textWeatherDescription"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/textDateTime" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_begin="@dimen/dp_16"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/textSunrise"
+            dateTime="@{dailyWeather.sunrise}"
+            dateTimeFormat="@{@string/format_time_short}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/dp_8"
+            android:text="@string/title_holder_time"
+            app:drawableStartCompat="@drawable/ic_sunrise_24"
+            app:layout_constraintBottom_toTopOf="@+id/textDayTemperature"
+            app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
+            app:layout_constraintTop_toTopOf="@+id/textCurrentTemperature"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
 
-    <TextView
-        android:id="@+id/textWeatherDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawablePadding="@dimen/dp_8"
-        android:text="@string/title_holder_description"
-        android:textSize="@dimen/sp_25"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
-        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-        tools:text="Thunderstorm" />
+        <TextView
+            android:id="@+id/textDayTemperature"
+            emojiEnabled="@{false}"
+            temperature="@{dailyWeather.temperature.day}"
+            unitSystem="@{unitSystem}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/dp_8"
+            android:text="@string/title_holder_temperature"
+            app:drawableStartCompat="@drawable/ic_sunny_24"
+            app:layout_constraintBottom_toTopOf="@+id/textSunset"
+            app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
+            app:layout_constraintTop_toBottomOf="@+id/textSunrise" />
 
-    <TextView
-        android:id="@+id/textFeelsLike"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawablePadding="@dimen/dp_8"
-        android:text="@string/title_holder_temperature"
-        android:textSize="@dimen/sp_20"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textDateTime"
-        app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical" />
+        <TextView
+            android:id="@+id/textSunset"
+            dateTime="@{dailyWeather.sunset}"
+            dateTimeFormat="@{@string/format_time_short}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/dp_8"
+            android:text="@string/title_holder_time"
+            app:drawableStartCompat="@drawable/ic_sunset_24"
+            app:layout_constraintBottom_toTopOf="@+id/textNightTemperature"
+            app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
+            app:layout_constraintTop_toBottomOf="@+id/textDayTemperature" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideMiddleVertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.65" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textNightTemperature"
+            emojiEnabled="@{false}"
+            temperature="@{dailyWeather.temperature.night}"
+            unitSystem="@{unitSystem}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/dp_8"
+            android:text="@string/title_holder_temperature"
+            app:drawableStartCompat="@drawable/ic_moon_24"
+            app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+            app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical"
+            app:layout_constraintTop_toBottomOf="@+id/textSunset" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/dp_32" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="@dimen/dp_16" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/dp_16" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_begin="@dimen/dp_16"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textWeatherDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/dp_8"
+            android:text="@{(isDisplayCurrent ? hourlyWeather.firstWeather : dailyWeather.firstWeather).description, default=@string/title_holder_description}"
+            android:textSize="@dimen/sp_25"
+            app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+            app:layout_constraintStart_toStartOf="@+id/guidelineStart"
+            tools:text="Thunderstorm" />
+
+        <TextView
+            android:id="@+id/textFeelsLike"
+            emojiEnabled="@{true}"
+            temperature="@{isDisplayCurrent ? hourlyWeather.feelsLike : dailyWeather.temperature.feelsLike}"
+            unitSystem="@{unitSystem}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/dp_8"
+            android:text="@string/title_holder_temperature"
+            android:textSize="@dimen/sp_20"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textDateTime"
+            app:layout_constraintStart_toStartOf="@+id/guideMiddleVertical" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideMiddleVertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.65" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

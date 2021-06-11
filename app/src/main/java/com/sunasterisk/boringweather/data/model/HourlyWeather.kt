@@ -1,7 +1,8 @@
 package com.sunasterisk.boringweather.data.model
 
-import android.content.ContentValues
 import android.database.Cursor
+import androidx.room.Ignore
+import com.google.gson.annotations.SerializedName
 import com.sunasterisk.boringweather.data.source.local.HourlyWeatherTable
 import com.sunasterisk.boringweather.util.get
 import com.sunasterisk.boringweather.util.getOrElse
@@ -10,24 +11,26 @@ import com.sunasterisk.boringweather.util.map
 import org.json.JSONArray
 import org.json.JSONObject
 
-data class HourlyWeather(
-    val dateTime: Long,
-    val temperature: Float,
-    val feelsLike: Float,
-    val pressure: Int,
-    val humidity: Int,
-    val dewPoint: Float,
-    val clouds: Int,
-    val windSpeed: Float,
-    val windDegrees: Int,
-    val weathers: List<Weather>,
-    val visibility: Int?,
-    val windGust: Float?,
-    val rain: Volume?,
-    val snow: Volume?,
-    val uvIndex: Float?
+data class HourlyWeather @JvmOverloads constructor(
+    @SerializedName(DT) val dateTime: Long,
+    @SerializedName(TEMP) val temperature: Float,
+    @SerializedName(FEELS_LIKE) val feelsLike: Float,
+    @SerializedName(PRESSURE) val pressure: Int,
+    @SerializedName(HUMIDITY) val humidity: Int,
+    @SerializedName(DEW_POINT) val dewPoint: Float,
+    @SerializedName(CLOUDS) val clouds: Int,
+    @SerializedName(WIND_SPEED) val windSpeed: Float,
+    @SerializedName(WIND_DEGREES) val windDegrees: Int,
+    @SerializedName(WEATHER) @Ignore val weathers: List<Weather> = emptyList(),
+    @SerializedName(VISIBILITY) val visibility: Int?,
+    @SerializedName(WIND_GUST) val windGust: Float?,
+    @SerializedName(RAIN) @Ignore val rain: Volume? = null,
+    @SerializedName(SNOW) @Ignore val snow: Volume? = null,
+    @SerializedName(UV_INDEX) val uvIndex: Float?
 ) {
+    val firstWeather: Weather? get() = weathers.firstOrNull()
 
+    @Deprecated("use retrofit gson library instead")
     constructor(jsonObject: JSONObject) : this(
         jsonObject.getOrElse(DT, default.dateTime),
         jsonObject.getOrElse(TEMP, default.temperature),
@@ -73,26 +76,6 @@ data class HourlyWeather(
         null,
         cursor.get(HourlyWeatherTable.COL_UV_INDEX)
     )
-
-    fun getContentValues(cityId: Int) = ContentValues().apply {
-        val weather = weathers.firstOrNull() ?: Weather.default
-        put(HourlyWeatherTable.COL_DATE_TIME, dateTime)
-        put(HourlyWeatherTable.COL_CITY_ID, cityId)
-        put(HourlyWeatherTable.COL_TEMPERATURE, temperature)
-        put(HourlyWeatherTable.COL_FEELS_LIKE, feelsLike)
-        put(HourlyWeatherTable.COL_PRESSURE, pressure)
-        put(HourlyWeatherTable.COL_HUMIDITY, humidity)
-        put(HourlyWeatherTable.COL_DEW_POINT, dewPoint)
-        put(HourlyWeatherTable.COL_CLOUDS, clouds)
-        put(HourlyWeatherTable.COL_WIND_SPEED, windSpeed)
-        put(HourlyWeatherTable.COL_WIND_DEGREES, windDegrees)
-        put(HourlyWeatherTable.COL_WEATHER_ID, weather.id)
-        put(HourlyWeatherTable.COL_WEATHER_MAIN, weather.main)
-        put(HourlyWeatherTable.COL_WEATHER_DESCRIPTION, weather.description)
-        put(HourlyWeatherTable.COL_WEATHER_ICON, weather.icon)
-        put(HourlyWeatherTable.COL_VISIBILITY, visibility ?: 0)
-        put(HourlyWeatherTable.COL_UV_INDEX, uvIndex ?: 0f)
-    }
 
     companion object {
         val default =

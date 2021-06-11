@@ -1,122 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipeRefreshLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    tools:context="com.sunasterisk.boringweather.ui.detail.DetailFragment">
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/motionDetail"
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.sunasterisk.boringweather.ui.detail.DetailViewModel" />
+    </data>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutDescription="@xml/fragment_detail_scene">
+        app:onRefreshListener="@{() -> viewModel.refreshDetailWeather()}"
+        app:refreshing="@{viewModel.isRefreshing}">
 
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineBottomActionBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="?attr/actionBarSize" />
-
-        <ImageView
-            android:id="@+id/imageBackground"
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            android:id="@+id/motionDetail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@null"
-            android:scaleType="centerCrop" />
+            app:layoutDescription="@xml/fragment_detail_scene">
 
-        <LinearLayout
-            android:id="@+id/viewBackgroundWeatherDailyHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageToolbar">
 
-            <View
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineBottomActionBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="?attr/actionBarSize" />
+
+            <ImageView
+                android:id="@+id/imageBackground"
+                blurRadius="@{5}"
+                blurSampling="@{2}"
+                imageUrl="@{viewModel.decorImageUrl}"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_200"
-                android:background="@color/color_ziggurat" />
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop" />
 
-            <View
+            <LinearLayout
+                android:id="@+id/viewBackgroundWeatherDailyHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageToolbar">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_200"
+                    android:background="@color/color_ziggurat" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_240"
+                    android:background="@color/color_gull_gray" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewDetail"
+                detailWeathersList="@{viewModel.detailWeatherAdapterItems}"
+                focusItemIndexEvent="@{viewModel.focusItemIndexEvent}"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageToolbar"
+                tools:listitem="@layout/item_weather_hourly_expandable" />
+
+            <ImageView
+                android:id="@+id/imageToolbar"
+                imageUrl="@{viewModel.decorImageUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_240"
-                android:background="@color/color_gull_gray" />
+                android:background="?colorPrimary"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/backgrounds/scenic" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/imageUpButton"
+                style="@style/Toolbar.Button"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/dp_8"
+                android:background="@drawable/background_circle_ripple"
+                android:contentDescription="@null"
+                android:padding="@dimen/dp_4"
+                android:src="@drawable/ic_round_arrow_back_24"
+                app:layout_constraintBottom_toTopOf="@id/guidelineBottomActionBar"
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?android:attr/textColorPrimaryInverse" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewDetail"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageToolbar"
-            tools:listitem="@layout/item_weather_hourly_expandable" />
+            <TextView
+                android:id="@+id/textTitleDetail"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_24"
+                android:gravity="center_vertical"
+                android:text="@string/title_detail"
+                android:textColor="?android:attr/textColorPrimaryInverse"
+                app:layout_constraintBottom_toBottomOf="@id/imageUpButton"
+                app:layout_constraintStart_toEndOf="@id/imageUpButton"
+                app:layout_constraintTop_toTopOf="@id/imageUpButton" />
 
-        <ImageView
-            android:id="@+id/imageToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_240"
-            android:background="?colorPrimary"
-            android:contentDescription="@null"
-            android:scaleType="centerCrop"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            <View
+                android:id="@+id/viewBlur"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/color_black_blur_dim"
+                app:layout_constraintBottom_toBottomOf="@id/imageToolbar" />
 
-        <ImageView
-            android:id="@+id/imageUpButton"
-            style="@style/Toolbar.Button"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_margin="@dimen/dp_8"
-            android:background="@drawable/background_circle_ripple"
-            android:contentDescription="@null"
-            android:padding="@dimen/dp_4"
-            android:src="@drawable/ic_round_arrow_back_24"
-            app:layout_constraintBottom_toTopOf="@id/guidelineBottomActionBar"
-            app:layout_constraintDimensionRatio="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="?android:attr/textColorPrimaryInverse" />
+            <TextView
+                android:id="@+id/textToolbarTitle"
+                style="@style/TextAppearance.Design.CollapsingToolbar.Expanded"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_16"
+                android:gravity="center"
+                android:text="@{viewModel.city.name, default=@string/app_name}"
+                android:textColor="?android:attr/textColorPrimaryInverse"
+                app:layout_constraintBottom_toBottomOf="@id/viewBlur"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/viewBlur" />
 
-        <TextView
-            android:id="@+id/textTitleDetail"
-            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_24"
-            android:gravity="center_vertical"
-            android:text="@string/title_detail"
-            android:textColor="?android:attr/textColorPrimaryInverse"
-            app:layout_constraintBottom_toBottomOf="@id/imageUpButton"
-            app:layout_constraintStart_toEndOf="@id/imageUpButton"
-            app:layout_constraintTop_toTopOf="@id/imageUpButton" />
+        </androidx.constraintlayout.motion.widget.MotionLayout>
 
-        <View
-            android:id="@+id/viewBlur"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/color_black_blur_dim"
-            app:layout_constraintBottom_toBottomOf="@id/imageToolbar" />
-
-        <TextView
-            android:id="@+id/textToolbarTitle"
-            style="@style/TextAppearance.Design.CollapsingToolbar.Expanded"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_16"
-            android:gravity="center"
-            android:text="@string/app_name"
-            android:textColor="?android:attr/textColorPrimaryInverse"
-            app:layout_constraintBottom_toBottomOf="@id/viewBlur"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/viewBlur" />
-
-    </androidx.constraintlayout.motion.widget.MotionLayout>
-
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>

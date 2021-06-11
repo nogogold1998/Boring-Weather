@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.annotation.StringRes
 import androidx.core.app.JobIntentService
 import com.sunasterisk.boringweather.R
-import com.sunasterisk.boringweather.data.source.local.AppDatabase
+import com.sunasterisk.boringweather.data.source.local.room.AppRoomDatabase
 import com.sunasterisk.boringweather.util.Constants
 import com.sunasterisk.boringweather.util.buildNotification
 import com.sunasterisk.boringweather.util.createNotificationChannel
@@ -46,8 +46,10 @@ class PrePopulateDatabaseService : JobIntentService() {
         try {
             connection.connect()
             val sqlStr = connection.inputStream.bufferedReader().readText()
-            AppDatabase.getInstance(this@PrePopulateDatabaseService)
-                .writableDatabase.execSQL(sqlStr)
+            AppRoomDatabase.getInstance(applicationContext)
+                .openHelper
+                .writableDatabase
+                .execSQL(sqlStr)
             notifySuccess()
         } catch (e: Exception) {
             when {

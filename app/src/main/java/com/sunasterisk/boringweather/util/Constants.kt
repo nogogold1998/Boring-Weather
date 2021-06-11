@@ -1,6 +1,8 @@
 package com.sunasterisk.boringweather.util
 
 object Constants {
+    const val SEARCH_LIMIT_DEFAULT = 500
+
     const val METER_TO_KILOMETER = 1000F
     const val KILOPASCAL_TO_HECTOPASCAL = 10F
     const val KILOMETER_TO_MILES = 0.621371192F
@@ -14,13 +16,15 @@ object Constants {
 
     const val MINUTE_TO_SECONDS = 60
 
+    const val MINUTE_TO_MILLIS = (MINUTE_TO_SECONDS * SECOND_TO_MILLIS).toLong()
+
+    const val REQUEST_TIMED_OUT = MINUTE_TO_MILLIS / 2
+
     const val HOUR_TO_MINUTES = 60
 
     const val HOUR_TO_SECONDS = HOUR_TO_MINUTES * MINUTE_TO_SECONDS
 
     const val DAY_TO_HOURS = 24
-
-    const val DAY_TO_SECONDS = DAY_TO_HOURS * HOUR_TO_MINUTES * MINUTE_TO_SECONDS
 
     const val NOTIFICATION_ID_PREPOPULATE_DATABASE_SERVICE = 16
 

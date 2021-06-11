@@ -1,35 +1,30 @@
 package com.sunasterisk.boringweather.ui.current
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.core.widget.NestedScrollView
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
 import com.sunasterisk.boringweather.R
 import com.sunasterisk.boringweather.base.AppbarStateChangeListener
-import com.sunasterisk.boringweather.base.BaseFragment
+import com.sunasterisk.boringweather.base.BaseDataBindingFragment
 import com.sunasterisk.boringweather.base.Single
-import com.sunasterisk.boringweather.data.model.City
-import com.sunasterisk.boringweather.data.model.CurrentWeather
-import com.sunasterisk.boringweather.data.model.DailyWeather
-import com.sunasterisk.boringweather.data.model.HourlyWeather
-import com.sunasterisk.boringweather.data.model.SummaryWeather
-import com.sunasterisk.boringweather.di.Injector
-import com.sunasterisk.boringweather.ui.main.findNavigator
-import com.sunasterisk.boringweather.ui.search.SearchConstants
+import com.sunasterisk.boringweather.base.observeEvent
+import com.sunasterisk.boringweather.databinding.FragmentCurrentBinding
+import com.sunasterisk.boringweather.di.NewInjector
 import com.sunasterisk.boringweather.util.DefaultSharedPreferences
 import com.sunasterisk.boringweather.util.TimeUtils
 import com.sunasterisk.boringweather.util.UnitSystem
-import com.sunasterisk.boringweather.util.blur
 import com.sunasterisk.boringweather.util.defaultSharedPreferences
-import com.sunasterisk.boringweather.util.firstCompletelyVisibleItemPosition
-import com.sunasterisk.boringweather.util.gifUrl
-import com.sunasterisk.boringweather.util.lastCompletelyVisibleItemPosition
 import com.sunasterisk.boringweather.util.lazy
 import com.sunasterisk.boringweather.util.load
 import com.sunasterisk.boringweather.util.setupDefaultItemDecoration
@@ -37,16 +32,20 @@ import com.sunasterisk.boringweather.util.showToast
 import com.sunasterisk.boringweather.util.verticalScrollProgress
 import kotlinx.android.synthetic.main.fragment_current.*
 import kotlinx.android.synthetic.main.fragment_current.view.*
-import kotlinx.android.synthetic.main.partial_detail.*
 import kotlinx.android.synthetic.main.partial_nav_view_header.view.*
-import kotlinx.android.synthetic.main.partial_summary.*
+import kotlinx.coroutines.FlowPreview
 
-class CurrentFragment : BaseFragment(), CurrentContract.View,
+@FlowPreview
+class CurrentFragment : BaseDataBindingFragment<FragmentCurrentBinding>(),
     NavigationView.OnNavigationItemSelectedListener,
     DrawerLayout.DrawerListener {
 
-    private var cityId = City.default.id
-    private var todayDailyWeather = DailyWeather.default
+    private val viewModel: CurrentViewModel by viewModels {
+        CurrentViewModel.Factory(
+            NewInjector.provideOneCallWeatherRepository(requireContext()),
+            requireContext().defaultSharedPreferences
+        )
+    }
 
     private val defaultSharedPreferences: DefaultSharedPreferences
         by lazy { requireContext().defaultSharedPreferences }
@@ -72,51 +71,52 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
         }
     }
 
-    override val layoutResource = R.layout.fragment_current
-
-    override var presenter: CurrentContract.Presenter? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        getCityId(savedInstanceState)
-
-        if (cityId == City.default.id) findNavigator()?.navigateToSearchFragment()
-        presenter = CurrentPresenter(
-            this,
-            Injector.getOneCallRepository(requireContext()),
-            Injector.getCityRepository(requireContext())
-        )
-
-        setFragmentResultListener(SearchConstants.KEY_REQUEST_SEARCH_CITY) { requestKey: String, bundle: Bundle ->
-            if (requestKey == SearchConstants.KEY_REQUEST_SEARCH_CITY) {
-                cityId = bundle.getInt(SearchConstants.KEY_BUNDLE_CITY_ID)
-                presenter?.loadCityById(cityId)
-            }
+        lifecycleScope.launchWhenStarted {
+            findNavController().currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<Int>(CITY_ID)
+                ?.observe(requireActivity()) {
+                    if (it != null) {
+                        viewModel.loadCurrentWeather(it)
+                    }
+                }
         }
     }
 
-    private fun getCityId(savedInstanceState: Bundle?) {
-        cityId = savedInstanceState?.getInt(KEY_CITY_ID)
-            ?: arguments?.getInt(ARGUMENT_CITY_ID)
-                ?: defaultSharedPreferences.selectedCityId
-    }
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ) =
+        FragmentCurrentBinding.inflate(inflater, container, false).also {
+            it.viewModel = viewModel
+            it.unitSystem = defaultSharedPreferences.unitSystem
+            it.lifecycleOwner = viewLifecycleOwner
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        presenter?.loadCityById(cityId)
         initViews(savedInstanceState)
         savedInstanceState?.let(::pendingRestoreRecyclerView)
+    }
+
+    override fun observeLiveData() {
+        viewModel.errorRes.observe(viewLifecycleOwner) { it?.let(this::showError) }
+        viewModel.navigationEvent.observeEvent(viewLifecycleOwner) { action ->
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun initViews(savedInstanceState: Bundle?) = with(binding) {
         navView.getHeaderView(0).imageOpenWeather
             .load(getString(R.string.url_open_weather_icon)) {
                 fitCenter()
             }
-    }
-
-    private fun initViews(savedInstanceState: Bundle?) {
-        navView.setNavigationItemSelectedListener(this)
-        drawerLayout.addDrawerListener(this)
+        navView.setNavigationItemSelectedListener(this@CurrentFragment)
+        drawerLayout.addDrawerListener(this@CurrentFragment)
 
         initRecyclerViews()
 
@@ -141,51 +141,47 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
 
         toolbarSearch.setOnMenuItemClickListener {
             if (it.itemId == R.id.searchCity) {
-                findNavigator()?.navigateToSearchFragment()
+                findNavController().navigate(CurrentFragmentDirections.actionCurrentToSearch())
                 true
             } else {
                 false
             }
         }
-
-        swipeRefreshLayout.setOnRefreshListener {
-            presenter?.refreshCurrentWeather(true)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        presenter?.stopLoadData()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putInt(KEY_CITY_ID, cityId)
         outState.putBoolean(KEY_EXPANDED_COLLAPSING_TOOL_BAR, expandedCollapsingToolbar)
-        saveRecyclerViewsState(outState)
+        /* FIXME configuration changes
+            single fragment: onSaveInstanceState -> onDestroyView
+            fragment A in foreground, fragment B in back stack
+            fragment B onDestroyView invoked when it's replaced by A
+            but onSaveInstanceState then later be invoked due to its host activity saveState
+        */
+        // with(binding) {
+        //     recyclerTodaySummaryWeather.centerItemPosition
+        //         .let { outState.putInt(KEY_TODAY_RECYCLER_POSITION, it) }
+        //     recyclerForecastSummaryWeather.centerItemPosition
+        //         .let { outState.putInt(KEY_FORECAST_RECYCLER_POSITION, it) }
+        // }
     }
 
     override fun onDestroyView() {
+        binding.appbarCurrent.removeOnOffsetChangedListener(appbarStateChangeListener)
+        binding.drawerLayout.removeDrawerListener(this)
         super.onDestroyView()
-
-        pendingRestoreTodayRecyclerViewPosition.value =
-            recyclerTodaySummaryWeather?.firstCompletelyVisibleItemPosition
-        pendingRestoreForecastRecyclerViewPosition.value =
-            recyclerForecastSummaryWeather?.firstCompletelyVisibleItemPosition
-        appbarCurrent.removeOnOffsetChangedListener(appbarStateChangeListener)
     }
 
-    private fun initRecyclerViews() {
+    private fun initRecyclerViews() = with(binding) {
         recyclerTodaySummaryWeather.adapter =
-            SummaryWeatherAdapter(unitSystem, TimeUtils.FORMAT_TIME_SHORT) {
-                findNavigator()
-                    ?.navigateToDetailsFragment(cityId, todayDailyWeather.dateTime, it.dt)
+            SummaryWeatherAdapter(this@CurrentFragment.unitSystem, TimeUtils.FORMAT_TIME_SHORT) {
+                this@CurrentFragment.viewModel.navigateToDetailsFragment(it.dt, true)
             }
 
         recyclerForecastSummaryWeather.adapter =
-            SummaryWeatherAdapter(unitSystem, TimeUtils.FORMAT_DATE_SHORT) {
-                findNavigator()?.navigateToDetailsFragment(cityId, it.dt)
+            SummaryWeatherAdapter(this@CurrentFragment.unitSystem, TimeUtils.FORMAT_DATE_SHORT) {
+                this@CurrentFragment.viewModel.navigateToDetailsFragment(it.dt, false)
             }
 
         recyclerTodaySummaryWeather.setupDefaultItemDecoration()
@@ -195,16 +191,6 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
     private fun pendingRestoreRecyclerView(savedInstanceState: Bundle) = with(savedInstanceState) {
         pendingRestoreTodayRecyclerViewPosition.value = getInt(KEY_TODAY_RECYCLER_POSITION)
         pendingRestoreForecastRecyclerViewPosition.value = getInt(KEY_FORECAST_RECYCLER_POSITION)
-    }
-
-    private fun saveRecyclerViewsState(outState: Bundle) {
-        (recyclerTodaySummaryWeather?.lastCompletelyVisibleItemPosition
-            ?: pendingRestoreTodayRecyclerViewPosition.peek())
-            ?.let { outState.putInt(KEY_TODAY_RECYCLER_POSITION, it) }
-
-        (recyclerForecastSummaryWeather?.lastCompletelyVisibleItemPosition
-            ?: pendingRestoreForecastRecyclerViewPosition.peek())
-            ?.let { outState.putInt(KEY_FORECAST_RECYCLER_POSITION, it) }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean = when (item.itemId) {
@@ -222,12 +208,11 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
             false
         }
         R.id.itemSettings -> {
-            pendingDrawerCloseRunnable.value =
-                Runnable { findNavigator()?.navigateToSettingsFragment() }
+            findNavController().navigate(CurrentFragmentDirections.actionCurrentToSettings())
             true
         }
         else -> false
-    }.also { if (it) drawerLayout.closeDrawers() }
+    }
 
     override fun onDrawerClosed(drawerView: View) {
         pendingDrawerCloseRunnable.value?.run()
@@ -239,105 +224,15 @@ class CurrentFragment : BaseFragment(), CurrentContract.View,
 
     override fun onDrawerOpened(drawerView: View) = Unit
 
-    override fun showCity(city: City) {
-        cityId = city.id
-        collapsingToolbar.title = city.name
-    }
-
-    override fun showCurrentWeather(currentWeather: CurrentWeather) {
-        if (isCurrentWeatherIsOutdated(currentWeather)) {
-            presenter?.refreshCurrentWeather(true)
-                ?.also { swipeRefreshLayout.isRefreshing = true }
-            return
-        }
-        val animTime = resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
-        view?.postDelayed({
-            val (city, current, day, todaySummary, forecastSummary) = currentWeather
-            city.takeIf { it.id != City.default.id }?.let(this::showCity)
-            current.takeIf { it.dateTime != HourlyWeather.default.dateTime }
-                ?.let(this::showCurrentHourlyWeather)
-            day.takeIf { it.dateTime != DailyWeather.default.dateTime }
-                ?.let(this::showDailyWeather)
-            showTodaySummaryWeather(todaySummary)
-            showForecastSummaryWeather(forecastSummary)
-            finishRefresh()
-        }, animTime)
-        currentWeather.currentWeather.weathers.firstOrNull()?.gifUrl?.let(::loadDecorImages)
-    }
-
-    private fun loadDecorImages(url: String) {
-        imageToolbar.load(url)
-        imageCurrentBackground.load(url) {
-            blur(5, 2)
-        }
-    }
-
-    override fun showError(errorStringRes: Int) {
+    private fun showError(errorStringRes: Int) {
         requireContext().showToast(getString(errorStringRes), Toast.LENGTH_LONG)
-        finishRefresh()
-    }
-
-    private fun isCurrentWeatherIsOutdated(currentWeather: CurrentWeather) =
-        currentWeather.copy(city = City.default) == CurrentWeather.default
-
-    private fun showCurrentHourlyWeather(currentWeather: HourlyWeather) = with(currentWeather) {
-        textDateTime.text =
-            TimeUtils.formatToString(TimeUtils.FORMAT_DATE_LONG_TIME_SHORT_, dateTime)
-        textCurrentTemperature.text = unitSystem.formatTemperature(temperature, resources)
-        textFeelsLike.text = unitSystem.formatTemperature(feelsLike, resources, true)
-        textWeatherDescription.text =
-            weathers.getOrNull(0)?.description ?: getString(R.string.title_holder_description)
-        textVisibility.text = unitSystem.formatDistance(visibility, resources)
-        textWindSpeed.text = unitSystem.formatSpeed(windSpeed, resources)
-        uvIndex?.takeIf { it > 0 }?.toString()?.let { textUVIndex.text = it }
-        textPressure.text = unitSystem.formatPressure(pressure, resources)
-        textCloud.text = getString(R.string.format_percent_decimal, clouds)
-        textHumidity.text = getString(R.string.format_percent_decimal, humidity)
-    }
-
-    private fun showDailyWeather(dailyWeather: DailyWeather) = with(dailyWeather) {
-        todayDailyWeather = dailyWeather
-        textSunrise.text = TimeUtils.formatToString(TimeUtils.FORMAT_TIME_SHORT, sunrise)
-        textDayTemperature.text = unitSystem.formatTemperature(temperature.day, resources)
-        textSunset.text = TimeUtils.formatToString(TimeUtils.FORMAT_TIME_SHORT, sunset)
-        textNightTemperature.text =
-            unitSystem.formatTemperature(temperature.night, resources)
-    }
-
-    private fun showTodaySummaryWeather(todaySummaryWeathers: List<SummaryWeather>) {
-        (recyclerTodaySummaryWeather.adapter as? SummaryWeatherAdapter)
-            ?.submitList(todaySummaryWeathers) {
-                pendingRestoreTodayRecyclerViewPosition.value
-                    ?.let { recyclerTodaySummaryWeather.scrollToPosition(it) }
-            }
-    }
-
-    private fun showForecastSummaryWeather(forecastSummaryWeathers: List<SummaryWeather>) {
-        (recyclerForecastSummaryWeather.adapter as? SummaryWeatherAdapter)
-            ?.submitList(forecastSummaryWeathers) {
-                pendingRestoreForecastRecyclerViewPosition.value
-                    ?.let { recyclerForecastSummaryWeather?.scrollToPosition(it) }
-            }
-    }
-
-    private fun finishRefresh() {
-        requireView().swipeRefreshLayout.run {
-            post {
-                isRefreshing = false
-            }
-        }
     }
 
     companion object {
         private const val KEY_TODAY_RECYCLER_POSITION = "today_recycler_pos"
         private const val KEY_FORECAST_RECYCLER_POSITION = "forecast_recycler_pos"
-        private const val KEY_CITY_ID = "city_id"
         private const val KEY_EXPANDED_COLLAPSING_TOOL_BAR = "expanded_collapsing_tool_bar"
 
-        private const val ARGUMENT_CITY_ID = "arg_city_id"
-
-        fun newInstance(cityId: Int? = null) = CurrentFragment().apply {
-            arguments = Bundle().apply { if (cityId != null) putInt(ARGUMENT_CITY_ID, cityId) }
-        }
+        const val CITY_ID = "city_id"
     }
 }

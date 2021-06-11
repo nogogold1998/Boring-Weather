@@ -10,11 +10,11 @@
     <string name="details_current_details">Current details</string>
     <string name="details_cloud">Cloud</string>
 
-    <string name="title_current">Current</string>
     <string name="title_powered">powered</string>
     <string name="title_today">Today</string>
     <string name="title_forecast">Forecast</string>
-    <string name="title_detail">Detail</string>
+    <string name="title_detail">Details</string>
+    <string name="title_current">Current</string>
     <string name="title_search">Search</string>
     <string name="title_search_city">Search city</string>
     <string name="title_search_text_background_first_time">First, let find a city</string>
@@ -33,14 +33,12 @@
     <string name="title_holder_temperature">--</string>
     <string name="title_holder_time">--:-- am</string>
     <string name="title_holder_description">Description</string>
-    <string name="title_holder_date_time">July, —,—:— AM</string>
+    <string name="title_holder_date_time">July —,—:— AM</string>
     <string name="title_holder_title_collapsing_toolbar">Boring Weather</string>
 
-    <string name="action_history">History</string>
     <string name="action_go_to_settings">Go to location settings</string>
 
     <string name="menu_current">Current</string>
-    <string name="menu_today">Today</string>
     <string name="menu_forecast">Forecast</string>
     <string name="menu_history">History</string>
     <string name="menu_locations">Locations</string>
@@ -62,10 +60,12 @@
 
     <string name="format_pressure">%1$.1f kPa</string>
 
+    <string name="format_time_short">h:mm a</string>
+    <string name="format_date_time">MMM dd yyyy</string>
+    <string name="format_date_long_time_short">MMM dd yyyy, h:mm a</string>
+    <string name="format_last_fetch">Last fetch: %1$s</string>
+
     <string name="error_refresh_result_null">No result returned</string>
-    <string name="error_refresh_task_pending">Refresh task is pending</string>
-    <string name="error_refresh_task_running">Refresh task is running</string>
-    <string name="error_refresh_task_canceled">Refresh task has cancelled</string>
     <string name="error_refresh_city_null">Loading city failed</string>
     <string name="error_refresh_city_not_outdated">Nope! Your data is recent</string>
     <string name="error_refresh_city_spamming">Hold on. Are you spamming?😤</string>
@@ -93,7 +93,6 @@
     <string name="url_open_weather_api">https://openweathermap.org/api</string>
     <string name="url_open_weather_icon">https://openweathermap.org/themes/openweathermap/assets/img/logo_white_cropped.png</string>
     <string name="format_url_weather_icon">http://openweathermap.org/img/wn/%1$s@2x.png</string>
-    <string name="pref_file_key">com.sunasterisk.borringweather.PREFERENCE_SETTINGS</string>
     <string name="pref_value_is_first_launch_default">true</string>
     <string name="pref_key_is_first_launch">_is_first_launch</string>
     <string name="pref_key_selected_city_id">selected_city_id</string>
@@ -121,12 +120,10 @@
     <string name="pref_value_setting_unit_system_default">@string/pref_value_setting_unit_system_international</string>
 
     <string name="pref_key_setting_notification">setting_notification</string>
-    <string name="pref_key_setting_notification_frequency">setting_notification_frequency</string>
     <string name="pref_value_setting_notification_frequency_default">@string/pref_value_setting_frequency_1hour</string>
 
     <string name="pref_key_setting_background_refresh">setting_background_refresh</string>
     <string name="pref_key_setting_background_refresh_frequency">setting_background_refresh_frequency</string>
-    <string name="pref_value_setting_background_refresh_frequency_default">@string/pref_value_setting_frequency_1hour</string>
 
     <string name="pref_value_setting_frequency_1hour">1hour</string>
     <string name="pref_value_setting_frequency_3hours">3hours</string>

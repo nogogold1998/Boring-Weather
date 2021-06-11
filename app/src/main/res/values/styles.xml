@@ -12,19 +12,9 @@
         <item name="android:layout">@layout/fragment_settings</item>
     </style>
 
-    <style name="Toolbar.Text" parent="">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-        <item name="android:textSize">25sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
     <style name="Toolbar.Button" parent="">
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:padding">@dimen/dp_16</item>
     </style>
 
-    <style name="FullscreenDialogTheme" parent="Theme.AppCompat.Light.DialogWhenLarge">
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowAnimationStyle">@style/Animation.AppCompat.Dialog</item>
-    </style>
 </resources>

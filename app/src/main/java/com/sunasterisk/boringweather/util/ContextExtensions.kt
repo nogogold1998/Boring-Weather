@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.location.LocationManager
 import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -55,22 +54,12 @@ fun Context.buildNotification(@StringRes channelId: Int): Notification =
 val Context.defaultSharedPreferences: DefaultSharedPreferences
     get() = DefaultSharedPreferences.getInstance(this)
 
+@Deprecated("", replaceWith = ReplaceWith(".data.live.NetworkState"))
 enum class NetworkState {
-    WIFI, CELLULAR
 }
 
 val Context.connectivityManager: ConnectivityManager?
     get() = ContextCompat.getSystemService(this, ConnectivityManager::class.java)
-
-val Context.networkState: NetworkState?
-    get() = connectivityManager?.getNetworkCapabilities(connectivityManager?.activeNetwork)?.run {
-        when {
-            hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkState.CELLULAR
-            hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                hasTransport(NetworkCapabilities.TRANSPORT_WIFI_AWARE) -> NetworkState.WIFI
-            else -> null
-        }
-    }
 
 val Context.locationManager: LocationManager?
     get() = ContextCompat.getSystemService(this, LocationManager::class.java)

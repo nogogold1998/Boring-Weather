@@ -2,6 +2,9 @@ package com.sunasterisk.boringweather.data.model
 
 import android.content.ContentValues
 import android.database.Cursor
+import androidx.room.Embedded
+import androidx.room.Ignore
+import com.google.gson.annotations.SerializedName
 import com.sunasterisk.boringweather.data.source.local.DailyWeatherTable
 import com.sunasterisk.boringweather.util.get
 import com.sunasterisk.boringweather.util.getOrElse
@@ -10,21 +13,23 @@ import com.sunasterisk.boringweather.util.map
 import org.json.JSONArray
 import org.json.JSONObject
 
-data class DailyWeather(
-    val dateTime: Long,
-    val sunrise: Long,
-    val sunset: Long,
-    val temperature: Temperature,
-    val pressure: Int,
-    val humidity: Int,
-    val dewPoint: Float,
-    val windSpeed: Float,
-    val windDegrees: Int,
-    val weathers: List<Weather>,
-    val clouds: Int,
-    val uvIndex: Float
+data class DailyWeather @JvmOverloads constructor(
+    @SerializedName(DT) val dateTime: Long,
+    @SerializedName(SUNRISE) val sunrise: Long,
+    @SerializedName(SUNSET) val sunset: Long,
+    @SerializedName(TEMP) @Embedded val temperature: Temperature,
+    @SerializedName(PRESSURE) val pressure: Int,
+    @SerializedName(HUMIDITY) val humidity: Int,
+    @SerializedName(DEW_POINT) val dewPoint: Float,
+    @SerializedName(WIND_SPEED) val windSpeed: Float,
+    @SerializedName(WIND_DEGREES) val windDegrees: Int,
+    @SerializedName(WEATHER) @Ignore val weathers: List<Weather> = emptyList(),
+    @SerializedName(CLOUDS) val clouds: Int,
+    @SerializedName(UVI) val uvIndex: Float
 ) {
+    val firstWeather: Weather? get() = weathers.firstOrNull()
 
+    @Deprecated("use gson library instead")
     constructor(jsonObject: JSONObject) : this(
         jsonObject.getOrElse(DT, default.dateTime),
         jsonObject.getOrElse(SUNRISE, default.sunrise),
@@ -40,6 +45,7 @@ data class DailyWeather(
         jsonObject.getOrElse(UVI, default.uvIndex)
     )
 
+    @Deprecated("use room library instead")
     constructor(cursor: Cursor) : this(
         cursor.get(DailyWeatherTable.COL_DATE_TIME) ?: default.dateTime,
         cursor.get(DailyWeatherTable.COL_SUNRISE) ?: default.sunrise,
@@ -70,6 +76,7 @@ data class DailyWeather(
         cursor.get(DailyWeatherTable.COL_UV_INDEX) ?: default.uvIndex
     )
 
+    @Deprecated("use room library instead")
     fun getContentValues(cityId: Int) = ContentValues().apply {
         val weather = weathers.firstOrNull() ?: Weather.default
         put(DailyWeatherTable.COL_DATE_TIME, dateTime)
